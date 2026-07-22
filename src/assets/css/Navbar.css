@@ -1,0 +1,154 @@
+.hollyu-navbar {
+  background: linear-gradient(
+    90deg,
+    #080a1c 0%,
+    #10123d 50%,
+    #17195a 100%
+  );
+
+  padding: 18px 0;
+
+  border-bottom: 1px solid rgba(229, 184, 63, 0.25);
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+.hollyu-logo-image {
+  width: 125px;
+  height: 50px;
+}
+
+.hollyu-navbar .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  margin: 0 10px;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.hollyu-navbar .nav-link:hover,
+.hollyu-navbar .nav-link:focus,
+.hollyu-navbar .nav-link.active {
+  color: #e5b83f !important;
+}
+
+.hollyu-navbar .nav-link::after {
+  content: "";
+
+  position: absolute;
+
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+
+  height: 2px;
+
+  background: #e5b83f;
+
+  transform: scaleX(0);
+
+  transition: transform 0.3s ease;
+}
+
+.hollyu-navbar .nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.hollyu-dropdown {
+  background-color: #10123d;
+
+  border: 1px solid rgba(229, 184, 63, 0.3);
+
+  border-radius: 8px;
+
+  padding: 8px;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.hollyu-dropdown .dropdown-item {
+  color: #080a1c;
+
+  padding: 10px 15px;
+
+  border-radius: 5px;
+
+  transition: all 0.3s ease;
+}
+
+.hollyu-dropdown .dropdown-item:hover {
+  background-color: #e5b83f;
+
+  color: #080a1c;
+}
+
+.login-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #e5b83f;
+  border: 1px solid #e5b83f;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #e5b83f;
+  color: #080a1c;
+}
+
+.cart-button {
+  position: relative;
+
+  color: #ffffff;
+
+  font-size: 22px;
+
+  text-decoration: none;
+
+  transition: color 0.3s ease;
+
+  margin:10px
+}
+
+.cart-button:hover {
+  color: #e5b83f;
+}
+
+.cart-count {
+  position: absolute;
+
+  top: -8px;
+  right: -10px;
+
+  background-color: #e5b83f;
+
+  color: #080a1c;
+
+  font-size: 10px;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+}
+
+.hollyu-navbar .navbar-toggler {
+  border-color: #e5b83f;
+}
+
+.hollyu-navbar .navbar-toggler-icon {
+  filter: invert(1);
+}
