@@ -8,7 +8,9 @@ import {
 
 import "../assets/css/Hero.css";
 import heroImageOne from "../assets/img/IMG_4023.webp";
-import heroImageTwo from "../assets/img/hero.png";
+import heroImageTwo from "../assets/img/IMG_0133.webp";
+import heroImageThree from "../assets/img/IMG_6496.webp";
+import heroImageFour from "../assets/img/IMG_4216.webp";
 
 const heroProducts = [
   {
@@ -25,13 +27,13 @@ const heroProducts = [
   },
   {
     id: 3,
-    image: heroImageTwo,
+    image: heroImageThree,
     category: "Dama",
     link: "/catalogo/dama",
   },
   {
     id: 4,
-    image: heroImageTwo,
+    image: heroImageFour,
     category: "Caballero",
     link: "/catalogo/caballero",
   },

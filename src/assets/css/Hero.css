@@ -69,6 +69,13 @@
 .hero-bottom {
   display: flex;
 
+  background: linear-gradient(
+    90deg,
+    #080a1c 0%,
+    #10123d 50%,
+    #17195a 100%
+  );
+
   justify-content: space-between;
 
   align-items: center;
@@ -85,7 +92,7 @@
 }
 
 .hero-brand-title {
-  color: #111111;
+  color: #ffffff;
 
   font-size: 4rem;
 
@@ -108,10 +115,12 @@
 
 .hero-description {
   max-width: 500px;
+
+  padding: 10px 0;
 }
 
 .hero-description h1 {
-  color: #080a1c;
+  color: #ffffff;
 
   font-size: 2rem;
 
@@ -121,7 +130,7 @@
 }
 
 .hero-description p {
-  color: #666666;
+  color: #d2d7ea;
 
   line-height: 1.7;
 
