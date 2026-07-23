@@ -96,7 +96,7 @@ export default function Hero() {
         <div className="hero-brand">
 
           <span className="hero-brand-title">
-            HOLLYU
+            HOLYHOLY
           </span>
 
           <span className="hero-brand-subtitle">
