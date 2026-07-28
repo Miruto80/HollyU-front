@@ -166,7 +166,7 @@ export default function Navbar() {
 
             {/* Login */}
             <Link
-              to="/login"
+              to="/Login"
               className="login-button"
               aria-label="Iniciar sesión"
             >
