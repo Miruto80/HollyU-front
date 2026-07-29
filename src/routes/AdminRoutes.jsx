@@ -1,19 +1,33 @@
 import { Routes, Route } from "react-router-dom";
 
+import AdminLayout from "../components/layout/AdminLayout.jsx";
+
 import Dashboard from "../pages/admin/Dashboard";
 import Products from "../pages/admin/Products";
+import Categories from "../pages/admin/Categories";
 
 function AdminRoutes() {
-  return (
-    <Routes>
-      <Route path="/" element={<Dashboard />} />
 
-      <Route path="productos" element={<Products />} />
-      {/* Futuras rutas */}
-      {/* <Route path="clientes" element={<Clientes />} /> */}
-      {/* <Route path="pedidos" element={<Pedidos />} /> */}
-    </Routes>
-  );
+    return (
+
+        <Routes>
+
+            <Route element={<AdminLayout />}>
+
+                <Route path="/" element={<Dashboard />} />
+
+                <Route path="productos" element={<Products />} />
+
+                 <Route path="categorias" element={<Categories />} /> 
+
+                {/* <Route path="pedidos" element={<Pedidos />} /> */}
+
+            </Route>
+
+        </Routes>
+
+    );
+
 }
 
 export default AdminRoutes;

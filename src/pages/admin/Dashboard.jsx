@@ -1,6 +1,3 @@
-import Sidebar from "../../components/admin/Sidebar";
-import AdminNav from "../../components/admin/AdminNav";
-
 import DashboardCards from "../../components/admin/DashboardCards";
 import ProductionTable from "../../components/admin/ProductionTable";
 import SalesChart from "../../components/admin/SalesChart";
@@ -9,14 +6,6 @@ import "../../assets/css/Dashboard.css";
 
 export default function Dashboard (){
   return (
-        <div className="admin-layout">
-
-            <Sidebar />
-
-            <div className="admin-content">
-
-                <AdminNav />
-
                 <div className="container-fluid py-4">
 
                     <DashboardCards />
@@ -38,9 +27,5 @@ export default function Dashboard (){
                     </div>
 
                 </div>
-
-            </div>
-
-        </div>
     );
 };
