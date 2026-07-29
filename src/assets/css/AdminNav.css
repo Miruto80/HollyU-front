@@ -1,0 +1,191 @@
+.admin-navbar{
+
+    height:70px;
+
+    background:#fff;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 30px;
+
+    border-bottom:1px solid #e9ecef;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+}
+
+.admin-navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.sidebar-toggle{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#080A1C;
+
+    color:#E5B83F;
+
+    transition:.25s;
+
+}
+
+.sidebar-toggle:hover{
+
+    background:#17195A;
+
+}
+
+.search-box{
+
+    display:flex;
+
+    align-items:center;
+
+    background:#f5f5f5;
+
+    border-radius:12px;
+
+    padding:0 15px;
+
+    width:320px;
+
+    height:45px;
+
+}
+
+.search-box input{
+
+    border:none;
+
+    background:none;
+
+    width:100%;
+
+    outline:none;
+
+    margin-left:12px;
+
+}
+
+.search-icon{
+
+    color:#999;
+
+}
+
+.admin-navbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+
+}
+
+.icon-button{
+
+    position:relative;
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#f5f5f5;
+
+    font-size:18px;
+
+}
+
+.notification-badge{
+
+    position:absolute;
+
+    top:6px;
+
+    right:6px;
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    background:#E5B83F;
+
+    color:#080A1C;
+
+    font-size:11px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:600;
+
+}
+
+.admin-user{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+}
+
+.admin-user img{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+.admin-user h6{
+
+    margin:0;
+
+    font-weight:600;
+
+}
+
+.admin-user small{
+
+    color:#777;
+
+}
