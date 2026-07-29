@@ -9,9 +9,7 @@ import {
     faClipboardList,
     faReceipt,
     faTags,
-    faMoneyBillWave,
-    faBell,
-    faGear
+    faMoneyBillWave
 } from "@fortawesome/free-solid-svg-icons";
 
 import SidebarItem from "./SidebarItem";
@@ -92,18 +90,6 @@ export default function Sidebar() {
                     to="/admin/cotizaciones"
                     icon={faReceipt}
                     text="Cotizaciones"
-                />
-
-                <SidebarItem
-                    to="/admin/notificaciones"
-                    icon={faBell}
-                    text="Notificaciones"
-                />
-
-                <SidebarItem
-                    to="/admin/configuracion"
-                    icon={faGear}
-                    text="Configuración"
                 />
 
             </div>

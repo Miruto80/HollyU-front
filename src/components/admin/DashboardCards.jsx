@@ -2,7 +2,8 @@ import {
     faDollarSign,
     faClipboardList,
     faShirt,
-    faUsers
+    faMoneyBill,
+    
 } from "@fortawesome/free-solid-svg-icons";
 
 import DashboardCard from "./DashboardCard";
@@ -33,10 +34,10 @@ export default function Sidebar() {
         },
 
         {
-            title: "Clientes",
-            value: "250",
-            icon: faUsers,
-            color: "#4CAF50"
+            title: "Pagos por confirmar",
+            value: "2",
+            icon: faMoneyBill,
+            color: "#76756f"
         }
 
     ];

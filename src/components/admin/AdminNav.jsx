@@ -3,23 +3,15 @@ import {
   faBars,
   faBell,
   faSearch,
-  faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "../../assets/css/AdminNav.css";
 
-export default function AdminNavbar({ toggleSidebar }) {
+export default function AdminNavbar() {
   return (
     <header className="admin-navbar">
 
       <div className="admin-navbar-left">
-
-        <button
-          className="sidebar-toggle"
-          onClick={toggleSidebar}
-        >
-          <FontAwesomeIcon icon={faBars} />
-        </button>
 
         <div className="search-box">
 
