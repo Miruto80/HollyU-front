@@ -5,6 +5,7 @@ import Home from "../pages/public/Home.jsx";
 import Login from "../pages/public/Login.jsx";
 import ScrollToTop from "../components/ScrollToTop.jsx";
 import AdminRoutes from "./AdminRoutes.jsx";
+import Catalog from "../pages/public/Catalog.jsx";
 
 function AppRoutes() {
   const location = useLocation();
@@ -20,6 +21,8 @@ function AppRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/catalog/:category" element={<Catalog />} />
 
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>

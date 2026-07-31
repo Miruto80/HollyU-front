@@ -67,7 +67,7 @@ export default function Navbar() {
               <ul className="dropdown-menu hollyu-dropdown">
 
                 <li>
-                  <Link to="/catalogo" className="dropdown-item">
+                  <Link to="/catalog" className="dropdown-item">
                     Ver todos
                   </Link>
                 </li>
@@ -78,7 +78,7 @@ export default function Navbar() {
 
                 <li>
                   <Link
-                    to="/catalogo/estudiantes"
+                    to="/catalog/estudiantes"
                     className="dropdown-item"
                   >
                     Estudiantes
@@ -87,7 +87,7 @@ export default function Navbar() {
 
                 <li>
                   <Link
-                    to="/catalogo/enfermeria"
+                    to="/catalog/enfermeria"
                     className="dropdown-item"
                   >
                     Enfermería
@@ -96,7 +96,7 @@ export default function Navbar() {
 
                 <li>
                   <Link
-                    to="/catalogo/odontologia"
+                    to="/catalog/odontologia"
                     className="dropdown-item"
                   >
                     Odontología
@@ -105,7 +105,7 @@ export default function Navbar() {
 
                 <li>
                   <Link
-                    to="/catalogo/dama"
+                    to="/catalog/dama"
                     className="dropdown-item"
                   >
                     Dama
@@ -114,7 +114,7 @@ export default function Navbar() {
 
                 <li>
                   <Link
-                    to="/catalogo/caballero"
+                    to="/catalog/caballero"
                     className="dropdown-item"
                   >
                     Caballero
@@ -123,7 +123,7 @@ export default function Navbar() {
 
                 <li>
                   <Link
-                    to="/catalogo/spa"
+                    to="/catalog/spa"
                     className="dropdown-item"
                   >
                     Peluquería y Spa

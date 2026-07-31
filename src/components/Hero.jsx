@@ -17,25 +17,25 @@ const heroProducts = [
     id: 1,
     image: heroImageOne,
     category: "Enfermería",
-    link: "/catalogo/enfermeria",
+    link: "/catalog/enfermeria",
   },
   {
     id: 2,
     image: heroImageTwo,
     category: "Odontología",
-    link: "/catalogo/odontologia",
+    link: "/catalog/odontologia",
   },
   {
     id: 3,
     image: heroImageThree,
     category: "Dama",
-    link: "/catalogo/dama",
+    link: "/catalog/dama",
   },
   {
     id: 4,
     image: heroImageFour,
     category: "Caballero",
-    link: "/catalogo/caballero",
+    link: "/catalog/caballero",
   },
 ];
 
@@ -119,7 +119,7 @@ export default function Hero() {
           </p>
 
           <Link
-            to="/catalogo"
+            to="/catalog"
             className="hero-button"
           >
             Explorar colección
