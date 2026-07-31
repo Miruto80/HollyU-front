@@ -11,7 +11,6 @@ const image =
 
         console.log("PRODUCTO:", product);
 console.log("IMAGEN:", product.Producto_imagenes?.[0]?.imagen);
-console.log("HERO:", hero);
 
     return (
 
