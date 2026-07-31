@@ -1,15 +1,17 @@
-import { useRef, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.css";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { SERVER_URL } from "../../services/api";
+import ProductModal from "../../components/admin/ProductModal";
 
 DataTable.use(DT);
 
 export default function ProductosTable() {
   const tableRef = useRef(null);
-  const { data: productos, loading, error } = useGetFetch("/productos");
+   const [showModal, setShowModal] = useState(false);
+  const { data: productos, loading, error, refetch } = useGetFetch("/productos");
 
   // Delegación de eventos para botones dentro de la tabla
   useEffect(() => {
@@ -92,7 +94,13 @@ export default function ProductosTable() {
 
   return (
     <div className="container mt-4" ref={tableRef}>
-      <h3>Productos</h3>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3>Productos</h3>
+        <button className="btn btn-dark" onClick={() => setShowModal(true)}>
+          + Registrar producto
+        </button>
+      </div>
+
       <DataTable
         data={productos}
         columns={columns}
@@ -105,6 +113,12 @@ export default function ProductosTable() {
           }
         }}
         className="table table-striped table-hover"
+      />
+
+      <ProductModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onCreated={refetch}
       />
     </div>
   );
