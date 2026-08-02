@@ -1,41 +1,28 @@
-import { useRef, useState, useEffect } from "react";
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-bs5";
-import "datatables.net-bs5/css/dataTables.bootstrap5.css";
+import { useState } from "react";
+import ReusableDataTable from "../../components/common/ReusableDataTable";
 import { useGetFetch } from "../../hooks/useGetFetch";
+import { useDeleteFetch } from "../../hooks/useDeleteFetch";
 import { SERVER_URL } from "../../services/api";
 import ProductModal from "../../components/admin/ProductModal";
 
-DataTable.use(DT);
-
 export default function ProductosTable() {
-  const tableRef = useRef(null);
    const [showModal, setShowModal] = useState(false);
   const { data: productos, loading, error, refetch } = useGetFetch("/productos");
+  const handleEdit = (id) => {
+    console.log("Editar producto", id);
+    setShowModal(true);
+  };
 
-  // Delegación de eventos para botones dentro de la tabla
-  useEffect(() => {
-    const container = tableRef.current;
-    if (!container) return;
+  const { remove, DeleteModal } = useDeleteFetch("/productos");
 
-    const handleClick = (e) => {
-      const editBtn = e.target.closest(".btn-editar");
-      const delBtn = e.target.closest(".btn-eliminar");
-
-      if (editBtn) {
-        console.log("Editar producto", editBtn.dataset.id);
-        // abrir modal de edición acá
-      }
-
-      if (delBtn) {
-        console.log("Eliminar producto", delBtn.dataset.id);
-        // confirmar + llamar al endpoint DELETE acá
-      }
-    };
-
-    container.addEventListener("click", handleClick);
-    return () => container.removeEventListener("click", handleClick);
-  }, [productos]);
+  const handleDelete = async (id) => {
+    try {
+      await remove(id);
+      refetch();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const columns = [
     {
@@ -93,7 +80,7 @@ export default function ProductosTable() {
   if (error) return <p className="text-danger">Error al cargar productos.</p>;
 
   return (
-    <div className="container mt-4" ref={tableRef}>
+    <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>Productos</h3>
         <button className="btn btn-dark" onClick={() => setShowModal(true)}>
@@ -101,9 +88,11 @@ export default function ProductosTable() {
         </button>
       </div>
 
-      <DataTable
+      <ReusableDataTable
         data={productos}
         columns={columns}
+        loading={loading}
+        error={error}
         options={{
           language: {
             search: "Buscar:",
@@ -113,6 +102,8 @@ export default function ProductosTable() {
           }
         }}
         className="table table-striped table-hover"
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
 
       <ProductModal
@@ -120,6 +111,7 @@ export default function ProductosTable() {
         onClose={() => setShowModal(false)}
         onCreated={refetch}
       />
+      <DeleteModal />
     </div>
   );
 }
