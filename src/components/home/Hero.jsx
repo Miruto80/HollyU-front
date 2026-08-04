@@ -6,11 +6,11 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-import "../assets/css/Hero.css";
-import heroImageOne from "../assets/img/IMG_4023.webp";
-import heroImageTwo from "../assets/img/IMG_0133.webp";
-import heroImageThree from "../assets/img/IMG_6496.webp";
-import heroImageFour from "../assets/img/IMG_4216.webp";
+import "../../assets/css/Hero.css";
+import heroImageOne from "../../assets/img/IMG_4023.webp";
+import heroImageTwo from "../../assets/img/IMG_0133.webp";
+import heroImageThree from "../../assets/img/IMG_6496.webp";
+import heroImageFour from "../../assets/img/IMG_4216.webp";
 
 const heroProducts = [
   {
