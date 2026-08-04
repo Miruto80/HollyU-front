@@ -1,0 +1,89 @@
+.footer-hollyu{
+    background:#0b2545;
+    color:#fff;
+}
+
+.footer-logo{
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.footer-logo span{
+    color:#d4af37;
+}
+
+.footer-text{
+    color:#d7d7d7;
+    line-height:1.8;
+}
+
+.footer-hollyu h5{
+    color:#fff;
+    margin-bottom:20px;
+    font-weight:600;
+}
+
+.footer-links{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.footer-links li{
+    margin-bottom:12px;
+}
+
+.footer-links a{
+    color:#d7d7d7;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.footer-links a:hover{
+    color:#d4af37;
+    padding-left:5px;
+}
+
+.footer-contact p{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#d7d7d7;
+}
+
+.footer-social{
+    display:flex;
+    gap:15px;
+    margin-top:25px;
+}
+
+.footer-social a{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#16385d;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    transition:.3s;
+    font-size:18px;
+}
+
+.footer-social a:hover{
+    background:#d4af37;
+    color:#0b2545;
+    transform:translateY(-4px);
+}
+
+.footer-hollyu hr{
+    border-color:rgba(255,255,255,.15);
+    margin:40px 0 20px;
+}
+
+.footer-copy{
+    text-align:center;
+    color:#bdbdbd;
+    font-size:.9rem;
+}

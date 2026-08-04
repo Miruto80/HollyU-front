@@ -1,48 +1,123 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faPhone,
+  faEnvelope,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
+
+import {
+  faFacebookF,
+  faInstagram,
+  faWhatsapp,
+} from "@fortawesome/free-brands-svg-icons";
+
+import "../../assets/css/Footer.css";
 
 export default function Footer() {
   return (
-    <footer className="footer bg-light py-5" role="contentinfo">
-      <div className="container">
-        <div className="row">
-          <div className="col-12 col-md-4 mb-3">
-            <h5>HollyU Uniformes</h5>
-            <p className="text-muted">Confección y venta de uniformes profesionales y prendas a medida.</p>
+    <footer className="footer-hollyu">
+      <div className="container py-5">
+        <div className="row gy-4">
+          {/* Logo */}
+          <div className="col-lg-4">
+            <h3 className="footer-logo">
+              Holly<span>U</span>
+            </h3>
+
+            <p className="footer-text">
+              Uniformes profesionales de alta calidad para empresas,
+              clínicas, restaurantes, hoteles y cualquier negocio que
+              quiera destacar con una imagen elegante.
+            </p>
+
+            <div className="footer-social">
+              <a href="#" aria-label="Facebook">
+                <FontAwesomeIcon icon={faFacebookF} />
+              </a>
+
+              <a href="#" aria-label="Instagram">
+                <FontAwesomeIcon icon={faInstagram} />
+              </a>
+
+              <a href="#" aria-label="WhatsApp">
+                <FontAwesomeIcon icon={faWhatsapp} />
+              </a>
+            </div>
           </div>
 
-          <div className="col-6 col-md-2 mb-3">
-            <h6>Compañía</h6>
-            <ul className="list-unstyled">
-              <li><Link to="/nosotros">Nosotros</Link></li>
-              <li><Link to="/contacto">Contacto</Link></li>
-              <li><Link to="/catalog">Catálogo</Link></li>
+          {/* Navegación */}
+          <div className="col-md-4 col-lg-2">
+            <h5>Navegación</h5>
+
+            <ul className="footer-links">
+              <li>
+                <Link to="/">Inicio</Link>
+              </li>
+
+              <li>
+                <Link to="/catalog/all">Catálogo</Link>
+              </li>
+
+              <li>
+                <Link to="/nosotros">Nosotros</Link>
+              </li>
+
+              <li>
+                <Link to="/contacto">Contacto</Link>
+              </li>
             </ul>
           </div>
 
-          <div className="col-6 col-md-3 mb-3">
-            <h6>Atención</h6>
-            <ul className="list-unstyled">
-              <li>Tel: <a href="tel:+511234567">(01) 123 4567</a></li>
-              <li>Email: <a href="mailto:ventas@hollyu.pe">ventas@hollyu.pe</a></li>
-              <li><Link to="/faq">Preguntas frecuentes</Link></li>
+          {/* Información */}
+          <div className="col-md-4 col-lg-3">
+            <h5>Información</h5>
+
+            <ul className="footer-links">
+              <li>
+                <Link to="/faq">Preguntas frecuentes</Link>
+              </li>
+
+              <li>
+                <Link to="/politicas">Políticas</Link>
+              </li>
+
+              <li>
+                <Link to="/terminos">Términos</Link>
+              </li>
             </ul>
           </div>
 
-          <div className="col-12 col-md-3 mb-3">
-            <h6>Síguenos</h6>
-            <div className="d-flex gap-2">
-              <a href="#" aria-label="Instagram" className="text-decoration-none">Instagram</a>
-              <a href="#" aria-label="Facebook" className="text-decoration-none">Facebook</a>
+          {/* Contacto */}
+          <div className="col-md-4 col-lg-3">
+            <h5>Contacto</h5>
+
+            <div className="footer-contact">
+              <p>
+                <FontAwesomeIcon icon={faPhone} />
+                <span>+58 412-000-0000</span>
+              </p>
+
+              <p>
+                <FontAwesomeIcon icon={faEnvelope} />
+                <span>ventas@hollyu.com</span>
+              </p>
+
+              <p>
+                <FontAwesomeIcon icon={faLocationDot} />
+                <span>Barquisimeto, Venezuela</span>
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="text-center pt-3 mt-3 border-top">
-          <small className="text-muted">© {new Date().getFullYear()} HollyU Uniformes. Todos los derechos reservados.</small>
+        <hr />
+
+        <div className="footer-copy">
+          © {new Date().getFullYear()} HollyU. Todos los derechos reservados.
         </div>
       </div>
     </footer>
   );
 }
-
