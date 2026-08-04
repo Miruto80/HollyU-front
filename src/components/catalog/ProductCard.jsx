@@ -1,47 +1,46 @@
 import "../../assets/css/Catalog.css";
-import hero from "../../assets/img/hero.png"; 
+import hero from "../../assets/img/hero.png";
 import { SERVER_URL } from "../../services/api";
-export default function ProductCard({ product, onClick }) {
 
-const imagenRelativa = product.Producto_imagenes?.[0]?.imagen;
+export default function ProductCard({ product, onClick }) {
+  const imagenRelativa = product.Producto_imagenes?.[0]?.imagen;
 
   const image = imagenRelativa
     ? `${SERVER_URL}${imagenRelativa}`
     : hero;
 
-    const precio =
-        product.Modelos?.[0]?.Modelo_telas?.[0]?.precio;
+  const precio = product.Modelos?.[0]?.Modelo_telas?.[0]?.precio;
 
-    return (
+  return (
+    <div className="product-card card h-100" onClick={onClick}>
 
-        <div
-            className="product-card"
-            onClick={onClick}
-        >
+      <div className="product-image">
 
-            <img
-                src={image}
-                alt={product.nombre}
-            />
+        <img
+          src={image}
+          alt={product.nombre}
+        />
 
-            <div className="p-3">
+        <span className="product-badge">
+            {product.Categoria?.nombre}        </span>
 
-                <h6 className="fw-bold mt-2">
+      </div>
 
-                    {product.nombre}
+      <div className="card-body">
 
-                </h6>
+  <h5 className="product-title">
+    {product.nombre}
+  </h5>
 
-                <h5 className="mt-3">
+  <div className="product-price">
+    ${Number(precio).toLocaleString()}
+  </div>
 
-                    ${Number(precio).toLocaleString()}
+  <button className="btn product-btn w-100">
+    Ver detalles
+  </button>
 
-                </h5>
-
-            </div>
-
-        </div>
-
-    );
-
+</div>
+    </div>
+  );
 }
