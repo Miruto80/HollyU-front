@@ -23,7 +23,7 @@ export default function Footer() {
           {/* Logo */}
           <div className="col-lg-4">
             <h3 className="footer-logo">
-              Holly<span>U</span>
+              Holy<span>Holy</span>
             </h3>
 
             <p className="footer-text">
