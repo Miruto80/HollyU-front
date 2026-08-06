@@ -1,0 +1,41 @@
+.promo-strip {
+  background: linear-gradient(90deg, #080a1c 0%, #10123d 48%, #17195a 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.promo-strip .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+}
+
+.promo-strip span {
+  font-size: 0.95rem;
+  letter-spacing: 0.4px;
+  color: #e7e7e7;
+}
+
+.promo-strip a {
+  color: #d4af37;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.promo-strip a:hover,
+.promo-strip a:focus {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .promo-strip .container {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 1rem 0.75rem;
+  }
+}
