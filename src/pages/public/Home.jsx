@@ -5,6 +5,7 @@ import CategoriesGrid from "../../components/home/CategoriesGrid";
 import FeaturedProducts from "../../components/home/FeaturedProducts";
 import Testimonials from "../../components/home/Testimonials";
 import FAQ from "../../components/home/FAQ";
+import About from "../../components/home/About";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <main>
         <Hero />
       <PromoStrip />
+        <About />
         <section aria-label="Categorías" className="container my-5">
           <CategoriesGrid />
         </section>
