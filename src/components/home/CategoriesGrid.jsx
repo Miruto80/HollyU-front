@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useGetFetch } from '../../hooks/useGetFetch';
+import '../../assets/css/CategoriesGrid.css';
 import img1 from '../../assets/img/IMG_4023.webp';
 import img2 from '../../assets/img/IMG_0133.webp';
 import img3 from '../../assets/img/IMG_6496.webp';

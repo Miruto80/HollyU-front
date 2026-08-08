@@ -1,5 +1,5 @@
 import "../../assets/css/About.css";
-import aboutImg from "../../assets/img/hero.png";
+import aboutImg from "../../assets/img/IMG_9567.webp";
 
 export default function About() {
   return (
@@ -24,6 +24,15 @@ export default function About() {
                 clínicas, restaurantes, hoteles, empresas y todo tipo
                 de organizaciones que buscan proyectar una imagen
                 moderna y profesional.
+              </p>
+
+              <p className="about-text">
+                Nuestro equipo combina creatividad, precisión y atención
+                a cada detalle para ofrecer soluciones personalizadas
+                que se adaptan a la cultura y al estilo de tu marca.
+                Además, trabajamos de la mano contigo desde el diseño
+                hasta la entrega, garantizando comodidad, durabilidad
+                y un acabado impecable en cada prenda.
               </p>
             </div>
 

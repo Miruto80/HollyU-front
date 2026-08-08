@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../assets/css/Testimonials.css';
 
 const quotes = [
   { id: 1, author: 'María L.', text: 'Calidad y atención impecable. Mis uniformes duran años.' },

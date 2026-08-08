@@ -1,0 +1,46 @@
+.testimonials {
+  padding: 3rem 0;
+}
+
+.testimonials h2 {
+  color: #0b2545;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.testimonials .blockquote {
+  background: #ffffff;
+  border: 1px solid rgba(11, 37, 69, 0.1);
+  box-shadow: 0 16px 40px rgba(11, 37, 69, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 24px;
+  min-height: 220px;
+}
+
+.testimonials .blockquote:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 48px rgba(11, 37, 69, 0.14);
+}
+
+.testimonials .blockquote p {
+  color: #475569;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.testimonials .blockquote-footer {
+  color: #0b2545;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+@media (max-width: 767px) {
+  .testimonials {
+    padding: 2rem 0;
+  }
+
+  .testimonials h2 {
+    font-size: 1.8rem;
+  }
+}

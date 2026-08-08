@@ -18,9 +18,7 @@ export default function Home() {
           <CategoriesGrid />
         </section>
 
-        <section aria-label="Productos destacados" className="container my-5">
           <FeaturedProducts />
-        </section>
 
         <section aria-label="Testimonios" className="container my-5">
           <Testimonials />

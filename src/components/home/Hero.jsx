@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
-  faChevronLeft,
-  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "../../assets/css/Hero.css";
@@ -76,19 +74,6 @@ export default function Hero() {
         ))}
 
       </div>
-
-      {/* Controles */}
-      <button
-        className="hero-control hero-control-left"
-      >
-        <FontAwesomeIcon icon={faChevronLeft} />
-      </button>
-
-      <button
-        className="hero-control hero-control-right"
-      >
-        <FontAwesomeIcon icon={faChevronRight} />
-      </button>
 
       {/* Parte inferior */}
       <div className="hero-bottom">

@@ -1,0 +1,223 @@
+.product-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.5rem;
+
+    background: rgba(11, 37, 69, 0.45);
+
+    overflow-y: auto;
+}
+
+
+/* CONTENEDOR */
+
+.product-modal-dialog {
+    position: relative;
+
+    width: 100%;
+    max-width: 1080px;
+
+    max-height: calc(100vh - 3rem);
+
+    margin: auto;
+}
+
+
+/* MODAL */
+
+.product-modal-content {
+    position: relative;
+
+    width: 100%;
+    max-height: calc(100vh - 3rem);
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+
+    border: none;
+    border-radius: 28px;
+
+    overflow: hidden;
+
+    box-shadow: 0 25px 80px rgba(11, 37, 69, 0.25);
+}
+
+
+/* HEADER */
+
+.product-modal-header {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1.5rem 1.5rem 1rem;
+
+    border-bottom: 1px solid rgba(11, 37, 69, 0.08);
+
+    flex-shrink: 0;
+}
+
+
+.product-modal-title {
+    margin: 0;
+
+    color: #0b2545;
+
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+
+/* BOTÓN X */
+
+.product-modal-close {
+    position: relative;
+
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(11, 37, 69, 0.12);
+    border-radius: 50%;
+
+    background: rgba(11, 37, 69, 0.06);
+
+    color: #0b2545;
+
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.product-modal-close:hover {
+    background: rgba(11, 37, 69, 0.12);
+
+    transform: rotate(90deg);
+}
+
+
+/* BODY */
+
+.product-modal-body {
+    padding: 1.5rem;
+
+    overflow-y: auto;
+
+    flex: 1;
+}
+
+
+/* IMAGEN */
+
+.product-main-image {
+    width: 100%;
+
+    max-height: 520px;
+
+    object-fit: cover;
+
+    border-radius: 24px;
+}
+
+
+/* NOMBRE */
+
+.product-modal-name {
+    color: #0b2545;
+
+    font-weight: 700;
+}
+
+
+/* COLORES */
+
+.color-circle {
+    width: 32px;
+    height: 32px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(11, 37, 69, 0.15);
+
+    box-shadow: 0 2px 5px rgba(11, 37, 69, 0.08);
+}
+
+
+/* TALLAS */
+
+.product-modal .btn-outline-dark {
+    min-width: 72px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 767px) {
+
+    .product-modal {
+        align-items: flex-start;
+
+        padding: 1rem;
+
+        overflow-y: auto;
+    }
+
+
+    .product-modal-dialog {
+        max-width: 100%;
+
+        max-height: none;
+
+        margin: 0;
+    }
+
+
+    .product-modal-content {
+        max-height: none;
+
+        border-radius: 20px;
+    }
+
+
+    .product-modal-header {
+        padding: 1rem;
+    }
+
+
+    .product-modal-body {
+        padding: 1rem;
+    }
+
+
+    .product-main-image {
+        max-height: 400px;
+
+        border-radius: 18px;
+    }
+}
