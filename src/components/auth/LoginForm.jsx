@@ -16,20 +16,24 @@ export default function LoginForm() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const result = await post(form);
+  try {
+    const result = await post(form);
 
-      localStorage.setItem("accessToken", result.accessToken);
-      localStorage.setItem("refreshToken", result.refreshToken);
-      localStorage.setItem("usuario", JSON.stringify(result.usuario));
+    localStorage.setItem("accessToken", result.accessToken);
+    localStorage.setItem("refreshToken", result.refreshToken);
+    localStorage.setItem("usuario", JSON.stringify(result.usuario));
 
+    if (result.usuario.rol === "Administrador") {
       navigate("/admin");
-    } catch {
-      // el error ya queda en el estado del hook
+    } else {
+      navigate("/"); 
     }
-  };
+  } catch {
+    // el error ya queda en el estado del hook 
+  }
+};
 
   return (
     <div className="login-form">
