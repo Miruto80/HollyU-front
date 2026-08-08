@@ -37,7 +37,7 @@ export default function Footer() {
                 <FontAwesomeIcon icon={faFacebookF} />
               </a>
 
-              <a href="#" aria-label="Instagram">
+              <a href="https://www.instagram.com/holyholyuniformes/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
 
