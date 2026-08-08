@@ -34,6 +34,8 @@
 
 .sidebar-toggle{
 
+    display:none;
+
     width:42px;
 
     height:42px;
@@ -188,4 +190,50 @@
 
     color:#777;
 
+}
+
+@media (max-width: 992px) {
+    .sidebar-toggle{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .admin-navbar{
+        gap:12px;
+        padding:0 18px;
+    }
+
+    .search-box{
+        width:100%;
+        max-width:550px;
+    }
+
+    .admin-navbar-right{
+        gap:14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-navbar{
+        flex-wrap:wrap;
+        padding:10px 16px;
+    }
+
+    .admin-navbar-left,
+    .admin-navbar-right{
+        width:100%;
+    }
+
+    .admin-navbar-left{
+        gap:10px;
+    }
+
+    .search-box{
+        width:100%;
+    }
+
+    .admin-user small{
+        display:none;
+    }
 }

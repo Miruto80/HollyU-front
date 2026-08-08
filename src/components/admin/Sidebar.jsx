@@ -9,17 +9,19 @@ import {
     faClipboardList,
     faReceipt,
     faTags,
-    faMoneyBillWave
+    faMoneyBillWave,
+    faRightFromBracket,
+    faXmark
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import SidebarItem from "./SidebarItem";
 import "../../assets/css/Sidebar.css";
 
-export default function Sidebar() {
-
+export default function Sidebar({ isOpen, onClose }) {
     return (
 
-        <aside className="sidebar">
+        <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
 
             <div className="sidebar-logo">
 
@@ -27,6 +29,15 @@ export default function Sidebar() {
                     src="/images/logo-holyholy.png"
                     alt="HolyHoly"
                 />
+
+                <button
+                    type="button"
+                    className="sidebar-close"
+                    onClick={onClose}
+                    aria-label="Cerrar menú"
+                >
+                    <FontAwesomeIcon icon={faXmark} />
+                </button>
 
             </div>
 
@@ -101,9 +112,7 @@ export default function Sidebar() {
                     to="/login"
                 >
 
-                    <i>
-                        <faRightFromBracket />
-                    </i>
+                    <FontAwesomeIcon icon={faRightFromBracket} />
 
                     Cerrar sesión
 

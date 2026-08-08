@@ -7,11 +7,19 @@ import {
 
 import "../../assets/css/AdminNav.css";
 
-export default function AdminNavbar() {
+export default function AdminNavbar({ onToggleSidebar }) {
   return (
     <header className="admin-navbar">
 
       <div className="admin-navbar-left">
+
+        <button
+          type="button"
+          className="sidebar-toggle"
+          onClick={onToggleSidebar}
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </button>
 
         <div className="search-box">
 
