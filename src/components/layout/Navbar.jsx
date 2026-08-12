@@ -1,14 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartShopping,
   faUser,
   faChevronDown,
+  faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "../../assets/css/Navbar.css";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const isLogged = Boolean(localStorage.getItem("accessToken"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("usuario");
+    navigate("/login", { replace: true });
+  };
+
   return (
     <nav className="navbar navbar-expand-lg hollyu-navbar">
       <div className="container">
@@ -164,14 +175,26 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Login */}
-            <Link
-              to="/Login"
-              className="login-button"
-              aria-label="Iniciar sesión"
-            >
-              <FontAwesomeIcon icon={faUser} />
-            </Link>
+            {/* Login / Logout */}
+            {isLogged ? (
+              <button
+                type="button"
+                className="login-button btn btn-link"
+                aria-label="Cerrar sesión"
+                onClick={handleLogout}
+                title="Cerrar sesión"
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />
+              </button>
+            ) : (
+              <Link
+                to="/Login"
+                className="login-button"
+                aria-label="Iniciar sesión"
+              >
+                <FontAwesomeIcon icon={faUser} />
+              </Link>
+            )}
 
           </div>
 
