@@ -10,7 +10,8 @@ export default function ReusableDataTable({
   options = {},
   className,
   onEdit,
-  onDelete
+  onDelete,
+  onView
 }) {
   // Register the DataTables integration inside the component
   // to avoid React Hook linting issues when called at module scope.
@@ -24,13 +25,16 @@ export default function ReusableDataTable({
     const handleClick = (e) => {
       const editBtn = e.target.closest(".btn-editar");
       const delBtn = e.target.closest(".btn-eliminar");
+      const viewBtn = e.target.closest(".btn-ver-pedidos");
+
       if (editBtn && onEdit) onEdit(editBtn.dataset.id);
       if (delBtn && onDelete) onDelete(delBtn.dataset.id);
+      if (viewBtn && onView) onView(viewBtn.dataset.id);
     };
 
     container.addEventListener("click", handleClick);
     return () => container.removeEventListener("click", handleClick);
-  }, [data, onEdit, onDelete]);
+  }, [data, onEdit, onDelete, onView]);
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="text-danger">Error al cargar datos.</p>;
