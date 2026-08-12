@@ -1,4 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useLogout } from "../../hooks/useLogout";
 import {
     faHouse,
     faBox,
@@ -19,14 +20,7 @@ import SidebarItem from "./SidebarItem";
 import "../../assets/css/Sidebar.css";
 
 export default function Sidebar({ isOpen, onClose }) {
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("usuario");
-        navigate("/login", { replace: true });
-    };
+    const handleLogout = useLogout();
 
     return (
 

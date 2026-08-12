@@ -1,5 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useLogout} from "../../hooks/useLogout";
 import {
   faCartShopping,
   faUser,
@@ -7,18 +8,14 @@ import {
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { useGetFetch } from "../../hooks/useGetFetch";
 import "../../assets/css/Navbar.css";
 
 export default function Navbar() {
-  const navigate = useNavigate();
+  const { data: categorias = [], loading } = useGetFetch("/categorias");
   const isLogged = Boolean(localStorage.getItem("accessToken"));
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("usuario");
-    navigate("/login", { replace: true });
-  };
+  const handleLogout = useLogout();
 
   return (
     <nav className="navbar navbar-expand-lg hollyu-navbar">
@@ -87,59 +84,29 @@ export default function Navbar() {
                   <hr className="dropdown-divider" />
                 </li>
 
-                <li>
-                  <Link
-                    to="/catalog/estudiantes"
-                    className="dropdown-item"
-                  >
-                    Estudiantes
-                  </Link>
-                </li>
+                {!loading && categorias.length > 0 ? (
+                  categorias.map((categoria) => {
+                    const slug = categoria.nombre
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/[^a-z0-9]+/g, "-")
+                      .replace(/(^-|-$)/g, "");
 
-                <li>
-                  <Link
-                    to="/catalog/enfermeria"
-                    className="dropdown-item"
-                  >
-                    Enfermería
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/catalog/odontologia"
-                    className="dropdown-item"
-                  >
-                    Odontología
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/catalog/dama"
-                    className="dropdown-item"
-                  >
-                    Dama
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/catalog/caballero"
-                    className="dropdown-item"
-                  >
-                    Caballero
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/catalog/spa"
-                    className="dropdown-item"
-                  >
-                    Peluquería y Spa
-                  </Link>
-                </li>
+                    return (
+                      <li key={categoria.id}>
+                        <Link
+                          to={`/catalog/${slug}?categoria_id=${categoria.id}`}
+                          className="dropdown-item"
+                        >
+                          {categoria.nombre}
+                        </Link>
+                      </li>
+                    );
+                  })
+                ) : (
+                  <li className="dropdown-item text-muted">Cargando categorías...</li>
+                )}
 
               </ul>
 
@@ -188,7 +155,7 @@ export default function Navbar() {
               </button>
             ) : (
               <Link
-                to="/Login"
+                to="/login"
                 className="login-button"
                 aria-label="Iniciar sesión"
               >
