@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useLogout } from "../../hooks/useLogout";
 import {
     faHouse,
     faBox,
@@ -19,6 +20,8 @@ import SidebarItem from "./SidebarItem";
 import "../../assets/css/Sidebar.css";
 
 export default function Sidebar({ isOpen, onClose }) {
+    const handleLogout = useLogout();
+
     return (
 
         <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
@@ -107,16 +110,17 @@ export default function Sidebar({ isOpen, onClose }) {
 
             <div className="sidebar-footer">
 
-                <Link
-                    className="logout-button"
-                    to="/login"
+                <button
+                    type="button"
+                    className="logout-button btn btn-link"
+                    onClick={handleLogout}
                 >
 
                     <FontAwesomeIcon icon={faRightFromBracket} />
 
                     Cerrar sesión
 
-                </Link>
+                </button>
 
             </div>
 

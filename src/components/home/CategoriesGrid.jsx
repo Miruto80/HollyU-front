@@ -39,7 +39,7 @@ export default function CategoriesGrid() {
           id: categoria.id,
           title: categoria.nombre,
           img: imageMap[slug] || img1,
-          link: `/catalog/${slug}`,
+          link: `/catalog/${slug}?categoria_id=${categoria.id}`,
         };
       })
     : fallbackCategories;
