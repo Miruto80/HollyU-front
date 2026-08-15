@@ -19,6 +19,8 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     descripcion: "",
     categoria_id: "",
     genero_id: "",
+    precio: "",
+    precio_mayor: "",
     permite_personalizacion: true,
     tiempo_fabricacion: 7
   });
@@ -75,6 +77,8 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     formData.append("descripcion", form.descripcion);
     formData.append("categoria_id", form.categoria_id);
     formData.append("genero_id", form.genero_id);
+    formData.append("precio", form.precio);
+    formData.append("precio_mayor", form.precio_mayor);
     formData.append("permite_personalizacion", form.permite_personalizacion);
     formData.append("tiempo_fabricacion", form.tiempo_fabricacion);
     formData.append("modelos", JSON.stringify(modelosPayload));
@@ -213,25 +217,27 @@ export default function ProductoModal({ show, onClose, onCreated }) {
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Precio</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={modelo.precio}
-                    onChange={(e) => setModelo(prev => ({ ...prev, precio: e.target.value }))}
-                    required
-                  />
-                </div>
+  <label className="form-label">Precio base</label>
+  <input
+    type="number"
+    name="precio"
+    className="form-control"
+    value={form.precio}
+    onChange={handleChange}
+    required
+  />
+</div>
 
-                <div className="col-md-6">
-                  <label className="form-label">Precio mayorista</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={modelo.precio_mayor}
-                    onChange={(e) => setModelo(prev => ({ ...prev, precio_mayor: e.target.value }))}
-                  />
-                </div>
+<div className="col-md-6">
+  <label className="form-label">Precio mayorista base</label>
+  <input
+    type="number"
+    name="precio_mayor"
+    className="form-control"
+    value={form.precio_mayor}
+    onChange={handleChange}
+  />
+</div>
 
                 <div className="col-12">
                   <label className="form-label">Colores</label>

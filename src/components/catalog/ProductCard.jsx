@@ -9,7 +9,7 @@ export default function ProductCard({ product, onClick }) {
     ? `${SERVER_URL}${imagenRelativa}`
     : hero;
 
-  const precio = product.Modelos?.[0]?.Modelo_telas?.[0]?.precio;
+const precio = product.precio; 
 
   return (
     <div className="product-card card h-100" onClick={onClick}>

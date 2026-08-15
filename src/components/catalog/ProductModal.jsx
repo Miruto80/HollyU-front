@@ -72,7 +72,7 @@ export default function ProductModal({ product, onClose }) {
 
                                 {tela && (
                                     <h3 className="my-4 text-primary">
-                                        ${Number(tela.precio).toLocaleString()}
+                                        ${Number(detalle.precio).toLocaleString()}
                                     </h3>
                                 )}
 

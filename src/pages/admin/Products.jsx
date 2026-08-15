@@ -48,15 +48,10 @@ export default function ProductosTable() {
       render: (data) => data.Genero?.nombre ?? "-"
     },
     {
-      title: "Precio desde",
-      data: null,
-      render: (data) => {
-        const precios = data.Modelos?.flatMap(m =>
-          m.Modelo_telas.map(t => Number(t.precio))
-        ) ?? [];
-        return precios.length ? `$${Math.min(...precios).toLocaleString()}` : "-";
-      }
-    },
+  title: "Precio",
+  data: null,
+  render: (data) => `$${Number(data.precio).toLocaleString()}`
+   },
     {
       title: "Estado",
       data: "activo",
