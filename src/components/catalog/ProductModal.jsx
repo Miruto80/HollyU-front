@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import api, { SERVER_URL } from "../../services/api";
+import { useCart } from "../../hooks/useCart";
+import { notifySuccess } from "../../utlis/Tostify";
 import "../../assets/css/ProductModal.css";
 import hero from "../../assets/img/hero.png";
 
 export default function ProductModal({ product, onClose }) {
     const [detalle, setDetalle] = useState(null);
+    const { addItem } = useCart();
 
     useEffect(() => {
         if (!product) return;
-
-        setDetalle(null);
 
         api.get(`/productos/${product.id}`)
             .then((r) => setDetalle(r.data))
             .catch((error) => {
                 console.error("Error cargando producto:", error);
             });
+        
+        return () => setDetalle(null);
     }, [product]);
 
     if (!product || !detalle) return null;
@@ -28,6 +31,20 @@ export default function ProductModal({ product, onClose }) {
     const image = imagenRelativa
         ? `${SERVER_URL}${imagenRelativa}`
         : hero;
+
+    const handleAgregarCarrito = () => {
+        addItem({
+            id: detalle.id,
+            nombre: detalle.nombre,
+            precio: detalle.precio,
+            imagen: imagenRelativa
+        });
+        notifySuccess("Producto agregado al carrito");
+    };
+
+    const handleSolicitarPersonalizado = () => {
+        // pendiente: lógica de personalización
+    };
 
     return (
         <div className="product-modal">
@@ -116,9 +133,20 @@ export default function ProductModal({ product, onClose }) {
                                 <button
                                     type="button"
                                     className="btn btn-dark mt-4 w-100 py-3"
+                                    onClick={handleAgregarCarrito}
                                 >
-                                    Solicitar
+                                    Agregar al carrito
                                 </button>
+
+                                {detalle.permite_personalizacion && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-dark mt-2 w-100 py-3"
+                                        onClick={handleSolicitarPersonalizado}
+                                    >
+                                        Solicitar personalizado
+                                    </button>
+                                )}
 
                             </div>
                         </div>
