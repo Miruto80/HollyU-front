@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import api, { SERVER_URL } from "../../services/api";
 import { useCart } from "../../hooks/useCart";
-import { notifySuccess } from "../../utils/Tostify";
+import { notifySuccess, notifyError } from "../../utils/Tostify";
 import "../../assets/css/ProductModal.css";
 import hero from "../../assets/img/hero.png";
 
 export default function ProductModal({ product, onClose }) {
     const [detalle, setDetalle] = useState(null);
+    const [colorSeleccionado, setColorSeleccionado] = useState(null);
+    const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
     const { addItem } = useCart();
 
     useEffect(() => {
@@ -17,8 +19,12 @@ export default function ProductModal({ product, onClose }) {
             .catch((error) => {
                 console.error("Error cargando producto:", error);
             });
-        
-        return () => setDetalle(null);
+
+        return () => {
+            setDetalle(null);
+            setColorSeleccionado(null);
+            setTallaSeleccionada(null);
+        };
     }, [product]);
 
     if (!product || !detalle) return null;
@@ -33,13 +39,32 @@ export default function ProductModal({ product, onClose }) {
         : hero;
 
     const handleAgregarCarrito = () => {
+        if (!colorSeleccionado) {
+            notifyError("Selecciona un color");
+            return;
+        }
+        if (!tallaSeleccionada) {
+            notifyError("Selecciona una talla");
+            return;
+        }
+
         addItem({
             id: detalle.id,
+            producto_id: detalle.id,
             nombre: detalle.nombre,
             precio: detalle.precio,
-            imagen: imagenRelativa
+            imagen: imagenRelativa,
+            modelo_id: modelo?.id,
+            tipo_tela_id: tela?.tipo_tela_id ?? tela?.Tipos_tela?.id,
+            color_id: colorSeleccionado.id,
+            color_nombre: colorSeleccionado.color.nombre,
+            talla_id: tallaSeleccionada.Talla.id,
+            talla_nombre: tallaSeleccionada.Talla.nombre
         });
+
         notifySuccess("Producto agregado al carrito");
+        setColorSeleccionado(null);
+        setTallaSeleccionada(null);
     };
 
     const handleSolicitarPersonalizado = () => {
@@ -96,6 +121,11 @@ export default function ProductModal({ product, onClose }) {
                                 <div className="mb-3">
                                     <h6 className="mb-2">
                                         Colores
+                                        {colorSeleccionado && (
+                                            <span className="text-muted fw-normal ms-2">
+                                                — {colorSeleccionado.color.nombre}
+                                            </span>
+                                        )}
                                     </h6>
 
                                     <div className="d-flex flex-wrap gap-2 mb-4">
@@ -103,10 +133,15 @@ export default function ProductModal({ product, onClose }) {
                                             <span
                                                 key={c.id}
                                                 className="color-circle"
+                                                onClick={() => setColorSeleccionado(c)}
                                                 style={{
-                                                    backgroundColor:
-                                                        c.color.codigo_hex,
+                                                    backgroundColor: c.color.codigo_hex,
+                                                    cursor: "pointer",
+                                                    border: colorSeleccionado?.id === c.id
+                                                        ? "3px solid #000"
+                                                        : "1px solid #ccc"
                                                 }}
+                                                title={c.color.nombre}
                                             />
                                         ))}
                                     </div>
@@ -122,7 +157,8 @@ export default function ProductModal({ product, onClose }) {
                                             <button
                                                 key={t.id}
                                                 type="button"
-                                                className="btn btn-outline-dark"
+                                                className={`btn ${tallaSeleccionada?.id === t.id ? "btn-dark" : "btn-outline-dark"}`}
+                                                onClick={() => setTallaSeleccionada(t)}
                                             >
                                                 {t.Talla.nombre}
                                             </button>

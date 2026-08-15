@@ -174,6 +174,16 @@ export default function Checkout() {
                   />
                   <div className="checkout-item-info">
                     <p className="mb-1 fw-semibold">{item.nombre}</p>
+                    {item.color_nombre && (
+                      <p className="mb-0 text-muted small">
+                        Color: <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: item.color_hex, borderRadius: '50%', verticalAlign: 'middle', marginRight: '4px' }}></span> {item.color_nombre}
+                      </p>
+                    )}
+                    {item.talla_nombre && (
+                      <p className="mb-0 text-muted small">
+                        Talla: {item.talla_nombre}
+                      </p>
+                    )}
                     <p className="mb-0 text-muted small">
                       Cantidad: {item.cantidad} × ${Number(item.precio).toLocaleString()}
                     </p>
