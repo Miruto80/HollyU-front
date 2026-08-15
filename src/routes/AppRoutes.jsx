@@ -7,6 +7,7 @@ import ScrollToTop from "../components/ScrollToTop.jsx";
 import AdminRoutes from "./AdminRoutes.jsx";
 import Catalog from "../pages/public/Catalog.jsx";
 import ProtectRoute from "./ProtectRoute.jsx";
+import Checkout from "../pages/public/Checkout.jsx";
 
 function AppRoutes() {
   const location = useLocation();
@@ -24,6 +25,8 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/:category" element={<Catalog />} />
+        <Route path="/checkout" element={<Checkout />} />
+
 
          <Route
           path="/admin/*"

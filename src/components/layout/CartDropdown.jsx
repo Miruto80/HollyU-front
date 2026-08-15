@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../../hooks/useCart";
@@ -5,7 +6,13 @@ import { SERVER_URL } from "../../services/api";
 import "../../assets/css/CartDropdown.css";
 
 export default function CartDropdown({ show, onClose }) {
+  const navigate = useNavigate();
   const { items, removeItem, updateCantidad, totalPrecio } = useCart();
+
+  const handleFinalizarPedido = () => {
+    onClose();
+    navigate("/checkout");
+  };
 
   return (
     <div
@@ -71,7 +78,9 @@ export default function CartDropdown({ show, onClose }) {
                 <strong>Total</strong>
                 <strong>${totalPrecio.toLocaleString()}</strong>
               </div>
-              <button className="btn btn-dark w-100">Finalizar pedido</button>
+              <button className="btn btn-dark w-100" onClick={handleFinalizarPedido}>
+                Finalizar pedido
+              </button>
             </div>
           </>
         )}
