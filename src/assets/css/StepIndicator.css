@@ -4,6 +4,7 @@
   align-items: flex-start;
   gap: 0;
   margin: 2rem 0 3rem;
+  position: relative;
 }
 
 .step-item {
@@ -46,12 +47,7 @@
 }
 
 .step-line {
-  flex: 1;
-  height: 2px;
-  background: #dcdcdc;
-  margin: 0 -45px 0 0;
-  transform: translateX(45px);
-  z-index: -1;
+  display: none;
 }
 
 .step-label {

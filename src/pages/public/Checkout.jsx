@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StepIndicator from "../../components/home/StepIndicator";
 import { useCart } from "../../hooks/useCart";
 import { SERVER_URL } from "../../services/api";
+import { obtenerTasaDolar } from "../../utils/Tasa";
 import "../../assets/css/Checkout.css";
 
 const BANCOS_VENEZUELA = [
@@ -12,10 +13,9 @@ const BANCOS_VENEZUELA = [
   { codigo: "0163", nombre: "0163 - Banco del Tesoro" },
 ];
 
-const TASA_DIA = 771.07; // valor de ejemplo, luego vendrá del backend
-
 export default function Checkout() {
   const { items, totalPrecio } = useCart();
+  const [tasaDia, setTasaDia] = useState(1);
 
   const [pagoForm, setPagoForm] = useState({
     bancoOrigen: "",
@@ -26,6 +26,10 @@ export default function Checkout() {
     aceptaTerminos: false,
   });
 
+  useEffect(() => {
+    obtenerTasaDolar().then(tasa => setTasaDia(tasa));
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     setPagoForm((prev) => ({
@@ -34,23 +38,17 @@ export default function Checkout() {
     }));
   };
 
-  const totalBs = totalPrecio * TASA_DIA;
+  const totalBs = totalPrecio * tasaDia;
 
   return (
     <div className="checkout-page">
-      <div className="checkout-topbar">
-        <span className="checkout-rate">
-          Tasa del día: {TASA_DIA.toFixed(2)} Bs
-        </span>
-      </div>
-
       <StepIndicator pasoActual={3} />
 
       <div className="container">
         <div className="row g-4">
 
           {/* Formulario de pago móvil */}
-          <div className="col-lg-7">
+          <div className="col-lg-6">
             <div className="checkout-card">
               <h4 className="mb-4">Completar pago | Pago Móvil</h4>
 
@@ -141,7 +139,7 @@ export default function Checkout() {
 
                 <button
                   type="submit"
-                  className="btn btn-dark w-100 py-2"
+                  className="checkout-submit-btn w-100 py-2"
                   disabled={!pagoForm.aceptaTerminos}
                 >
                   Realizar Pago
@@ -155,8 +153,8 @@ export default function Checkout() {
           </div>
 
           {/* Columna lateral */}
-          <div className="col-lg-5">
-            <div className="checkout-card checkout-info-card mb-4">
+          <div className="col-lg-6">
+            <div className="checkout-card checkout-info-card mb-3">
               <h6 className="checkout-accent-title">Datos del pago móvil</h6>
               <p className="mb-1">Venezuela (0102) C.I.: V-30.352.937 Telf.: 0414-509.49.59</p>
               <p className="mb-0">Mercantil (0105) C.I.: V-11.787.299 Telf.: 0426-554.13.64</p>

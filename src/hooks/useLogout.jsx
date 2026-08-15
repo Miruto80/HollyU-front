@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { notifySuccess } from "../utlis/Tostify";
+import { notifySuccess } from "../utils/Tostify";
 
 export const useLogout = () => {
   const navigate = useNavigate();

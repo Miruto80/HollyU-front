@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api, { SERVER_URL } from "../../services/api";
 import { useCart } from "../../hooks/useCart";
-import { notifySuccess } from "../../utlis/Tostify";
+import { notifySuccess } from "../../utils/Tostify";
 import "../../assets/css/ProductModal.css";
 import hero from "../../assets/img/hero.png";
 
