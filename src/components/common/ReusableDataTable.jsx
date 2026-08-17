@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.css";
+
 export default function ReusableDataTable({
   columns,
   data,
@@ -11,10 +12,10 @@ export default function ReusableDataTable({
   className,
   onEdit,
   onDelete,
-  onView
+  onView,
+  onConfirm,
+  onReject
 }) {
-  // Register the DataTables integration inside the component
-  // to avoid React Hook linting issues when called at module scope.
   DataTable.use(DT);
   const containerRef = useRef(null);
 
@@ -26,15 +27,19 @@ export default function ReusableDataTable({
       const editBtn = e.target.closest(".btn-editar");
       const delBtn = e.target.closest(".btn-eliminar");
       const viewBtn = e.target.closest(".btn-ver-pedidos");
+      const confirmBtn = e.target.closest(".btn-confirmar");
+      const rejectBtn = e.target.closest(".btn-rechazar");
 
       if (editBtn && onEdit) onEdit(editBtn.dataset.id);
       if (delBtn && onDelete) onDelete(delBtn.dataset.id);
       if (viewBtn && onView) onView(viewBtn.dataset.id);
+      if (confirmBtn && onConfirm) onConfirm(confirmBtn.dataset.id);
+      if (rejectBtn && onReject) onReject(rejectBtn.dataset.id);
     };
 
     container.addEventListener("click", handleClick);
     return () => container.removeEventListener("click", handleClick);
-  }, [data, onEdit, onDelete, onView]);
+  }, [data, onEdit, onDelete, onView, onConfirm, onReject]);
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="text-danger">Error al cargar datos.</p>;

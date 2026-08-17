@@ -6,6 +6,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import Products from "../pages/admin/Products";
 import Categories from "../pages/admin/Categories";
 import Clients from "../pages/admin/Clients";
+import Orders from "../pages/admin/Orders";
 
 function AdminRoutes() {
 
@@ -22,6 +23,8 @@ function AdminRoutes() {
                  <Route path="categorias" element={<Categories />} /> 
 
                 <Route path="clientes" element={<Clients />} /> 
+
+                <Route path="pedidos" element={<Orders />} />
 
             </Route>
 
