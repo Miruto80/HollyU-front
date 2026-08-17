@@ -28,7 +28,10 @@ export const useFetchData = (fetcher, dependencies = []) => {
 };
 
 export const useGetFetch = (endpoint, dependencies = []) => {
-  const fetcher = useCallback(() => api.get(endpoint).then((response) => response.data), [endpoint]);
+  const fetcher = useCallback(() => {
+    if (!endpoint) return Promise.resolve(null);
+    return api.get(endpoint).then((response) => response.data);
+  }, [endpoint]);
 
   return useFetchData(fetcher, dependencies);
 };
