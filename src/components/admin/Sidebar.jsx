@@ -89,12 +89,6 @@ export default function Sidebar({ isOpen, onClose }) {
                 />
 
                 <SidebarItem
-                    to="/admin/pagos"
-                    icon={faMoneyBillWave}
-                    text="Pagos"
-                />
-
-                <SidebarItem
                     to="/admin/descuentos"
                     icon={faTags}
                     text="Descuentos"
