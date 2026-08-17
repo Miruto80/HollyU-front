@@ -10,6 +10,9 @@ import { useGetFetch } from "../../hooks/useGetFetch";
 
 export default function DashboardCards() {
     const { data: pedidos = [], loading, error } = useGetFetch("/pedidos");
+    const ESTADO_PAGO_PENDIENTE = 1;
+
+    const { data: pagosPendientes = [] } = useGetFetch(`/pagos?estado_pago_id=${ESTADO_PAGO_PENDIENTE}`);
 
     const cards = [
         {
@@ -32,7 +35,7 @@ export default function DashboardCards() {
         },
         {
             title: "Pagos por confirmar",
-            value: "2",
+            value: loading ? "..." : error ? "-" : String(pagosPendientes.length),
             icon: faMoneyBill,
             color: "#76756f"
         }
