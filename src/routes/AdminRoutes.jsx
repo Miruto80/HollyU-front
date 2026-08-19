@@ -9,6 +9,7 @@ import Clients from "../pages/admin/Clients";
 import Orders from "../pages/admin/Orders";
 import Sizes from "../pages/admin/Sizes";
 import Colors from "../pages/admin/Colors";
+import Productions from "../pages/admin/Productions";
 
 function AdminRoutes() {
 
@@ -31,7 +32,8 @@ function AdminRoutes() {
                 <Route path="tallas" element={<Sizes />} />
 
                 <Route path="colores" element={<Colors />} />
-
+                
+                <Route path="producciones" element={<Productions />} />
             </Route>
 
         </Routes>

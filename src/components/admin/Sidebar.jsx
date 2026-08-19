@@ -87,6 +87,12 @@ export default function Sidebar({ isOpen, onClose }) {
                     icon={faClipboardList}
                     text="Pedidos"
                 />
+                
+                <SidebarItem
+                    to="/admin/producciones"
+                    icon={faMoneyBillWave}
+                    text="Producciones"
+                />
 
                 <SidebarItem
                     to="/admin/descuentos"
