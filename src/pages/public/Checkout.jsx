@@ -270,6 +270,9 @@ export default function Checkout() {
                     {item.talla_nombre && (
                       <p className="mb-0 text-muted small">Talla: {item.talla_nombre}</p>
                     )}
+                    {item.color_nombre && (
+                    <p className="mb-0 text-muted small">Color: {item.color_nombre}</p>
+                    )}
                     <p className="mb-0 text-muted small">
                       Cantidad: {item.cantidad} × ${Number(item.precio).toLocaleString()}
                     </p>

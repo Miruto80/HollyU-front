@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import api from "../../services/api";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
-import { confirmarAccion } from "../../utils/Alert";
+import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
 import OrderModal from "../../components/admin/OrderModal";
+
+const ESTADO_PAGO_VERIFICADO = 2;
+const ESTADO_PAGO_RECHAZADO = 3;
 
 export default function Orders() {
   const { data: pedidos, loading, error, refetch } = useGetFetch("/pedidos");
@@ -17,39 +20,52 @@ export default function Orders() {
     setShowDetalle(true);
   };
 
-const ESTADO_PAGO_VERIFICADO = 2;
-const ESTADO_PAGO_RECHAZADO = 3;
+  const handleConfirm = async (id) => {
+    const ok = await confirmarAccion({
+      titulo: "¿Confirmar este pago?",
+      texto: "Se verificará el comprobante",
+      icon: "question"
+    });
+    if (!ok) return;
 
-const handleCambiarEstadoPago = async (id, estadoPagoId, mensajeConfirmacion) => {
-  const ok = await confirmarAccion({
-    titulo: mensajeConfirmacion.titulo,
-    texto: mensajeConfirmacion.texto,
-    icon: mensajeConfirmacion.icon
-  });
-  if (!ok) return;
+    try {
+      const { data: pedidoActualizado } = await api.patch(`/pedidos/${id}/estado-pago`, {
+        estado_pago_id: ESTADO_PAGO_VERIFICADO
+      });
 
-  try {
-    await api.patch(`/pedidos/${id}/estado-pago`, { estado_pago_id: estadoPagoId });
-    notifySuccess(mensajeConfirmacion.exito);
-    refetch();
-  } catch {
-    notifyError("No se pudo actualizar el estado del pago");
-  }
-};
+      const listoParaEntrega = pedidoActualizado.Estados_pedido?.nombre === "Listo para entrega";
 
-const handleConfirm = (id) => handleCambiarEstadoPago(id, ESTADO_PAGO_VERIFICADO, {
-  titulo: "¿Confirmar este pago?",
-  texto: "El pedido pasará a producción",
-  icon: "question",
-  exito: "Pago confirmado"
-});
+      await alertaExito(
+        listoParaEntrega ? "¡Pedido listo para entregar!" : "Pago confirmado",
+        listoParaEntrega
+          ? "Había stock suficiente, no requiere producción."
+          : "Algunos productos no tienen stock, el pedido pasó a producción."
+      );
 
-const handleReject = (id) => handleCambiarEstadoPago(id, ESTADO_PAGO_RECHAZADO, {
-  titulo: "¿Rechazar este pago?",
-  texto: "El pedido se marcará como cancelado",
-  icon: "warning",
-  exito: "Pago rechazado"
-});
+      refetch();
+    } catch {
+      alertaError("Error", "No se pudo confirmar el pago");
+    }
+  };
+
+  const handleReject = async (id) => {
+    const ok = await confirmarAccion({
+      titulo: "¿Rechazar este pago?",
+      texto: "El pedido se marcará como cancelado",
+      icon: "warning"
+    });
+    if (!ok) return;
+
+    try {
+      await api.patch(`/pedidos/${id}/estado-pago`, {
+        estado_pago_id: ESTADO_PAGO_RECHAZADO
+      });
+      notifySuccess("Pago rechazado");
+      refetch();
+    } catch {
+      alertaError("Error", "No se pudo rechazar el pago");
+    }
+  };
 
   const columns = [
     { title: "ID", data: "id" },

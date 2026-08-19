@@ -21,6 +21,7 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     genero_id: "",
     precio: "",
     precio_mayor: "",
+    stock: 0,
     permite_personalizacion: true,
     tiempo_fabricacion: 7
   });
@@ -79,6 +80,7 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     formData.append("genero_id", form.genero_id);
     formData.append("precio", form.precio);
     formData.append("precio_mayor", form.precio_mayor);
+    formData.append("stock", form.stock);
     formData.append("permite_personalizacion", form.permite_personalizacion);
     formData.append("tiempo_fabricacion", form.tiempo_fabricacion);
     formData.append("modelos", JSON.stringify(modelosPayload));
@@ -164,7 +166,17 @@ export default function ProductoModal({ show, onClose, onCreated }) {
                     onChange={handleChange}
                   />
                 </div>
-
+                <div className="col-md-6">
+                <label className="form-label">Stock</label>
+                 <input
+                  type="number"
+                  name="stock"
+                  className="form-control"
+                  value={form.stock}
+                  onChange={handleChange}
+                  min="0"
+                  />
+                 </div>
                 <div className="col-md-6 d-flex align-items-end">
                   <div className="form-check">
                     <input

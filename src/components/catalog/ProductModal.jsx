@@ -56,7 +56,7 @@ export default function ProductModal({ product, onClose }) {
             imagen: imagenRelativa,
             modelo_id: modelo?.id,
             tipo_tela_id: tela?.tipo_tela_id ?? tela?.Tipos_tela?.id,
-            color_id: colorSeleccionado.id,
+            color_id: colorSeleccionado.color.id,
             color_nombre: colorSeleccionado.color.nombre,
             talla_id: tallaSeleccionada.Talla.id,
             talla_nombre: tallaSeleccionada.Talla.nombre
