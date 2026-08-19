@@ -14,7 +14,8 @@ export default function ReusableDataTable({
   onDelete,
   onView,
   onConfirm,
-  onReject
+  onReject,
+  onAvanzar
 }) {
   DataTable.use(DT);
   const containerRef = useRef(null);
@@ -29,17 +30,19 @@ export default function ReusableDataTable({
       const viewBtn = e.target.closest(".btn-ver-pedidos");
       const confirmBtn = e.target.closest(".btn-confirmar");
       const rejectBtn = e.target.closest(".btn-rechazar");
+      const avanzarBtn = e.target.closest(".btn-avanzar");
 
       if (editBtn && onEdit) onEdit(editBtn.dataset.id);
       if (delBtn && onDelete) onDelete(delBtn.dataset.id);
       if (viewBtn && onView) onView(viewBtn.dataset.id);
       if (confirmBtn && onConfirm) onConfirm(confirmBtn.dataset.id);
       if (rejectBtn && onReject) onReject(rejectBtn.dataset.id);
+      if (avanzarBtn && onAvanzar) onAvanzar(avanzarBtn.dataset.id);
     };
 
     container.addEventListener("click", handleClick);
     return () => container.removeEventListener("click", handleClick);
-  }, [data, onEdit, onDelete, onView, onConfirm, onReject]);
+  }, [data, onEdit, onDelete, onView, onConfirm, onReject, onAvanzar]);
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="text-danger">Error al cargar datos.</p>;
