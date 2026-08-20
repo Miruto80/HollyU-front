@@ -17,6 +17,8 @@ import "../../assets/css/Navbar.css";
 export default function Navbar() {
   const { data: categorias = [], loading } = useGetFetch("/categorias");
   const isLogged = Boolean(localStorage.getItem("accessToken"));
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  const isClienteLogged = isLogged && usuario?.rol === "Cliente";
   const handleLogout = useLogout();
 
   const { totalItems } = useCart();
@@ -128,6 +130,14 @@ export default function Navbar() {
                   Contacto
                 </Link>
               </li>
+
+              {isClienteLogged && (
+                <li className="nav-item">
+                  <Link to="/mis-pedidos" className="nav-link">
+                    Mis pedidos
+                  </Link>
+                </li>
+              )}
 
             </ul>
 
