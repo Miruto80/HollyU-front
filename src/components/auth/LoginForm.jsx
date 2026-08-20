@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faEye } from "@fortawesome/free-solid-svg-icons";
 import { usePostFetch } from "../../hooks/usePostFetch";
+import RegisterModal from "./RegisterModal";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function LoginForm() {
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -103,8 +105,9 @@ export default function LoginForm() {
       </form>
 
       <div className="text-center mt-4">
-        ¿No tienes cuenta? <Link to="/registro">Registrarse</Link>
+        ¿No tienes cuenta? <button type="button" className="register-link" onClick={() => setShowRegister(true)}>Registrarse</button>
       </div>
+      <RegisterModal show={showRegister} onClose={() => setShowRegister(false)} />
     </div>
   );
 }

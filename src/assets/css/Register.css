@@ -1,0 +1,89 @@
+.register-modal{
+    z-index: 9999 !important;
+}
+
+.register-link {
+    border: 0;
+    background: transparent;
+    color: #17195A;
+    padding: 0;
+    font-weight: 600;
+}
+
+.register-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1055;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(8, 10, 28, .72);
+}
+
+.register-dialog {
+    width: min(100%, 680px);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+}
+
+.register-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.register-eyebrow {
+    color: #b58b16;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.register-header h2 {
+    margin: .25rem 0 0;
+    color: #080A1C;
+}
+
+.register-intro {
+    color: #687080;
+    margin-bottom: 1.5rem;
+}
+
+.register-close {
+    border: 0;
+    background: transparent;
+    color: #687080;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.register-input {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    min-height: 38px;
+    padding: 0 .75rem;
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+}
+
+.register-input svg {
+    color: #b58b16;
+}
+
+.register-input input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+}
+
+@media (max-width: 575px) {
+    .register-dialog {
+        padding: 1.25rem;
+    }
+}
