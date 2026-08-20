@@ -8,6 +8,7 @@ import AdminRoutes from "./AdminRoutes.jsx";
 import Catalog from "../pages/public/Catalog.jsx";
 import ProtectRoute from "./ProtectRoute.jsx";
 import Checkout from "../pages/public/Checkout.jsx";
+import OrderConfirmation from "../pages/public/OrderConfirmation.jsx";
 
 function AppRoutes() {
   const location = useLocation();
@@ -26,6 +27,7 @@ function AppRoutes() {
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/:category" element={<Catalog />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/pedido-confirmado/:id" element={<OrderConfirmation />} />
 
 
          <Route
