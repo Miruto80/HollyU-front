@@ -13,10 +13,11 @@ export default function DashboardCards() {
     const ESTADO_PAGO_PENDIENTE = 1;
 
     const { data: pagosPendientes = [] } = useGetFetch(`/pagos?estado_pago_id=${ESTADO_PAGO_PENDIENTE}`);
+    const { data: producciones = [], loading: loadingProducciones, error: errorProducciones } = useGetFetch("/producciones");
 
     const cards = [
         {
-            title: "Ventas Hoy",
+            title: "Ventas del mes",
             value: "$ 1.250",
             icon: faDollarSign,
             color: "#17195A"
@@ -29,7 +30,7 @@ export default function DashboardCards() {
         },
         {
             title: "En Producción",
-            value: "7",
+            value: loadingProducciones ? "..." : errorProducciones ? "-" : String(producciones.length),
             icon: faShirt,
             color: "#3F51B5"
         },
