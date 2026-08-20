@@ -85,3 +85,14 @@
     border:2px solid #fff;
     box-shadow:0 0 0 1px #ccc;
 }
+
+.product-card-skeleton{
+    min-height:470px;
+    background:linear-gradient(100deg,#f2f2f2 30%,#fafafa 45%,#f2f2f2 60%);
+    background-size:300% 100%;
+    animation:skeleton-loading 1.4s infinite;
+}
+
+@keyframes skeleton-loading{
+    to{background-position:-100% 0;}
+}

@@ -1,6 +1,17 @@
 import ProductCard from "./ProductCard";
 
-export default function ProductGrid({ products, onSelect }) {
+export default function ProductGrid({ products = [], loading, onSelect }) {
+    if (loading) {
+        return (
+            <div className="row g-4" aria-busy="true" aria-label="Cargando productos">
+                {Array.from({ length: 8 }, (_, index) => (
+                    <div className="col-lg-3 col-md-4 col-sm-6" key={index}>
+                        <div className="product-card product-card-skeleton" />
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     return (
 

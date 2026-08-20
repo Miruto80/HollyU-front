@@ -33,11 +33,14 @@ export default function Catalog() {
         return categorias.find((cat) => slugify(cat.nombre) === slugTarget) || null;
     }, [categoriaIdFromUrl, category, categorias]);
 
-    const endpoint = categoriaSeleccionada
-        ? `/productos?categoria_id=${categoriaSeleccionada.id}`
-        : "/productos";
+    const esperandoCategoria = Boolean(category || categoriaIdFromUrl) && loadingCategorias;
+    const endpoint = esperandoCategoria
+        ? null
+        : categoriaSeleccionada
+            ? `/productos?categoria_id=${categoriaSeleccionada.id}`
+            : "/productos";
 
-    const { data: productos, loading } = useGetFetch(endpoint, [categoriaSeleccionada?.id]);
+    const { data: productos = [], loading } = useGetFetch(endpoint, [categoriaSeleccionada?.id]);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
     const title = categoriaSeleccionada ? categoriaSeleccionada.nombre : "Uniformes";
@@ -49,7 +52,7 @@ export default function Catalog() {
             </h2>
 
             <ProductGrid
-                products={productos}
+                products={productos || []}
                 loading={loading || loadingCategorias}
                 onSelect={setSelectedProduct}
             />
