@@ -108,19 +108,27 @@ export default function Orders() {
     },
     {
       title: "Acción",
-      data: "id",
+      data: null,
       orderable: false,
-      render: (id) => `
-        <button class="btn btn-sm btn-info text-white btn-ver-pedidos" data-id="${id}" title="Ver detalle">
-          Ver
-        </button>
-        <button class="btn btn-sm btn-success btn-confirmar" data-id="${id}" title="Confirmar pago">
+      render: (_, __, d) => {
+        const estadoPago = d.Pagos?.[0]?.Estados_pago?.nombre;
+        const accionesPago = estadoPago === "Pendiente de verificación"
+          ? `
+        <button class="btn btn-sm btn-success btn-confirmar" data-id="${d.id}" title="Confirmar pago">
           ✓
         </button>
-        <button class="btn btn-sm btn-danger btn-rechazar" data-id="${id}" title="Rechazar pago">
+        <button class="btn btn-sm btn-danger btn-rechazar" data-id="${d.id}" title="Rechazar pago">
           ✕
+        </button>`
+          : "";
+
+        return `
+        <button class="btn btn-sm btn-info text-white btn-ver-pedidos" data-id="${d.id}" title="Ver detalle">
+          Ver
         </button>
-      `
+        ${accionesPago}
+      `;
+      }
     }
   ];
 
