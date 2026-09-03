@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import api, { SERVER_URL } from "../../services/api";
 import { useCart } from "../../hooks/useCart";
+import { usePostFetch } from "../../hooks/usePostFetch";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
+import GuestModal from "./GuestModal";
 import "../../assets/css/ProductModal.css";
 import hero from "../../assets/img/hero.png";
 
@@ -9,6 +11,11 @@ export default function ProductModal({ product, onClose }) {
     const [detalle, setDetalle] = useState(null);
     const [colorSeleccionado, setColorSeleccionado] = useState(null);
     const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
+    const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
+    const [mostrarDatosCliente, setMostrarDatosCliente] = useState(false);
+    const [descripcionSolicitud, setDescripcionSolicitud] = useState("");
+    const [imagenReferencia, setImagenReferencia] = useState(null);
+    const { post: postPersonalizacion, loading: enviandoSolicitud } = usePostFetch("/personalizaciones");
     const { addItem } = useCart();
 
     useEffect(() => {
@@ -24,6 +31,10 @@ export default function ProductModal({ product, onClose }) {
             setDetalle(null);
             setColorSeleccionado(null);
             setTallaSeleccionada(null);
+            setMostrarSolicitud(false);
+            setMostrarDatosCliente(false);
+            setDescripcionSolicitud("");
+            setImagenReferencia(null);
         };
     }, [product]);
 
@@ -68,11 +79,49 @@ export default function ProductModal({ product, onClose }) {
     };
 
     const handleSolicitarPersonalizado = () => {
-        // pendiente: lógica de personalización
+        setMostrarSolicitud(true);
+    };
+
+    const continuarSolicitud = () => {
+        if (!descripcionSolicitud.trim()) {
+            notifyError("Describe lo que quieres personalizar");
+            return;
+        }
+
+        setMostrarDatosCliente(true);
+    };
+
+    const enviarSolicitud = async (cliente) => {
+        const formData = new FormData();
+        formData.append("cliente_id", cliente.id);
+        formData.append("producto_id", detalle.id);
+        formData.append("descripcion_solicitada", descripcionSolicitud.trim());
+
+        if (imagenReferencia) {
+            const extension = imagenReferencia.name.slice(imagenReferencia.name.lastIndexOf("."));
+            formData.append("nombreArchivo", `${detalle.codigo || detalle.id}_${Date.now()}${extension}`);
+            formData.append("imagen_referencia", imagenReferencia);
+        }
+
+        try {
+            await postPersonalizacion(formData);
+            notifySuccess("Solicitud recibida. Te contactaremos para aprobarla y cotizarla.");
+            setMostrarDatosCliente(false);
+            setMostrarSolicitud(false);
+            setDescripcionSolicitud("");
+            setImagenReferencia(null);
+        } catch (error) {
+            notifyError(error.response?.data?.message || "No se pudo enviar la solicitud");
+        }
     };
 
     return (
         <div className="product-modal">
+            <GuestModal
+                show={mostrarDatosCliente}
+                onClose={() => setMostrarDatosCliente(false)}
+                onConfirm={enviarSolicitud}
+            />
             <div className="product-modal-dialog">
                 <div className="product-modal-content">
 
@@ -175,13 +224,53 @@ export default function ProductModal({ product, onClose }) {
                                 </button>
 
                                 {detalle.permite_personalizacion && (
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-dark mt-2 w-100 py-3"
-                                        onClick={handleSolicitarPersonalizado}
-                                    >
-                                        Solicitar personalizado
-                                    </button>
+                                    <div className="mt-2">
+                                        {!mostrarSolicitud ? (
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-dark w-100 py-3"
+                                                onClick={handleSolicitarPersonalizado}
+                                            >
+                                                Solicitar personalizado
+                                            </button>
+                                        ) : (
+                                            <div className="border rounded p-3">
+                                                <label className="form-label" htmlFor="descripcion-personalizacion">
+                                                    Describe lo que quieres
+                                                </label>
+                                                <textarea
+                                                    id="descripcion-personalizacion"
+                                                    className="form-control mb-3"
+                                                    rows="4"
+                                                    value={descripcionSolicitud}
+                                                    onChange={(e) => setDescripcionSolicitud(e.target.value)}
+                                                    placeholder="Indica qué deseas cambiar del producto o qué quieres crear"
+                                                    disabled={enviandoSolicitud}
+                                                />
+
+                                                <label className="form-label" htmlFor="imagen-referencia">
+                                                    Imagen de referencia (opcional)
+                                                </label>
+                                                <input
+                                                    id="imagen-referencia"
+                                                    type="file"
+                                                    className="form-control mb-3"
+                                                    accept="image/jpeg,image/png,image/webp"
+                                                    onChange={(e) => setImagenReferencia(e.target.files[0] || null)}
+                                                    disabled={enviandoSolicitud}
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-dark w-100"
+                                                    onClick={continuarSolicitud}
+                                                    disabled={enviandoSolicitud}
+                                                >
+                                                    Continuar con mis datos
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
 
                             </div>
