@@ -10,6 +10,9 @@ import Orders from "../pages/admin/Orders";
 import Sizes from "../pages/admin/Sizes";
 import Colors from "../pages/admin/Colors";
 import Productions from "../pages/admin/Productions";
+import Quotes from "../pages/admin/Quotes";
+import Personalizations from "../pages/admin/Personalizations";
+import Discounts from "../pages/admin/Discounts";
 
 function AdminRoutes() {
 
@@ -34,6 +37,12 @@ function AdminRoutes() {
                 <Route path="colores" element={<Colors />} />
                 
                 <Route path="producciones" element={<Productions />} />
+
+                <Route path="cotizaciones" element={<Quotes />} />
+
+                <Route path="personalizaciones" element={<Personalizations />} />
+
+                <Route path="descuentos" element={<Discounts />} />
             </Route>
 
         </Routes>

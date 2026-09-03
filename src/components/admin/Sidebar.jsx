@@ -106,6 +106,12 @@ export default function Sidebar({ isOpen, onClose }) {
                     text="Cotizaciones"
                 />
 
+                <SidebarItem
+                    to="/admin/personalizaciones"
+                    icon={faReceipt}
+                    text="Personalizaciones"
+                />
+
             </div>
 
             <div className="sidebar-footer">
