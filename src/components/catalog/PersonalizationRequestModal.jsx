@@ -4,6 +4,8 @@ export default function PersonalizationRequestModal({
     image,
     description,
     onDescriptionChange,
+    referenceFile,
+    onReferenceFileChange,
     onClose,
     onContinue,
     loading
@@ -17,7 +19,9 @@ export default function PersonalizationRequestModal({
                     <div className="personalization-modal-header">
                         <div>
                             <p className="personalization-modal-eyebrow">Solicitud personalizada</p>
-                            <h2 id="personalization-modal-title">Personaliza {productName}</h2>
+                            <h2 id="personalization-modal-title">
+                                {image ? `Personaliza ${productName}` : "Crea tu producto desde cero"}
+                            </h2>
                         </div>
                         <button
                             type="button"
@@ -30,11 +34,27 @@ export default function PersonalizationRequestModal({
                     </div>
 
                     <div className="personalization-modal-body">
-                        <img
-                            className="personalization-reference-image"
-                            src={image}
-                            alt={`Imagen de referencia de ${productName}`}
-                        />
+                        {image ? (
+                            <img
+                                className="personalization-reference-image"
+                                src={image}
+                                alt={`Imagen de referencia de ${productName}`}
+                            />
+                        ) : (
+                            <label className="personalization-upload-box" htmlFor="imagen-referencia-personalizacion">
+                                <span className="personalization-upload-icon">+</span>
+                                <strong>Sube una imagen de referencia</strong>
+                                <small>Inspíranos con un diseño, boceto o ejemplo</small>
+                                <input
+                                    id="imagen-referencia-personalizacion"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(event) => onReferenceFileChange(event.target.files?.[0] || null)}
+                                    disabled={loading}
+                                />
+                                {referenceFile && <span className="personalization-file-name">{referenceFile.name}</span>}
+                            </label>
+                        )}
 
                         <div className="mt-4">
                             <label className="form-label" htmlFor="descripcion-personalizacion">

@@ -75,6 +75,107 @@
     border-radius: 16px;
 }
 
+.personalization-upload-box {
+    display: flex;
+    min-height: 220px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 2rem;
+    color: #0b2545;
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed rgba(11, 37, 69, 0.25);
+    border-radius: 16px;
+    background: #f5f8fb;
+}
+
+.personalization-upload-box:hover {
+    border-color: #0b2545;
+    background: #edf3f8;
+}
+
+.personalization-upload-box input {
+    display: none;
+}
+
+.personalization-upload-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    color: #ffffff;
+    font-size: 2rem;
+    line-height: 1;
+    border-radius: 50%;
+    background: #0b2545;
+}
+
+.personalization-upload-box small,
+.personalization-file-name {
+    color: #6c757d;
+}
+
+.personalization-file-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-personalization-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2.5rem 3rem;
+    color: #ffffff;
+    border-radius: 24px;
+    background: linear-gradient(120deg, #0b2545, #1c5276);
+    box-shadow: 0 18px 45px rgba(11, 37, 69, 0.2);
+}
+
+.custom-personalization-eyebrow {
+    color: #a9d6e5;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.custom-personalization-banner h2 {
+    margin: 0.35rem 0 0.5rem;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+}
+
+.custom-personalization-banner p {
+    margin: 0;
+    color: #d9edf2;
+}
+
+.custom-personalization-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.2rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .custom-personalization-banner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 2rem 1.5rem;
+    }
+
+    .custom-personalization-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 @media (max-width: 767px) {
     .personalization-modal {
         align-items: flex-start;
