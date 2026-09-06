@@ -46,6 +46,7 @@ export default function ProductModal({ product, onClose }) {
 
     const modelo = detalle.Modelos?.[0];
     const tela = modelo?.Modelo_telas?.[0];
+    const tieneStock = Number(detalle.stock) > 0;
 
     const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
 
@@ -183,6 +184,12 @@ export default function ProductModal({ product, onClose }) {
                                         ${Number(detalle.precio).toLocaleString()}
                                     </h3>
                                 )}
+
+                                <p className={`alert ${tieneStock ? "alert-success" : "alert-warning"} mb-4`}>
+                                    {tieneStock
+                                        ? "Disponibilidad inmediata"
+                                        : "Producto sin stock, pasará a producción"}
+                                </p>
 
                                 <div className="mb-3">
                                     <h6 className="mb-2">
