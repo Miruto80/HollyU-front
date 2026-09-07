@@ -9,6 +9,7 @@ import {
     faUsers,
     faClipboardList,
     faReceipt,
+    faWandMagicSparkles,
     faTags,
     faMoneyBillWave,
     faRightFromBracket,
@@ -108,7 +109,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
                 <SidebarItem
                     to="/admin/personalizaciones"
-                    icon={faReceipt}
+                    icon={faWandMagicSparkles}
                     text="Personalizaciones"
                 />
 
