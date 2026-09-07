@@ -1,5 +1,8 @@
 import ReusableDataTable from '../../components/common/ReusableDataTable';
 import { useGetFetch } from '../../hooks/useGetFetch';
+import api from '../../services/api';
+import { notifySuccess, notifyError } from '../../utils/Tostify';
+import { confirmarAccion } from '../../utils/Alert';
 
 const formatCurrency = (value) => `$${Number(value || 0).toLocaleString()}`;
 
@@ -10,14 +13,33 @@ const formatDate = (value) => value
 const statusClass = (status = '') => {
   const normalizedStatus = status.toLowerCase();
   if (normalizedStatus.includes('aprob')) return 'bg-success';
+  if (normalizedStatus.includes('producc')) return 'bg-primary';
   if (normalizedStatus.includes('rechaz') || normalizedStatus.includes('cancel')) return 'bg-danger';
   if (normalizedStatus.includes('pend')) return 'bg-warning text-dark';
   return 'bg-secondary';
 };
 
 export default function Quotes() {
-  const { data, loading, error } = useGetFetch('/cotizaciones');
+  const { data, loading, error, refetch } = useGetFetch('/cotizaciones');
   const cotizaciones = Array.isArray(data) ? data : [];
+
+  const handleProduction = async (id) => {
+    const ok = await confirmarAccion({
+      titulo: '¿Pasar cotización a producción?',
+      texto: 'La cotización cambiará a estado En producción',
+      confirmText: 'Sí, pasar a producción',
+      icon: 'question'
+    });
+    if (!ok) return;
+
+    try {
+      await api.patch(`/cotizaciones/${id}/produccion`);
+      notifySuccess('Cotización pasada a producción');
+      refetch();
+    } catch (err) {
+      notifyError(err.response?.data?.message || 'No se pudo pasar la cotización a producción');
+    }
+  };
 
   const columns = [
     { title: 'ID', data: 'id' },
@@ -67,6 +89,19 @@ export default function Quotes() {
       title: 'Observaciones',
       data: 'observaciones',
       defaultContent: '-'
+    },
+    {
+      title: 'Acción',
+      data: null,
+      orderable: false,
+      render: (quote) => {
+        const status = quote.Estados_cotizacion?.nombre?.toLowerCase() || '';
+        if (status.includes('producc')) return '';
+
+        return `<button class="btn btn-sm btn-primary btn-produccion" data-id="${quote.id}">
+          Pasar a producción
+        </button>`;
+      }
     }
   ];
 
@@ -79,6 +114,7 @@ export default function Quotes() {
         columns={columns}
         loading={loading}
         error={error}
+        onProduction={handleProduction}
         options={{
           language: {
             search: 'Buscar:',
