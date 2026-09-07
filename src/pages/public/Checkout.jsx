@@ -249,8 +249,7 @@ export default function Checkout() {
           <div className="col-lg-6">
             <div className="checkout-card checkout-info-card mb-3">
               <h6 className="checkout-accent-title">Datos del pago móvil</h6>
-              <p className="mb-1">Venezuela (0102) C.I.: V-30.352.937 Telf.: 0414-509.49.59</p>
-              <p className="mb-0">Mercantil (0105) C.I.: V-11.787.299 Telf.: 0426-554.13.64</p>
+              <p className="mb-1">Banco Nacional de Credito (0191) C.I.: V-18.334.628 Telf.:0414-511-9764</p>
             </div>
 
             <div className="checkout-card">
