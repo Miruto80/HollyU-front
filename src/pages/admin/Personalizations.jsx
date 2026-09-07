@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import ReusableDataTable from '../../components/common/ReusableDataTable';
+import ImagePreviewModal from '../../components/common/ImagePreviewModal';
 import { useGetFetch } from '../../hooks/useGetFetch';
 import api, { SERVER_URL } from '../../services/api';
 import { alertaError, alertaExito, confirmarAccion } from '../../utils/Alert';
@@ -13,6 +15,7 @@ const statusClass = (status = '') => status === 'cotizada'
 export default function Personalizations() {
   const { data, loading, error, refetch } = useGetFetch('/personalizaciones');
   const personalizaciones = Array.isArray(data) ? data : [];
+  const [previewImage, setPreviewImage] = useState(null);
 
   const handleQuote = async (id) => {
     const result = await Swal.fire({
@@ -57,6 +60,12 @@ export default function Personalizations() {
     }
   };
 
+  const handleImagePreview = (imageUrl) => {
+    if (!imageUrl) return;
+
+    setPreviewImage(decodeURIComponent(imageUrl));
+  };
+
   const columns = [
     {
       title: 'Imagen',
@@ -66,7 +75,9 @@ export default function Personalizations() {
         const image = request.imagen_referencia || request.Productos?.Producto_imagenes?.[0]?.imagen;
         const imageUrl = image?.startsWith('http') ? image : `${SERVER_URL}${image}`;
         return image
-          ? `<img src="${imageUrl}" alt="${request.Productos?.nombre || 'Producto'}" style="width: 56px; height: 56px; object-fit: cover;">`
+          ? `<button type="button" class="btn p-0 border-0 btn-image-preview" data-image="${encodeURIComponent(imageUrl)}" title="Ver imagen de referencia">
+              <img src="${imageUrl}" alt="${request.Productos?.nombre || 'Producto'}" style="width: 56px; height: 56px; object-fit: cover; cursor: zoom-in;">
+            </button>`
           : '-';
       }
     },
@@ -112,6 +123,7 @@ export default function Personalizations() {
         error={error}
         onQuote={handleQuote}
         onReject={handleReject}
+        onImagePreview={handleImagePreview}
         options={{
           language: {
             search: 'Buscar:',
@@ -122,6 +134,7 @@ export default function Personalizations() {
         }}
         className="table table-striped table-hover"
       />
+      <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
     </div>
   );
 }

@@ -17,7 +17,8 @@ export default function ReusableDataTable({
   onReject,
   onAvanzar,
   onQuote,
-  onProduction
+  onProduction,
+  onImagePreview
 }) {
   DataTable.use(DT);
   const containerRef = useRef(null);
@@ -35,6 +36,7 @@ export default function ReusableDataTable({
       const avanzarBtn = e.target.closest(".btn-avanzar");
       const quoteBtn = e.target.closest(".btn-cotizar");
       const productionBtn = e.target.closest(".btn-produccion");
+      const imagePreviewBtn = e.target.closest(".btn-image-preview");
 
       if (editBtn && onEdit) onEdit(editBtn.dataset.id);
       if (delBtn && onDelete) onDelete(delBtn.dataset.id);
@@ -44,11 +46,12 @@ export default function ReusableDataTable({
       if (avanzarBtn && onAvanzar) onAvanzar(avanzarBtn.dataset.id);
       if (quoteBtn && onQuote) onQuote(quoteBtn.dataset.id);
       if (productionBtn && onProduction) onProduction(productionBtn.dataset.id);
+      if (imagePreviewBtn && onImagePreview) onImagePreview(imagePreviewBtn.dataset.image);
     };
 
     container.addEventListener("click", handleClick);
     return () => container.removeEventListener("click", handleClick);
-  }, [data, onEdit, onDelete, onView, onConfirm, onReject, onAvanzar, onQuote, onProduction]);
+  }, [data, onEdit, onDelete, onView, onConfirm, onReject, onAvanzar, onQuote, onProduction, onImagePreview]);
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="text-danger">Error al cargar datos.</p>;
