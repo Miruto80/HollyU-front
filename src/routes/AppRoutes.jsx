@@ -10,6 +10,8 @@ import ProtectRoute from "./ProtectRoute.jsx";
 import Checkout from "../pages/public/Checkout.jsx";
 import OrderConfirmation from "../pages/public/OrderConfirmation.jsx";
 import MyOrders from "../pages/public/MyOrders.jsx";
+import CartPage from "../pages/public/CartPage.jsx";
+import DeliveryPage from "../pages/public/DeliveryPage.jsx";
 
 function AppRoutes() {
   const location = useLocation();
@@ -27,6 +29,8 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/:category" element={<Catalog />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/entrega" element={<DeliveryPage />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/pedido-confirmado/:id" element={<OrderConfirmation />} />
         <Route path="/mis-pedidos" element={<MyOrders />} />

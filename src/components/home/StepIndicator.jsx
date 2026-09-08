@@ -1,6 +1,6 @@
 import "../../assets/css/StepIndicator.css";
 
-const PASOS = ["Producto", "Entrega", "Pago", "Confirmación"];
+const PASOS = ["Carrito", "Entrega", "Pago", "Confirmación"];
 
 export default function StepIndicator({ pasoActual }) {
   return (

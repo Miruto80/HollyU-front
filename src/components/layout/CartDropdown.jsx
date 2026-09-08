@@ -11,7 +11,7 @@ export default function CartDropdown({ show, onClose }) {
 
   const handleFinalizarPedido = () => {
     onClose();
-    navigate("/checkout");
+    navigate("/cart");
   };
 
   return (

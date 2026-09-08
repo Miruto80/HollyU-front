@@ -3,7 +3,8 @@
   justify-content: center;
   align-items: flex-start;
   gap: 0;
-  margin: 2rem 0 3rem;
+  margin: 1.4rem auto 2.4rem;
+  width: min(100%, 640px);
   position: relative;
 }
 
@@ -11,52 +12,59 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 90px;
+  min-width: 110px;
+  flex: 1;
 }
 
 .step-item-row {
   display: flex;
   align-items: center;
   width: 100%;
+  justify-content: center;
 }
 
 .step-circle {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: #e9e9e9;
   color: #6c757d;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.8rem;
   flex-shrink: 0;
-  margin: 0 auto;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
 }
 
 .step-completed {
-  background: #212529;
+  background: #1b9b63;
   color: #fff;
 }
 
 .step-active {
-  background: #0d6efd;
+  background: #ff4f9a;
   color: #fff;
 }
 
 .step-line {
-  display: none;
+  display: block;
+  width: calc(100% - 44px);
+  height: 2px;
+  background: #dfe3e8;
+  margin: 0 0.5rem;
 }
 
 .step-label {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+  margin-top: 0.55rem;
+  font-size: 0.9rem;
   color: #6c757d;
+  font-weight: 500;
 }
 
 .step-label-active {
   color: #212529;
-  font-weight: 600;
+  font-weight: 700;
 }
