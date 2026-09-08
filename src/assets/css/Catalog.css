@@ -29,6 +29,22 @@
     transform:scale(1.08);
 }
 
+.product-discount-banner{
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:#e8f9ee;
+    color:#0c7a4a;
+    border:1px solid rgba(12,122,74,.2);
+    box-shadow:0 8px 18px rgba(12, 122, 74, 0.15);
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.4px;
+    z-index:2;
+}
+
 .product-badge{
     position:absolute;
     top:15px;
