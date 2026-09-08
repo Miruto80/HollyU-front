@@ -35,7 +35,6 @@ export default function ProductosTable() {
         return `<img src="${src}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;" />`;
       }
     },
-    { title: "Código", data: "codigo" },
     { title: "Nombre", data: "nombre" },
     {
       title: "Categoría",

@@ -14,7 +14,6 @@ export default function ProductoModal({ show, onClose, onCreated }) {
   const { post, loading, error } = usePostFetch("/productos");
 
   const [form, setForm] = useState({
-    codigo: "",
     nombre: "",
     descripcion: "",
     categoria_id: "",
@@ -73,7 +72,6 @@ const [imagenes, setImagenes] = useState([]);
     ];
 
     const formData = new FormData();
-    formData.append("codigo", form.codigo);
     formData.append("nombre", form.nombre);
     formData.append("descripcion", form.descripcion);
     formData.append("categoria_id", form.categoria_id);
@@ -87,7 +85,6 @@ const [imagenes, setImagenes] = useState([]);
 
     
    if (imagenes.length > 0) {
-  formData.append("nombreArchivo", form.codigo); 
   imagenes.forEach(img => {
     formData.append("imagenes", img);
   });
@@ -122,12 +119,7 @@ const [imagenes, setImagenes] = useState([]);
               )}
 
               <div className="row g-3">
-                <div className="col-md-4">
-                  <label className="form-label">Código</label>
-                  <input name="codigo" className="form-control" value={form.codigo} onChange={handleChange} required />
-                </div>
-
-                <div className="col-md-8">
+                <div className="col-md-12">
                   <label className="form-label">Nombre</label>
                   <input name="nombre" className="form-control" value={form.nombre} onChange={handleChange} required />
                 </div>
