@@ -68,11 +68,6 @@ export default function Quotes() {
       render: formatCurrency
     },
     {
-      title: 'Descuento',
-      data: 'descuento',
-      render: formatCurrency
-    },
-    {
       title: 'Total',
       data: 'total',
       render: formatCurrency
