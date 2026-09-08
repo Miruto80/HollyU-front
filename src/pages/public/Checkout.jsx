@@ -23,6 +23,47 @@ const TIPO_VENTA_CATALOGO = 1;
 const METODO_PAGO_MOVIL = 1;
 const ESTADO_PAGO_PENDIENTE = 1;
 
+const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
+
+const getDiscountForItem = (item, descuentos) => {
+  const now = new Date();
+
+  const aplicables = (descuentos || []).filter((descuento) => {
+    if (!descuento.activo) return false;
+
+    const fechaInicio = descuento.fecha_inicio ? new Date(descuento.fecha_inicio) : null;
+    const fechaFin = descuento.fecha_fin ? new Date(descuento.fecha_fin) : null;
+
+    if (fechaInicio && now < fechaInicio) return false;
+    if (fechaFin && now > fechaFin) return false;
+
+    const categoryMatch = descuento.categoria_id != null && Number(descuento.categoria_id) === Number(item.categoria_id);
+    const productMatch = Array.isArray(descuento.Productos) && descuento.Productos.some((producto) => Number(producto.id) === Number(item.producto_id));
+
+    return categoryMatch || productMatch;
+  });
+
+  if (!aplicables.length) return { discountAmount: 0, discountLabel: "" };
+
+  const descuento = aplicables[0];
+  const basePrice = Number(item.precio || 0);
+  const quantity = Number(item.cantidad || 1);
+
+  if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
+    const descuentoUnitario = basePrice * (Number(descuento.valor || 0) / 100);
+    return {
+      discountAmount: descuentoUnitario * quantity,
+      discountLabel: `${Number(descuento.valor).toFixed(2)}% de descuento`
+    };
+  }
+
+  const fixedAmount = Number(descuento.valor || 0);
+  return {
+    discountAmount: fixedAmount * quantity,
+    discountLabel: `${formatMoney(fixedAmount)} de descuento`
+  };
+};
+
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, totalPrecio, clearCart } = useCart();
@@ -37,7 +78,25 @@ export default function Checkout() {
   const [clienteInvitado, setClienteInvitado] = useState(null);
   const [showGuestModal, setShowGuestModal] = useState(false);
 
+  const { data: descuentos = [] } = useGetFetch("/descuentos");
   const { post: postPedido, loading: enviando } = usePostFetch("/pedidos");
+
+  const itemsWithDiscount = items.map((item) => {
+    const discountInfo = getDiscountForItem(item, descuentos);
+    const subtotal = Number(item.cantidad || 0) * Number(item.precio || 0);
+    const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
+
+    return {
+      ...item,
+      subtotal,
+      discountAmount: Number(discountInfo.discountAmount || 0),
+      discountedSubtotal,
+      discountLabel: discountInfo.discountLabel,
+    };
+  });
+
+  const totalDiscount = itemsWithDiscount.reduce((sum, item) => sum + item.discountAmount, 0);
+  const totalConDescuento = Math.max(0, totalPrecio - totalDiscount);
 
   const [pagoForm, setPagoForm] = useState({
     bancoOrigen: "",
@@ -70,7 +129,7 @@ export default function Checkout() {
     }));
   };
 
-  const totalBs = totalPrecio * tasaDia;
+  const totalBs = totalConDescuento * tasaDia;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,7 +146,7 @@ export default function Checkout() {
     }
 
     try {
-      const itemsPayload = items.map(item => ({
+      const itemsPayload = itemsWithDiscount.map(item => ({
         producto_id: item.producto_id,
         modelo_id: item.modelo_id,
         tipo_tela_id: item.tipo_tela_id,
@@ -95,7 +154,7 @@ export default function Checkout() {
         talla_id: item.talla_id,
         cantidad: item.cantidad,
         precio: item.precio,
-        descuento: 0
+        descuento: Number(item.discountAmount || 0)
       }));
 
       const formData = new FormData();
@@ -258,7 +317,7 @@ export default function Checkout() {
                 {items.length} {items.length === 1 ? "producto" : "productos"}
               </p>
 
-              {items.map((item) => (
+              {itemsWithDiscount.map((item) => (
                 <div className="checkout-item" key={item.id}>
                   <img
                     src={item.imagen ? `${SERVER_URL}${item.imagen}` : "/images/no-image.jpg"}
@@ -270,14 +329,19 @@ export default function Checkout() {
                       <p className="mb-0 text-muted small">Talla: {item.talla_nombre}</p>
                     )}
                     {item.color_nombre && (
-                    <p className="mb-0 text-muted small">Color: {item.color_nombre}</p>
+                      <p className="mb-0 text-muted small">Color: {item.color_nombre}</p>
                     )}
                     <p className="mb-0 text-muted small">
                       Cantidad: {item.cantidad} × ${Number(item.precio).toLocaleString()}
                     </p>
                     <p className="mb-0 fw-semibold">
-                      Subtotal: ${(item.cantidad * item.precio).toLocaleString()}
+                      Subtotal: {formatMoney(item.discountedSubtotal)}
                     </p>
+                    {item.discountAmount > 0 && (
+                      <p className="mb-0 text-success small">
+                        Descuento aplicado: -{formatMoney(item.discountAmount)}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -285,13 +349,25 @@ export default function Checkout() {
               <hr />
 
               <div className="d-flex justify-content-between mb-1">
+                <span>Subtotal:</span>
+                <span>{formatMoney(totalPrecio)}</span>
+              </div>
+
+              {totalDiscount > 0 && (
+                <div className="d-flex justify-content-between mb-1 text-success">
+                  <span>Descuento:</span>
+                  <span>-{formatMoney(totalDiscount)}</span>
+                </div>
+              )}
+
+              <div className="d-flex justify-content-between mb-1">
                 <strong>Total USD:</strong>
-                <strong>${totalPrecio.toLocaleString()}</strong>
+                <strong>{formatMoney(totalConDescuento)}</strong>
               </div>
               <div className="d-flex justify-content-between">
                 <strong>Total Bs:</strong>
                 <strong className="text-success">
-                  Resultado: {totalBs.toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs
+                  {totalBs.toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs
                 </strong>
               </div>
             </div>

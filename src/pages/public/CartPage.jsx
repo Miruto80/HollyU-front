@@ -1,16 +1,102 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
+import { useGetFetch } from "../../hooks/useGetFetch";
 import StepIndicator from "../../components/home/StepIndicator";
 import { SERVER_URL } from "../../services/api";
 import "../../assets/css/CartFlow.css";
 
 const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
 
+const getDiscountForItem = (item, descuentos) => {
+  const now = new Date();
+
+  const aplicables = (descuentos || []).filter((descuento) => {
+    if (!descuento.activo) return false;
+
+    const fechaInicio = descuento.fecha_inicio
+      ? new Date(descuento.fecha_inicio)
+      : null;
+
+    const fechaFin = descuento.fecha_fin
+      ? new Date(descuento.fecha_fin)
+      : null;
+
+    if (fechaInicio && now < fechaInicio) return false;
+    if (fechaFin && now > fechaFin) return false;
+
+
+    const categoryMatch =
+      descuento.categoria_id !== null &&
+      descuento.categoria_id !== undefined &&
+      item.categoria_id !== null &&
+      item.categoria_id !== undefined &&
+      Number(descuento.categoria_id) === Number(item.categoria_id);
+
+    
+    const productMatch =
+      Array.isArray(descuento.Productos) &&
+      descuento.Productos.some(
+        (producto) =>
+          Number(producto.id) === Number(item.producto_id)
+      );
+
+    return categoryMatch || productMatch;
+  });
+
+  if (aplicables.length === 0) {
+    return {
+      discountAmount: 0,
+      discountLabel: ""
+    };
+  }
+
+  const descuento = aplicables[0];
+
+  const basePrice = Number(item.precio || 0);
+  const quantity = Number(item.cantidad || 1);
+  const valor = Number(descuento.valor || 0);
+
+  if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
+    const descuentoUnitario = basePrice * (valor / 100);
+
+    return {
+      discountAmount: descuentoUnitario * quantity,
+      discountLabel: `${valor.toFixed(2)}% de descuento`
+    };
+  }
+
+  const discountAmount = valor * quantity;
+
+  return {
+    discountAmount,
+    discountLabel: `$${valor.toLocaleString()} de descuento`
+  };
+};
+
 export default function CartPage() {
   const navigate = useNavigate();
   const { items, totalPrecio, updateCantidad, removeItem } = useCart();
+  const { data: descuentos = [] } = useGetFetch("/descuentos");
 
   const cantidadTotal = items.reduce((sum, item) => sum + item.cantidad, 0);
+
+  const itemsWithDiscount = items.map((item) => {
+    const discountInfo = getDiscountForItem(item, descuentos);
+    const unitPrice = Number(item.precio || 0);
+    const subtotal = item.cantidad * unitPrice;
+    const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
+
+    return {
+      ...item,
+      subtotal,
+      discountAmount: discountInfo.discountAmount,
+      discountedSubtotal,
+      discountLabel: discountInfo.discountLabel
+    };
+  });
+
+  const totalDiscount = itemsWithDiscount.reduce((sum, item) => sum + item.discountAmount, 0);
+  const totalAfterDiscount = itemsWithDiscount.reduce((sum, item) => sum + item.discountedSubtotal, 0);
 
   if (items.length === 0) {
     return (
@@ -47,7 +133,7 @@ export default function CartPage() {
               <span>Subtotal</span>
             </div>
 
-            {items.map((item) => (
+            {itemsWithDiscount.map((item) => (
               <div className="cart-flow-item-row" key={item.id}>
                 <button
                   type="button"
@@ -71,6 +157,9 @@ export default function CartPage() {
                         {item.color_nombre && <span>Color: {item.color_nombre}</span>}
                       </div>
                     )}
+                    {item.discountLabel && (
+                      <span className="cart-flow-discount-tag">{item.discountLabel}</span>
+                    )}
                   </div>
                 </div>
 
@@ -82,7 +171,12 @@ export default function CartPage() {
                   <button type="button" onClick={() => updateCantidad(item.id, item.cantidad + 1)}>+</button>
                 </div>
 
-                <span className="cart-flow-subtotal">{formatMoney(item.cantidad * Number(item.precio || 0))}</span>
+                <div className="cart-flow-subtotal-box">
+                  <span className="cart-flow-subtotal">{formatMoney(item.discountedSubtotal)}</span>
+                  {item.discountAmount > 0 && (
+                    <small className="cart-flow-discount-amount">-{formatMoney(item.discountAmount)}</small>
+                  )}
+                </div>
               </div>
             ))}
 
@@ -99,17 +193,20 @@ export default function CartPage() {
               <span>{cantidadTotal} unidad(es)</span>
             </div>
 
+            {totalDiscount > 0 && (
+              <div className="cart-flow-summary-row cart-flow-summary-discount">
+                <span>Descuento aplicado:</span>
+                <span>-{formatMoney(totalDiscount)}</span>
+              </div>
+            )}
+
             <div className="cart-flow-total-row">
               <span>Total a pagar:</span>
-              <strong>{formatMoney(totalPrecio)}</strong>
+              <strong>{formatMoney(totalAfterDiscount || totalPrecio)}</strong>
             </div>
 
             <button type="button" className="cart-flow-primary" onClick={() => navigate("/entrega")}>
               Continuar con la Compra
-            </button>
-
-            <button type="button" className="cart-flow-secondary" onClick={() => navigate("/catalog")}>
-              Reservar Productos
             </button>
           </aside>
         </div>

@@ -65,9 +65,11 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
             return;
         }
 
+        
         addItem({
             id: detalle.id,
             producto_id: detalle.id,
+            categoria_id: detalle.categoria_id,
             nombre: detalle.nombre,
             precio: detalle.precio,
             imagen: imagenRelativa,
