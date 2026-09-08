@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
-import ImageUploader from "../ImageUploader";
+import ImageUploaderMultiple from "../ImageUploaderMultiple"; 
 
 export default function ProductoModal({ show, onClose, onCreated }) {
   const { data: categorias } = useGetFetch("/categorias");
@@ -36,7 +36,7 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     tallas: []
   });
 
-  const [imagen, setImagen] = useState(null);
+const [imagenes, setImagenes] = useState([]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -85,12 +85,13 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     formData.append("tiempo_fabricacion", form.tiempo_fabricacion);
     formData.append("modelos", JSON.stringify(modelosPayload));
 
-    // nombreArchivo debe ir ANTES que imagen para que multer lo lea a tiempo
-    if (imagen) {
-      const extension = imagen.name.split('.').pop();
-      formData.append("nombreArchivo", `${form.codigo}_${Date.now()}.${extension}`);
-      formData.append("imagen", imagen);
-    }
+    
+   if (imagenes.length > 0) {
+  formData.append("nombreArchivo", form.codigo); 
+  imagenes.forEach(img => {
+    formData.append("imagenes", img);
+  });
+}
 
     try {
       await post(formData);
@@ -194,8 +195,8 @@ export default function ProductoModal({ show, onClose, onCreated }) {
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Imagen principal</label>
-                  <ImageUploader onImageSelected={setImagen} />
+                 <label className="form-label">Imágenes del producto</label>
+                  <ImageUploaderMultiple onImagesSelected={setImagenes} />
                 </div>
               </div>
 

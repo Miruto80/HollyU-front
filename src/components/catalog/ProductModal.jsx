@@ -4,6 +4,8 @@ import { useCart } from "../../hooks/useCart";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
 import GuestModal from "./GuestModal";
 import PersonalizationRequestModal from "./PersonalizationRequestModal";
 import "../../assets/css/ProductModal.css";
@@ -48,12 +50,11 @@ export default function ProductModal({ product, onClose }) {
     const tela = modelo?.Modelo_telas?.[0];
     const tieneStock = Number(detalle.stock) > 0;
 
-    const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
+    const imagenes = detalle.Producto_imagenes?.length > 0
+    ? detalle.Producto_imagenes
+    : [{ imagen: null }]; 
 
-    const image = imagenRelativa
-        ? `${SERVER_URL}${imagenRelativa}`
-        : hero;
-
+const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen; 
     const handleAgregarCarrito = () => {
         if (!colorSeleccionado) {
             notifyError("Selecciona un color");
@@ -133,7 +134,7 @@ export default function ProductModal({ product, onClose }) {
             <PersonalizationRequestModal
                 show={mostrarSolicitud}
                 productName={detalle.nombre}
-                image={image}
+                image={imagenes[0]?.imagen ? `${SERVER_URL}${imagenes[0].imagen}` : hero}
                 description={descripcionSolicitud}
                 onDescriptionChange={setDescripcionSolicitud}
                 onClose={() => setMostrarSolicitud(false)}
@@ -162,12 +163,27 @@ export default function ProductModal({ product, onClose }) {
                         <div className="row g-4 align-items-center">
 
                             <div className="col-12 col-lg-6">
-                                <img
-                                    className="img-fluid product-main-image"
-                                    src={image}
-                                    alt={detalle.nombre}
-                                />
-                            </div>
+    <Splide
+        options={{
+            type: imagenes.length > 1 ? 'loop' : 'slide',
+            perPage: 1,
+            arrows: imagenes.length > 1,
+            pagination: imagenes.length > 1,
+            drag: imagenes.length > 1
+        }}
+        aria-label="Imágenes del producto"
+    >
+        {imagenes.map((img, index) => (
+            <SplideSlide key={img.id ?? index}>
+                <img
+                    src={img.imagen ? `${SERVER_URL}${img.imagen}` : hero}
+                    className="img-fluid product-main-image"
+                    alt={`${detalle.nombre} ${index + 1}`}
+                />
+            </SplideSlide>
+        ))}
+    </Splide>
+</div>
 
                             <div className="col-12 col-lg-6">
 
