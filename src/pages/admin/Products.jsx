@@ -47,6 +47,11 @@ export default function ProductosTable() {
       render: (data) => data.Genero?.nombre ?? "-"
     },
     {
+      title: "Bota",
+      data: null,
+      render: (data) => data.Tipo_botum?.nombre ?? "-"
+    },
+    {
   title: "Precio",
   data: null,
   render: (data) => `$${Number(data.precio).toLocaleString()}`

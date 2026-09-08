@@ -8,6 +8,7 @@ export default function ProductoModal({ show, onClose, onCreated }) {
   const { data: categorias } = useGetFetch("/categorias");
   const { data: generos } = useGetFetch("/generos");
   const { data: tiposTela } = useGetFetch("/tipos_tela");
+  const { data: tiposBota } = useGetFetch("/tipo_bota");
   const { data: colores } = useGetFetch("/colores");
   const { data: tallas } = useGetFetch("/tallas");
 
@@ -18,6 +19,7 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     descripcion: "",
     categoria_id: "",
     genero_id: "",
+    tipo_bota_id: "",
     precio: "",
     precio_mayor: "",
     stock: 0,
@@ -76,6 +78,9 @@ const [imagenes, setImagenes] = useState([]);
     formData.append("descripcion", form.descripcion);
     formData.append("categoria_id", form.categoria_id);
     formData.append("genero_id", form.genero_id);
+    if (form.tipo_bota_id) {
+      formData.append("tipo_bota_id", form.tipo_bota_id);
+    }
     formData.append("precio", form.precio);
     formData.append("precio_mayor", form.precio_mayor);
     formData.append("stock", form.stock);
@@ -145,6 +150,21 @@ const [imagenes, setImagenes] = useState([]);
                     <option value="">Seleccione...</option>
                     {generos?.map(g => (
                       <option key={g.id} value={g.id}>{g.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Tipo de bota (opcional)</label>
+                  <select
+                    name="tipo_bota_id"
+                    className="form-select"
+                    value={form.tipo_bota_id}
+                    onChange={handleChange}
+                  >
+                    <option value="">Sin tipo de bota</option>
+                    {tiposBota?.map(tipo => (
+                      <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
                     ))}
                   </select>
                 </div>
