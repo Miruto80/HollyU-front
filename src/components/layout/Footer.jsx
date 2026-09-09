@@ -96,12 +96,12 @@ export default function Footer() {
             <div className="footer-contact">
               <p>
                 <FontAwesomeIcon icon={faPhone} />
-                <span>+58 412-000-0000</span>
+                <span>+58 04145119764</span>
               </p>
 
               <p>
                 <FontAwesomeIcon icon={faEnvelope} />
-                <span>ventas@hollyu.com</span>
+                <span>alexyvb33@gmail.com</span>
               </p>
 
               <p>
