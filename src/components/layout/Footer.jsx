@@ -13,6 +13,7 @@ import {
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
 
+import { openTermsModal } from "../catalog/Terms.jsx";
 import "../../assets/css/Footer.css";
 
 export default function Footer() {
@@ -84,7 +85,20 @@ export default function Footer() {
               </li>
 
               <li>
-                <Link to="/terminos">Términos</Link>
+                <button
+                  type="button"
+                  onClick={openTermsModal}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    padding: 0,
+                    color: "inherit",
+                    font: "inherit",
+                    textDecoration: "none",
+                  }}
+                >
+                  Términos
+                </button>
               </li>
             </ul>
           </div>

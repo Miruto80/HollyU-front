@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StepIndicator from "../../components/home/StepIndicator";
 import GuestDataModal from "../../components/catalog/GuestModal";
+import { openTermsModal } from "../../components/catalog/Terms";
 import { useCart } from "../../hooks/useCart";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
@@ -286,7 +287,15 @@ export default function Checkout() {
                     onChange={handleChange}
                   />
                   <label className="form-check-label" htmlFor="aceptaTerminos">
-                    Acepto los <a href="/terminos">Términos y Condiciones</a>
+                    Acepto los{" "}
+                    <button
+                      type="button"
+                      onClick={openTermsModal}
+                      className="btn btn-link p-0 align-baseline"
+                      style={{ textDecoration: "underline" }}
+                    >
+                      Términos y Condiciones
+                    </button>
                   </label>
                 </div>
 

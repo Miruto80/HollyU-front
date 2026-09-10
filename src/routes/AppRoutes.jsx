@@ -12,6 +12,7 @@ import OrderConfirmation from "../pages/public/OrderConfirmation.jsx";
 import MyOrders from "../pages/public/MyOrders.jsx";
 import CartPage from "../pages/public/CartPage.jsx";
 import DeliveryPage from "../pages/public/DeliveryPage.jsx";
+import Terms from "../components/catalog/Terms.jsx";
 
 function AppRoutes() {
   const location = useLocation();
@@ -47,6 +48,7 @@ function AppRoutes() {
       </Routes>
 
       {!isAdminRoute && <Footer />}
+      <Terms />
     </>
   );
 }
