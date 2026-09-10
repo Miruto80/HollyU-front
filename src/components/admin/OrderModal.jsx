@@ -1,5 +1,11 @@
 import { useGetFetch } from "../../hooks/useGetFetch";
 
+const DELIVERY_LABELS = {
+  store: "Tienda física",
+  shipping: "Envío nacional",
+  delivery: "Delivery",
+};
+
 export default function OrderModal({ pedidoId, show, onClose }) {
   const { data: pedido, loading } = useGetFetch(
     show && pedidoId ? `/pedidos/${pedidoId}` : null,
@@ -75,6 +81,40 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                         </div>
                       ))}
                       <p className="mb-0"><strong>Total pagado:</strong> {Number(pedido.total_bs || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="accordion-item">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#datosEnvio">
+                      📦 Datos del envío
+                    </button>
+                  </h2>
+                  <div id="datosEnvio" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
+                    <div className="accordion-body">
+                      <p><strong>Método:</strong> {DELIVERY_LABELS[pedido.metodo_entrega] ?? pedido.metodo_entrega ?? "-"}</p>
+
+                      {pedido.metodo_entrega === "shipping" && (
+                        <>
+                          <p><strong>Agencia:</strong> {pedido.agencia_envio || "-"}</p>
+                          <p className="mb-0"><strong>Sucursal:</strong> {pedido.sucursal_envio || "-"}</p>
+                        </>
+                      )}
+
+                      {pedido.metodo_entrega === "delivery" && (
+                        <>
+                          <p><strong>Servicio:</strong> {pedido.servicio_delivery || "-"}</p>
+                          <p><strong>Zona:</strong> {pedido.zona_entrega || "-"}</p>
+                          <p><strong>Parroquia:</strong> {pedido.parroquia_entrega || "-"}</p>
+                          <p><strong>Sector:</strong> {pedido.sector_entrega || "-"}</p>
+                          <p className="mb-0"><strong>Dirección:</strong> {pedido.direccion_entrega || "-"}</p>
+                        </>
+                      )}
+
+                      {pedido.metodo_entrega === "store" && (
+                        <p className="mb-0"><strong>Ubicación:</strong> {pedido.direccion_entrega || "Retiro en tienda física"}</p>
+                      )}
                     </div>
                   </div>
                 </div>

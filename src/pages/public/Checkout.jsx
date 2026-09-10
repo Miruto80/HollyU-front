@@ -23,6 +23,7 @@ const ESTADO_PEDIDO_PENDIENTE = 1;
 const TIPO_VENTA_CATALOGO = 1;
 const METODO_PAGO_MOVIL = 1;
 const ESTADO_PAGO_PENDIENTE = 1;
+const DELIVERY_STORAGE_KEY = "hollyu.delivery";
 
 const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
 
@@ -71,6 +72,13 @@ export default function Checkout() {
 
   const isLogged = Boolean(localStorage.getItem("accessToken"));
   const [tasaDia, setTasaDia] = useState(1);
+  const [deliveryData] = useState(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(DELIVERY_STORAGE_KEY) || "null");
+    } catch {
+      return null;
+    }
+  });
 
   const { data: clienteLogueado, error: errorCliente, loading: cargandoCliente } = useGetFetch(
     isLogged ? "/clientes/me" : null
@@ -146,6 +154,12 @@ export default function Checkout() {
       return;
     }
 
+    if (!deliveryData?.metodoEntrega) {
+      notifyError("Completa primero el método de entrega");
+      navigate("/entrega");
+      return;
+    }
+
     try {
       const itemsPayload = itemsWithDiscount.map(item => ({
         producto_id: item.producto_id,
@@ -169,6 +183,14 @@ export default function Checkout() {
       formData.append("banco_destino", pagoForm.bancoDestino);
       formData.append("telefono_emisor", pagoForm.telefono);
       formData.append("total_bs", totalBs);
+      formData.append("metodo_entrega", deliveryData.metodoEntrega);
+      formData.append("agencia_envio", deliveryData.agenciaEnvio || "");
+      formData.append("sucursal_envio", deliveryData.sucursalEnvio || "");
+      formData.append("servicio_delivery", deliveryData.servicioDelivery || "");
+      formData.append("zona_entrega", deliveryData.zona || "");
+      formData.append("parroquia_entrega", deliveryData.parroquia || "");
+      formData.append("sector_entrega", deliveryData.sector || "");
+      formData.append("direccion_entrega", deliveryData.direccionEntrega || "");
       formData.append("items", JSON.stringify(itemsPayload));
 
       if (pagoForm.comprobante) {
@@ -179,6 +201,7 @@ export default function Checkout() {
 
       notifySuccess("Pedido creado correctamente");
       clearCart();
+      sessionStorage.removeItem(DELIVERY_STORAGE_KEY);
       navigate(`/pedido-confirmado/${pedido.id}`);
 
     } catch (error) {

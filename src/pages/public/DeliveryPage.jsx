@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import StepIndicator from "../../components/home/StepIndicator";
 import "../../assets/css/CartFlow.css";
 
+const DELIVERY_STORAGE_KEY = "hollyu.delivery";
+
 const DELIVERY_OPTIONS = [
   {
     id: "store",
@@ -27,6 +29,129 @@ const DELIVERY_OPTIONS = [
 export default function DeliveryPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(DELIVERY_OPTIONS[0].id);
+  const [form, setForm] = useState({
+    agenciaEnvio: "",
+    sucursalEnvio: "",
+    servicioDelivery: "",
+    zona: "",
+    parroquia: "",
+    sector: "",
+    direccionEntrega: "Retiro en Tienda Física (HolyHoly)",
+  });
+
+  const handleChange = ({ target }) => {
+    setForm((previous) => ({ ...previous, [target.name]: target.value }));
+  };
+
+  const continueToCheckout = () => {
+    const requiredFields = {
+      store: ["direccionEntrega"],
+      shipping: ["agenciaEnvio", "sucursalEnvio"],
+      delivery: ["servicioDelivery", "zona", "parroquia", "sector", "direccionEntrega"],
+    };
+
+    const missingField = requiredFields[selected].find((field) => !form[field].trim());
+    if (missingField) {
+      const firstInvalid = document.querySelector(`[name="${missingField}"]`);
+      firstInvalid?.focus();
+      return;
+    }
+
+    sessionStorage.setItem(
+      DELIVERY_STORAGE_KEY,
+      JSON.stringify({ metodoEntrega: selected, ...form })
+    );
+    navigate("/checkout");
+  };
+
+  const renderDetails = () => {
+    if (selected === "store") {
+      return (
+        <div className="delivery-details">
+          <h2>Retiro en tienda física</h2>
+          <label>
+            Ubicación principal
+            <input
+              name="direccionEntrega"
+              value={form.direccionEntrega}
+              readOnly
+            />
+          </label>
+          <p className="delivery-hint">Av. 20 entre calles 29 y 30, C.C. Barquisimeto Plaza, Estado Lara.</p>
+        </div>
+      );
+    }
+
+    if (selected === "shipping") {
+      return (
+        <div className="delivery-details">
+          <h2>Datos para envío nacional</h2>
+          <div className="delivery-form-grid">
+            <label>
+              Empresa de envío
+              <select name="agenciaEnvio" value={form.agenciaEnvio} onChange={handleChange}>
+                <option value="">Selecciona agencia</option>
+                <option value="MRW">MRW</option>
+                <option value="Zoom">Zoom</option>
+                <option value="Tealca">Tealca</option>
+                <option value="Domesa">Domesa</option>
+              </select>
+            </label>
+            <label>
+              Sucursal o código
+              <input
+                name="sucursalEnvio"
+                value={form.sucursalEnvio}
+                onChange={handleChange}
+                placeholder="Ej. MRW Barquisimeto Centro"
+              />
+            </label>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="delivery-details">
+        <h2>Detalles de entrega express</h2>
+        <div className="delivery-form-grid">
+          <label>
+            Servicio de delivery
+            <input
+              name="servicioDelivery"
+              value={form.servicioDelivery}
+              onChange={handleChange}
+              placeholder="Nombre del repartidor o empresa"
+            />
+          </label>
+          <label>
+            Zona
+            <select name="zona" value={form.zona} onChange={handleChange}>
+              <option value="">Selecciona una zona</option>
+              {['Norte', 'Sur', 'Este', 'Oeste', 'Centro'].map((zona) => <option key={zona} value={zona}>{zona}</option>)}
+            </select>
+          </label>
+          <label>
+            Parroquia
+            <input name="parroquia" value={form.parroquia} onChange={handleChange} placeholder="Ej. Catedral" />
+          </label>
+          <label>
+            Sector / urbanización
+            <input name="sector" value={form.sector} onChange={handleChange} placeholder="Ej. Centro" />
+          </label>
+        </div>
+        <label>
+          Punto de referencia y dirección exacta
+          <input
+            name="direccionEntrega"
+            value={form.direccionEntrega}
+            onChange={handleChange}
+            placeholder="Av. Lara con Av. Los Leones, edificio, piso y apartamento"
+          />
+        </label>
+      </div>
+    );
+  };
 
   return (
     <main className="cart-flow-page">
@@ -55,12 +180,14 @@ export default function DeliveryPage() {
           ))}
         </div>
 
+        {renderDetails()}
+
         <div className="cart-flow-actions">
           <button type="button" className="cart-flow-back-btn" onClick={() => navigate("/cart")}>
             ← Regresar al carrito
           </button>
 
-          <button type="button" className="cart-flow-primary" onClick={() => navigate("/checkout")}>
+          <button type="button" className="cart-flow-primary" onClick={continueToCheckout}>
             Continuar al Pago →
           </button>
         </div>

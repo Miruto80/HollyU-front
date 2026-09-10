@@ -306,6 +306,60 @@
   font-size: 0.92rem;
 }
 
+.delivery-details {
+  margin-top: 1.25rem;
+  padding: 1.4rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(34, 34, 34, 0.08);
+  border-radius: 16px;
+}
+
+.delivery-details h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #202020;
+}
+
+.delivery-details label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #333;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.delivery-details input,
+.delivery-details select {
+  width: 100%;
+  border: 1px solid #d7d7d7;
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  font-weight: 400;
+}
+
+.delivery-details input:focus,
+.delivery-details select:focus {
+  outline: 2px solid rgba(255, 87, 154, 0.3);
+  border-color: #ff579a;
+}
+
+.delivery-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.delivery-hint {
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 0.82rem;
+}
+
 .cart-flow-actions {
   display: flex;
   justify-content: space-between;
@@ -347,6 +401,10 @@
   }
 
   .delivery-options {
+    grid-template-columns: 1fr;
+  }
+
+  .delivery-form-grid {
     grid-template-columns: 1fr;
   }
 }
