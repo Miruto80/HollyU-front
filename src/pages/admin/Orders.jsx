@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import api from "../../services/api";
-import { notifySuccess, notifyError } from "../../utils/Tostify";
+import { notifySuccess } from "../../utils/Tostify";
 import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
 import OrderModal from "../../components/admin/OrderModal";
@@ -67,6 +67,26 @@ export default function Orders() {
     }
   };
 
+  const handleAdvance = async (id) => {
+    const ok = await confirmarAccion({
+      titulo: "¿Cambiar el estado de entrega?",
+      texto: "El pedido avanzará al siguiente estado",
+      icon: "question"
+    });
+    if (!ok) return;
+
+    try {
+      const { data: pedidoActualizado } = await api.patch(`/pedidos/${id}/avanzar-estado`);
+      alertaExito(
+        "Estado actualizado",
+        `El pedido ahora está: ${pedidoActualizado.Estados_pedido?.nombre ?? "actualizado"}`
+      );
+      refetch();
+    } catch {
+      alertaError("Error", "No se pudo cambiar el estado de entrega");
+    }
+  };
+
   const columns = [
     { title: "ID", data: "id" },
     {
@@ -79,16 +99,14 @@ export default function Orders() {
       data: null,
       render: (d) => {
         const estadoPago = d.Pagos?.[0]?.Estados_pago?.nombre;
+        const estadoPedido = d.Estados_pedido?.nombre;
         if (estadoPago === "Pendiente de verificación") {
           return '<span class="badge bg-warning text-dark">VERIFICAR PAGO</span>';
-        }
-        if (estadoPago === "Verificado") {
-          return '<span class="badge bg-success">PAGO VERIFICADO</span>';
         }
         if (estadoPago === "Rechazado") {
           return '<span class="badge bg-danger">PAGO RECHAZADO</span>';
         }
-        return `<span class="badge bg-secondary">${d.Estados_pedido?.nombre ?? "-"}</span>`;
+        return `<span class="badge ${estadoPago === "Verificado" ? "bg-primary" : "bg-secondary"}">${estadoPedido ?? "-"}</span>`;
       }
     },
     {
@@ -112,6 +130,7 @@ export default function Orders() {
       orderable: false,
       render: (_, __, d) => {
         const estadoPago = d.Pagos?.[0]?.Estados_pago?.nombre;
+        const estadoPedido = d.Estados_pedido?.nombre;
         const accionesPago = estadoPago === "Pendiente de verificación"
           ? `
         <button class="btn btn-sm btn-success btn-confirmar" data-id="${d.id}" title="Confirmar pago">
@@ -126,6 +145,11 @@ export default function Orders() {
         <button class="btn btn-sm btn-info text-white btn-ver-pedidos" data-id="${d.id}" title="Ver detalle">
           Ver
         </button>
+        ${estadoPago === "Verificado" && ["En producción", "Listo para entrega"].includes(estadoPedido)
+          ? `<button class="btn btn-sm btn-primary btn-avanzar" data-id="${d.id}" title="Cambiar estado de entrega">
+          ${estadoPedido === "En producción" ? "Listo para entrega" : "Entregado"}
+        </button>`
+          : ""}
         ${accionesPago}
       `;
       }
@@ -144,6 +168,7 @@ export default function Orders() {
         onView={handleView}
         onConfirm={handleConfirm}
         onReject={handleReject}
+        onAvanzar={handleAdvance}
         options={{
           language: {
             search: "Buscador:",
