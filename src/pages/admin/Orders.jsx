@@ -92,9 +92,9 @@ export default function Orders() {
       }
     },
     {
-      title: "Total",
-      data: "total_bs",
-      render: (val) => `${Number(val).toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs`
+      title: "Total ($)",
+      data: "total",
+      render: (val) => `$${Number(val || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
     },
     {
       title: "Referencia",

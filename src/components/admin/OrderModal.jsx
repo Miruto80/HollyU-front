@@ -74,6 +74,7 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                           )}
                         </div>
                       ))}
+                      <p className="mb-0"><strong>Total pagado:</strong> {Number(pedido.total_bs || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs</p>
                     </div>
                   </div>
                 </div>
@@ -86,30 +87,48 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                   </h2>
                   <div id="detalleVenta" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
                     <div className="accordion-body">
-                      {pedido.Detalle_pedidos?.map(item => (
-                        <div key={item.id} className="d-flex justify-content-between border-bottom py-2">
-                          <div>
-                            <strong>{item.Producto?.nombre}</strong>
-                            <div className="text-muted small">
-                              {item.Modelo?.nombre} · {item.Tipos_tela?.nombre} · Talla {item.Talla?.nombre}
-                            </div>
-                          </div>
-                          <div className="text-end">
-                            {item.cantidad} × ${Number(item.precio).toLocaleString()}
-                          </div>
-                        </div>
-                      ))}
+                      <div className="table-responsive">
+                        <table className="table table-sm align-middle">
+                          <thead>
+                            <tr>
+                              <th>Producto</th>
+                              <th className="text-end">Cantidad</th>
+                              <th className="text-end">Precio ($)</th>
+                              <th className="text-end">Subtotal ($)</th>
+                              <th className="text-end">Descuento ($)</th>
+                              <th className="text-end">Total ($)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {pedido.Detalle_pedidos?.map(item => (
+                              <tr key={item.id}>
+                                <td>
+                                  <strong>{item.Producto?.nombre}</strong>
+                                  <div className="text-muted small">
+                                    {item.Modelo?.nombre} · {item.Tipos_tela?.nombre} · Talla {item.Talla?.nombre}
+                                  </div>
+                                </td>
+                                <td className="text-end">{item.cantidad}</td>
+                                <td className="text-end">${Number(item.precio || 0).toLocaleString()}</td>
+                                <td className="text-end">${(Number(item.cantidad || 0) * Number(item.precio || 0)).toLocaleString()}</td>
+                                <td className="text-end">${Number(item.descuento || 0).toLocaleString()}</td>
+                                <td className="text-end">${Math.max(0, Number(item.cantidad || 0) * Number(item.precio || 0) - Number(item.descuento || 0)).toLocaleString()}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                       <div className="d-flex justify-content-between mt-3">
                         <strong>Subtotal:</strong>
-                        <strong>${Number(pedido.subtotal).toLocaleString()}</strong>
+                        <strong>${Number(pedido.subtotal || 0).toLocaleString()}</strong>
+                      </div>
+                      <div className="d-flex justify-content-between text-danger">
+                        <strong>Descuento aplicado:</strong>
+                        <strong>-${Number(pedido.descuento || 0).toLocaleString()}</strong>
                       </div>
                       <div className="d-flex justify-content-between">
                         <strong>Total:</strong>
-                        <strong>${Number(pedido.total).toLocaleString()}</strong>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <strong>Total Bs:</strong>
-                        <strong>{Number(pedido.total_bs).toLocaleString()} Bs</strong>
+                        <strong>${Number(pedido.total || 0).toLocaleString()}</strong>
                       </div>
                     </div>
                   </div>
