@@ -15,22 +15,35 @@ export default function DashboardCards() {
     const { data: pagosPendientes = [] } = useGetFetch(`/pagos?estado_pago_id=${ESTADO_PAGO_PENDIENTE}`);
     const { data: producciones = [], loading: loadingProducciones, error: errorProducciones } = useGetFetch("/producciones");
 
+    const pedidosVerificados = pedidos.filter((pedido) =>
+        pedido.Pagos?.some((pago) => pago.Estados_pago?.nombre === "Verificado")
+    );
+    const ventasWebVerificadas = pedidosVerificados.reduce(
+        (total, pedido) => total + Number(pedido.total || 0),
+        0
+    );
+    const produccionesActivas = producciones.filter(
+        (produccion) => produccion.Estados_produccion?.nombre !== "Terminado"
+    );
+
     const cards = [
         {
-            title: "Ventas del mes",
-            value: "$ 1.250",
+            title: "Ventas web",
+            value: loading ? "..." : error
+                ? "-"
+                : `$ ${ventasWebVerificadas.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
             icon: faDollarSign,
             color: "#17195A"
         },
         {
             title: "Pedidos",
-            value: loading ? "..." : error ? "-" : String(pedidos.length),
+            value: loading ? "..." : error ? "-" : String(pedidosVerificados.length),
             icon: faClipboardList,
             color: "#E5B83F"
         },
         {
             title: "En Producción",
-            value: loadingProducciones ? "..." : errorProducciones ? "-" : String(producciones.length),
+            value: loadingProducciones ? "..." : errorProducciones ? "-" : String(produccionesActivas.length),
             icon: faShirt,
             color: "#3F51B5"
         },

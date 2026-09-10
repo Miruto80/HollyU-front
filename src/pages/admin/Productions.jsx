@@ -65,10 +65,10 @@ export default function Productions() {
     },
     {
       title: "Acción",
-      data: "id",
+      data: null,
       orderable: false,
-      render: (id) => `
-        <button class="btn btn-sm btn-primary btn-avanzar" data-id="${id}">
+      render: (_, __, d) => d.Estados_produccion?.nombre === "Terminado" ? "" : `
+        <button class="btn btn-sm btn-primary btn-avanzar" data-id="${d.id}">
           Avanzar →
         </button>
       `
