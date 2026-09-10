@@ -77,7 +77,7 @@ export default function DeliveryPage() {
               readOnly
             />
           </label>
-          <p className="delivery-hint">Av. 20 entre calles 29 y 30, C.C. Barquisimeto Plaza, Estado Lara.</p>
+          <p className="delivery-hint">Carrera 17 con calle 11 exactamente frente a Ascardio! Barquisimeto- Edo- Lara.</p>
         </div>
       );
     }
@@ -116,13 +116,16 @@ export default function DeliveryPage() {
         <h2>Detalles de entrega express</h2>
         <div className="delivery-form-grid">
           <label>
-            Servicio de delivery
-            <input
+            Tipo de delivery
+            <select
               name="servicioDelivery"
               value={form.servicioDelivery}
               onChange={handleChange}
-              placeholder="Nombre del repartidor o empresa"
-            />
+            >
+              <option value="">Selecciona una opción</option>
+              <option value="Delivery de la tienda">Delivery de la tienda</option>
+              <option value="Delivery externo">Delivery externo</option>
+            </select>
           </label>
           <label>
             Zona
