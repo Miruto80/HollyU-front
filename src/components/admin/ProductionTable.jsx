@@ -1,105 +1,62 @@
-const pedidos = [
-
-    {
-        id: 1001,
-        cliente: "Hospital Central",
-        estado: "Corte",
-        entrega: "20 Jul"
-    },
-
-    {
-        id: 1002,
-        cliente: "Colegio San José",
-        estado: "Costura",
-        entrega: "21 Jul"
-    },
-
-    {
-        id: 1003,
-        cliente: "María Pérez",
-        estado: "Bordado",
-        entrega: "22 Jul"
-    },
-
-    {
-        id: 1004,
-        cliente: "Clínica Norte",
-        estado: "Empaque",
-        entrega: "23 Jul"
-    }
-
-];
+import { useGetFetch } from "../../hooks/useGetFetch";
 
 export default function ProductionTable() {
+    const { data: producciones = [], loading, error } = useGetFetch("/producciones");
+    const pedidosEnProduccion = producciones
+        .filter((produccion) => produccion.Estados_produccion?.nombre !== "Terminado")
+        .slice(0, 5);
 
     return (
-
         <div className="card dashboard-table">
-
             <div className="card-body">
-
                 <h5>
-
                     Pedidos en Producción
-
                 </h5>
-
                 <table className="table">
-
                     <thead>
-
                         <tr>
-
                             <th>Pedido</th>
-
                             <th>Cliente</th>
-
                             <th>Estado</th>
-
                             <th>Entrega</th>
-
                         </tr>
-
                     </thead>
-
                     <tbody>
-
-                        {
-
-                            pedidos.map(pedido => (
-
-                                <tr key={pedido.id}>
-
-                                    <td>#{pedido.id}</td>
-
-                                    <td>{pedido.cliente}</td>
-
-                                    <td>
-
-                                        <span className="badge bg-warning text-dark">
-
-                                            {pedido.estado}
-
-                                        </span>
-
-                                    </td>
-
-                                    <td>{pedido.entrega}</td>
-
-                                </tr>
-
-                            ))
-
-                        }
-
+                        {loading ? (
+                            <tr>
+                                <td colSpan="4">Cargando...</td>
+                            </tr>
+                        ) : error ? (
+                            <tr>
+                                <td colSpan="4">No se pudieron cargar los pedidos</td>
+                            </tr>
+                        ) : pedidosEnProduccion.length === 0 ? (
+                            <tr>
+                                <td colSpan="4">No hay pedidos en producción</td>
+                            </tr>
+                        ) : pedidosEnProduccion.map((produccion) => (
+                            <tr key={produccion.id}>
+                                <td>#{produccion.Pedido?.id ?? "-"}</td>
+                                <td>
+                                    {produccion.Pedido?.Cliente
+                                        ? `${produccion.Pedido.Cliente.nombres} ${produccion.Pedido.Cliente.apellidos ?? ""}`
+                                        : "-"}
+                                </td>
+                                <td>
+                                    <span className="badge bg-warning text-dark">
+                                        {produccion.Estados_produccion?.nombre ?? "-"}
+                                    </span>
+                                </td>
+                                <td>
+                                    {produccion.Pedido?.fecha_entrega_estimada
+                                        ? new Date(produccion.Pedido.fecha_entrega_estimada).toLocaleDateString()
+                                        : "-"}
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
-
     );
-
-};
+}
