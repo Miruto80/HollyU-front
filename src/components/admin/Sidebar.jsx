@@ -113,6 +113,12 @@ export default function Sidebar({ isOpen, onClose }) {
                     text="Personalizaciones"
                 />
 
+                <SidebarItem
+                    to="/admin/ventas"
+                    icon={faMoneyBillWave}
+                    text="Ventas"
+                />
+
             </div>
 
             <div className="sidebar-footer">
