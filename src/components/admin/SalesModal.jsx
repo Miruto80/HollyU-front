@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { usePostFetch } from "../../hooks/usePostFetch";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
-import ClientePaso from "./ClientePaso";
-import ProductosPaso from "./ProductosPaso";
-import PagoPaso from "./PagoPaso";
+import ClientePaso from "../sale/ClientePaso";
+import ProductosPaso from "../sale/ProductosPaso";
+import PagoPaso from "../sale/PagoPaso";
 
 const PASOS = ["Cliente", "Productos", "Pago"];
 
