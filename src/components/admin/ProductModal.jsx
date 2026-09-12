@@ -19,7 +19,7 @@ export default function ProductoModal({ show, onClose, onCreated }) {
     descripcion: "",
     categoria_id: "",
     genero_id: "",
-    tipo_bota_id: "",
+    tipo_bota_ids: [],
     precio: "",
     precio_mayor: "",
     stock: 0,
@@ -78,9 +78,7 @@ const [imagenes, setImagenes] = useState([]);
     formData.append("descripcion", form.descripcion);
     formData.append("categoria_id", form.categoria_id);
     formData.append("genero_id", form.genero_id);
-    if (form.tipo_bota_id) {
-      formData.append("tipo_bota_id", form.tipo_bota_id);
-    }
+    formData.append("tipo_bota_ids", JSON.stringify(form.tipo_bota_ids));
     formData.append("precio", form.precio);
     formData.append("precio_mayor", form.precio_mayor);
     formData.append("stock", form.stock);
@@ -155,18 +153,24 @@ const [imagenes, setImagenes] = useState([]);
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Tipo de bota (opcional)</label>
-                  <select
-                    name="tipo_bota_id"
-                    className="form-select"
-                    value={form.tipo_bota_id}
-                    onChange={handleChange}
-                  >
-                    <option value="">Sin tipo de bota</option>
+                  <label className="form-label">Tipos de bota (opcional)</label>
+                  <div className="d-flex gap-2 flex-wrap">
                     {tiposBota?.map(tipo => (
-                      <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+                      <button
+                        key={tipo.id}
+                        type="button"
+                        className={`btn btn-sm ${form.tipo_bota_ids.includes(tipo.id) ? "btn-dark" : "btn-outline-dark"}`}
+                        onClick={() => setForm(prev => ({
+                          ...prev,
+                          tipo_bota_ids: prev.tipo_bota_ids.includes(tipo.id)
+                            ? prev.tipo_bota_ids.filter(id => id !== tipo.id)
+                            : [...prev.tipo_bota_ids, tipo.id]
+                        }))}
+                      >
+                        {tipo.nombre}
+                      </button>
                     ))}
-                  </select>
+                  </div>
                 </div>
 
                 <div className="col-md-6">

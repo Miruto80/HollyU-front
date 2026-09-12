@@ -49,7 +49,13 @@ export default function ProductosTable() {
     {
       title: "Bota",
       data: null,
-      render: (data) => data.Tipo_botum?.nombre ?? "-"
+      render: (data) => {
+        const tipos = data.Tipos_bota?.map(tipo => tipo.nombre) ?? [];
+        if (data.Tipo_botum?.nombre && !tipos.includes(data.Tipo_botum.nombre)) {
+          tipos.unshift(data.Tipo_botum.nombre);
+        }
+        return tipos.length ? tipos.join(", ") : "-";
+      }
     },
     {
   title: "Precio",
