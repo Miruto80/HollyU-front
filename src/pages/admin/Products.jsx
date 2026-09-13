@@ -82,6 +82,7 @@ export default function ProductosTable() {
   data: null,
   render: (data) => `$${Number(data.precio).toLocaleString()}`
    },
+   { title: "Stock", data: "stock" },
    {
   title: "Estado",
   data: "estatus",
