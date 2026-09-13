@@ -151,10 +151,11 @@ export default function CartPage() {
                   />
                   <div className="cart-flow-product-meta">
                     <strong>{item.nombre}</strong>
-                    {(item.talla_nombre || item.color_nombre) && (
+                    {(item.talla_nombre || item.color_nombre || item.tipo_bota_nombre) && (
                       <div className="cart-flow-product-details">
                         {item.talla_nombre && <span>Talla: {item.talla_nombre}</span>}
                         {item.color_nombre && <span>Color: {item.color_nombre}</span>}
+                        {item.tipo_bota_nombre && <span>Bota: {item.tipo_bota_nombre}</span>}
                       </div>
                     )}
                     {item.discountLabel && (

@@ -15,6 +15,7 @@ export default function ProductModal({ product, onClose }) {
     const [detalle, setDetalle] = useState(null);
     const [colorSeleccionado, setColorSeleccionado] = useState(null);
     const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
+    const [tipoBotaSeleccionado, setTipoBotaSeleccionado] = useState(null);
     const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
     const [mostrarDatosCliente, setMostrarDatosCliente] = useState(false);
     const [descripcionSolicitud, setDescripcionSolicitud] = useState("");
@@ -38,6 +39,7 @@ export default function ProductModal({ product, onClose }) {
             setDetalle(null);
             setColorSeleccionado(null);
             setTallaSeleccionada(null);
+            setTipoBotaSeleccionado(null);
             setMostrarSolicitud(false);
             setMostrarDatosCliente(false);
             setDescripcionSolicitud("");
@@ -64,10 +66,14 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
             notifyError("Selecciona una talla");
             return;
         }
+        if (detalle.Tipos_bota?.length > 0 && !tipoBotaSeleccionado) {
+            notifyError("Selecciona un tipo de bota");
+            return;
+        }
 
         
         addItem({
-            id: detalle.id,
+            id: `${detalle.id}-${modelo?.id ?? ""}-${colorSeleccionado.color.id}-${tallaSeleccionada.Talla.id}-${tipoBotaSeleccionado?.id ?? ""}`,
             producto_id: detalle.id,
             categoria_id: detalle.categoria_id,
             nombre: detalle.nombre,
@@ -78,12 +84,15 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
             color_id: colorSeleccionado.color.id,
             color_nombre: colorSeleccionado.color.nombre,
             talla_id: tallaSeleccionada.Talla.id,
-            talla_nombre: tallaSeleccionada.Talla.nombre
+            talla_nombre: tallaSeleccionada.Talla.nombre,
+            tipo_bota_id: tipoBotaSeleccionado?.id ?? null,
+            tipo_bota_nombre: tipoBotaSeleccionado?.nombre ?? null
         });
 
         notifySuccess("Producto agregado al carrito");
         setColorSeleccionado(null);
         setTallaSeleccionada(null);
+        setTipoBotaSeleccionado(null);
     };
 
     const handleSolicitarPersonalizado = () => {
@@ -256,6 +265,24 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                                         ))}
                                     </div>
                                 </div>
+
+                                {detalle.Tipos_bota?.length > 0 && (
+                                    <div className="mt-4">
+                                        <h6 className="mb-2">Tipo de bota</h6>
+                                        <div className="d-flex flex-wrap gap-2">
+                                            {detalle.Tipos_bota.map((tipo) => (
+                                                <button
+                                                    key={tipo.id}
+                                                    type="button"
+                                                    className={`btn ${tipoBotaSeleccionado?.id === tipo.id ? "btn-dark" : "btn-outline-dark"}`}
+                                                    onClick={() => setTipoBotaSeleccionado(tipo)}
+                                                >
+                                                    {tipo.nombre}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <button
                                     type="button"

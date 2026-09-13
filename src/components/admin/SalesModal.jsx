@@ -39,6 +39,7 @@ export default function SalesModal({ show, onClose, onCreated }) {
           tipo_tela_id: i.tipo_tela_id,
           color_id: i.color_id,
           talla_id: i.talla_id,
+          tipo_bota_id: i.tipo_bota_id,
           cantidad: i.cantidad,
           precio: i.precio,
           descuento: 0

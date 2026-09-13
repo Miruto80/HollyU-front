@@ -146,6 +146,8 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                                   <strong>{item.Producto?.nombre}</strong>
                                   <div className="text-muted small">
                                     {item.Modelo?.nombre} · {item.Tipos_tela?.nombre} · Talla {item.Talla?.nombre}
+                                    {(item.Color?.nombre || item.Colore?.nombre) && ` · ${item.Color?.nombre || item.Colore.nombre}`}
+                                    {item.Tipo_botum?.nombre && ` · ${item.Tipo_botum.nombre}`}
                                   </div>
                                 </td>
                                 <td className="text-end">{item.cantidad}</td>

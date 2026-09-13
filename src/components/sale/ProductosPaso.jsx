@@ -14,6 +14,7 @@ export default function ProductosPaso({ items, setItems }) {
   const [telaId, setTelaId] = useState("");
   const [colorId, setColorId] = useState(null);
   const [tallaId, setTallaId] = useState(null);
+  const [tipoBotaId, setTipoBotaId] = useState(null);
   const [cantidad, setCantidad] = useState(1);
 
   const modelo = detalle?.Modelos?.find(m => String(m.id) === String(modeloId));
@@ -25,6 +26,7 @@ export default function ProductosPaso({ items, setItems }) {
     setTelaId("");
     setColorId(null);
     setTallaId(null);
+    setTipoBotaId(null);
     setCantidad(1);
   };
 
@@ -34,6 +36,7 @@ export default function ProductosPaso({ items, setItems }) {
     if (!telaId) { notifyError("Selecciona una tela"); return; }
     if (!colorId) { notifyError("Selecciona un color"); return; }
     if (!tallaId) { notifyError("Selecciona una talla"); return; }
+    if (detalle.Tipos_bota?.length > 0 && !tipoBotaId) { notifyError("Selecciona un tipo de bota"); return; }
     if (!cantidad || cantidad < 1) { notifyError("Cantidad inválida"); return; }
 
     const colorObj = tela.Modelo_telas_colores.find(c => String(c.id) === String(colorId));
@@ -53,6 +56,8 @@ export default function ProductosPaso({ items, setItems }) {
         color_nombre: colorObj.color.nombre,
         talla_id: tallaObj.Talla.id,
         talla_nombre: tallaObj.Talla.nombre,
+        tipo_bota_id: tipoBotaId,
+        tipo_bota_nombre: detalle.Tipos_bota?.find(t => String(t.id) === String(tipoBotaId))?.nombre,
         precio: Number(detalle.precio),
         cantidad: Number(cantidad)
       }
@@ -77,7 +82,7 @@ export default function ProductosPaso({ items, setItems }) {
             value={productoSeleccionadoId}
             onChange={(e) => {
               setProductoSeleccionadoId(e.target.value);
-              setModeloId(""); setTelaId(""); setColorId(null); setTallaId(null);
+              setModeloId(""); setTelaId(""); setColorId(null); setTallaId(null); setTipoBotaId(null);
             }}
           >
             <option value="">Seleccione...</option>
@@ -94,7 +99,7 @@ export default function ProductosPaso({ items, setItems }) {
               <select
                 className="form-select"
                 value={modeloId}
-                onChange={(e) => { setModeloId(e.target.value); setTelaId(""); setColorId(null); setTallaId(null); }}
+                onChange={(e) => { setModeloId(e.target.value); setTelaId(""); setColorId(null); setTallaId(null); setTipoBotaId(null); }}
               >
                 <option value="">Seleccione...</option>
                 {detalle.Modelos?.map(m => (
@@ -157,6 +162,26 @@ export default function ProductosPaso({ items, setItems }) {
                   onClick={() => setTallaId(t.id)}
                 >
                   {t.Talla?.nombre}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {detalle?.Tipos_bota?.length > 0 && (
+        <div className="row g-2 mb-3">
+          <div className="col-12">
+            <label className="form-label">Tipo de bota</label>
+            <div className="d-flex flex-wrap gap-2">
+              {detalle.Tipos_bota.map(tipo => (
+                <button
+                  key={tipo.id}
+                  type="button"
+                  className={`btn btn-sm ${String(tipoBotaId) === String(tipo.id) ? "btn-dark" : "btn-outline-dark"}`}
+                  onClick={() => setTipoBotaId(tipo.id)}
+                >
+                  {tipo.nombre}
                 </button>
               ))}
             </div>

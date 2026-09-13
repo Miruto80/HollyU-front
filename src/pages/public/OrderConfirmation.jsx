@@ -64,6 +64,7 @@ export default function OrderConfirmation() {
                     <p>
                       {detalle.Talla?.nombre && `Talla: ${detalle.Talla.nombre}`}
                       {detalle.Color?.nombre && ` · Color: ${detalle.Color.nombre}`}
+                      {detalle.Tipo_bota?.nombre && ` · Bota: ${detalle.Tipo_bota.nombre}`}
                     </p>
                   </div>
                   <div className="text-end">

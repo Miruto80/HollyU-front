@@ -167,6 +167,7 @@ export default function Checkout() {
         tipo_tela_id: item.tipo_tela_id,
         color_id: item.color_id,
         talla_id: item.talla_id,
+        tipo_bota_id: item.tipo_bota_id,
         cantidad: item.cantidad,
         precio: item.precio,
         descuento: Number(item.discountAmount || 0)
@@ -362,6 +363,9 @@ export default function Checkout() {
                     )}
                     {item.color_nombre && (
                       <p className="mb-0 text-muted small">Color: {item.color_nombre}</p>
+                    )}
+                    {item.tipo_bota_nombre && (
+                      <p className="mb-0 text-muted small">Bota: {item.tipo_bota_nombre}</p>
                     )}
                     <p className="mb-0 text-muted small">
                       Cantidad: {item.cantidad} × ${Number(item.precio).toLocaleString()}
