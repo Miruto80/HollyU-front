@@ -9,6 +9,7 @@ export default function ProductDetailsModal({ productId, onClose }) {
   if (!productId) return null;
 
   const modelos = producto?.Modelos ?? [];
+  const precioMayor = Number(producto?.precio_mayor || 0).toLocaleString();
 
   return (
     <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
@@ -33,7 +34,10 @@ export default function ProductDetailsModal({ productId, onClose }) {
                     <dd className="col-sm-8">{producto.Tipos_bota?.map((tipo) => tipo.nombre).join(", ") || "-"}</dd>
                     <dt className="col-sm-4">Fabricación</dt>
                     <dd className="col-sm-8">{producto.tiempo_fabricacion ?? "-"} días</dd>
+                    <dt className="col-sm-4">Precio al mayor</dt>
+                    <dd className="col-sm-8">${precioMayor}</dd>
                     <dt className="col-sm-4">Personalización</dt>
+                    
                     <dd className="col-sm-8">{producto.permite_personalizacion ? "Sí" : "No"}</dd>
                   </dl>
                 </div>
