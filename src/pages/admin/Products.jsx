@@ -6,12 +6,14 @@ import { usePutFetch } from "../../hooks/usePutFetch";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
 import { SERVER_URL } from "../../services/api";
 import ProductModal from "../../components/admin/ProductModal";
+import ProductDetailsModal from "../../components/admin/ProductDetailsModal";
 import { icon } from "@fortawesome/fontawesome-svg-core";
-import { faPenToSquare, faTrash, faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPenToSquare, faTrash, faWarning } from "@fortawesome/free-solid-svg-icons";
 
 export default function ProductosTable() {
   const [showModal, setShowModal] = useState(false);
   const [productId, setProductId] = useState(null);
+  const [detailProductId, setDetailProductId] = useState(null);
   const { data: productos, loading, error, refetch } = useGetFetch("/productos");
   const handleEdit = (id) => {
     setProductId(id);
@@ -27,6 +29,8 @@ export default function ProductosTable() {
     setShowModal(false);
     setProductId(null);
   };
+
+  const handleView = (id) => setDetailProductId(id);
 
   const { remove, DeleteModal } = useDeleteFetch("/productos");
   const { put: putEstatus } = usePutFetch("/productos");
@@ -92,6 +96,9 @@ export default function ProductosTable() {
    data: "id",
    orderable: false,
    render: (id, type, row) => `
+    <button class="btn btn-sm btn-outline-info btn-ver-producto" data-id="${id}" title="Ver más">
+      ${icon(faEye).html.join("")}
+    </button>
     <button class="btn btn-sm btn-outline-primary btn-editar" data-id="${id}" title="Editar">
       ${icon(faPenToSquare).html.join("")}
     </button>
@@ -132,6 +139,7 @@ export default function ProductosTable() {
         }}
         className="table table-striped table-hover"
         onEdit={handleEdit}
+        onView={handleView}
         onDelete={handleDelete}
         onToggleEstatus={handleToggleEstatus}
       />
@@ -142,6 +150,10 @@ export default function ProductosTable() {
         onClose={handleCloseModal}
         onCreated={refetch}
         onUpdated={refetch}
+      />
+      <ProductDetailsModal
+        productId={detailProductId}
+        onClose={() => setDetailProductId(null)}
       />
       <DeleteModal />
     </div>

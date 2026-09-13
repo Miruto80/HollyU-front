@@ -31,7 +31,7 @@ export default function ReusableDataTable({
     const handleClick = (e) => {
       const editBtn = e.target.closest(".btn-editar");
       const delBtn = e.target.closest(".btn-eliminar");
-      const viewBtn = e.target.closest(".btn-ver-pedidos");
+      const viewBtn = e.target.closest(".btn-ver-pedidos, .btn-ver-producto");
       const confirmBtn = e.target.closest(".btn-confirmar");
       const rejectBtn = e.target.closest(".btn-rechazar");
       const avanzarBtn = e.target.closest(".btn-avanzar");
