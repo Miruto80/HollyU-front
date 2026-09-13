@@ -18,7 +18,8 @@ export default function ReusableDataTable({
   onAvanzar,
   onQuote,
   onProduction,
-  onImagePreview
+  onImagePreview,
+  onToggleEstatus
 }) {
   DataTable.use(DT);
   const containerRef = useRef(null);
@@ -37,6 +38,7 @@ export default function ReusableDataTable({
       const quoteBtn = e.target.closest(".btn-cotizar");
       const productionBtn = e.target.closest(".btn-produccion");
       const imagePreviewBtn = e.target.closest(".btn-image-preview");
+      const toggleEstatusBtn = e.target.closest(".btn-toggle-estatus");
 
       if (editBtn && onEdit) onEdit(editBtn.dataset.id);
       if (delBtn && onDelete) onDelete(delBtn.dataset.id);
@@ -47,11 +49,14 @@ export default function ReusableDataTable({
       if (quoteBtn && onQuote) onQuote(quoteBtn.dataset.id);
       if (productionBtn && onProduction) onProduction(productionBtn.dataset.id);
       if (imagePreviewBtn && onImagePreview) onImagePreview(imagePreviewBtn.dataset.image);
+       if (toggleEstatusBtn && onToggleEstatus) {
+        onToggleEstatus(toggleEstatusBtn.dataset.id, toggleEstatusBtn.dataset.estatus);
+      }
     };
 
     container.addEventListener("click", handleClick);
     return () => container.removeEventListener("click", handleClick);
-  }, [data, onEdit, onDelete, onView, onConfirm, onReject, onAvanzar, onQuote, onProduction, onImagePreview]);
+  }, [data, onEdit, onDelete, onView, onConfirm, onReject, onAvanzar, onQuote, onProduction, onImagePreview, onToggleEstatus]);
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="text-danger">Error al cargar datos.</p>;

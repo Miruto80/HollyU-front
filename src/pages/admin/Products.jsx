@@ -2,8 +2,12 @@ import { useState } from "react";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { useDeleteFetch } from "../../hooks/useDeleteFetch";
+import { usePutFetch } from "../../hooks/usePutFetch";
+import { notifySuccess, notifyError } from "../../utils/Tostify";
 import { SERVER_URL } from "../../services/api";
 import ProductModal from "../../components/admin/ProductModal";
+import { icon } from "@fortawesome/fontawesome-svg-core";
+import { faPenToSquare, faTrash, faWarning } from "@fortawesome/free-solid-svg-icons";
 
 export default function ProductosTable() {
    const [showModal, setShowModal] = useState(false);
@@ -14,6 +18,7 @@ export default function ProductosTable() {
   };
 
   const { remove, DeleteModal } = useDeleteFetch("/productos");
+  const { put: putEstatus } = usePutFetch("/productos");
 
   const handleDelete = async (id) => {
     try {
@@ -21,6 +26,17 @@ export default function ProductosTable() {
       refetch();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleToggleEstatus = async (id, estatusActual) => {
+    const nuevoEstatus = Number(estatusActual) === 1 ? 2 : 1;
+    try {
+      await putEstatus(`${id}/estatus`, { estatus: nuevoEstatus });
+      notifySuccess("Estado actualizado");
+      refetch();
+    } catch {
+      notifyError("No se pudo actualizar el estado");
     }
   };
 
@@ -62,23 +78,31 @@ export default function ProductosTable() {
   data: null,
   render: (data) => `$${Number(data.precio).toLocaleString()}`
    },
-    {
-      title: "Estado",
-      data: "activo",
-      render: (val) =>
-        val
-          ? '<span class="badge bg-success">Activo</span>'
-          : '<span class="badge bg-secondary">Inactivo</span>'
-    },
-    {
-      title: "Acciones",
-      data: "id",
-      orderable: false,
-      render: (id) => `
-        <button class="btn btn-sm btn-outline-primary btn-editar" data-id="${id}">Editar</button>
-        <button class="btn btn-sm btn-outline-danger btn-eliminar" data-id="${id}">Eliminar</button>
-      `
-    }
+   {
+  title: "Estado",
+  data: "estatus",
+  render: (val) => {
+    if (val === 1) return '<span class="badge bg-success">Activo</span>';
+    if (val === 2) return '<span class="badge bg-secondary">Desactivado</span>';
+    return '<span class="badge bg-dark">Eliminado</span>';
+  }
+   },
+  {
+   title: "Acciones",
+   data: "id",
+   orderable: false,
+   render: (id, type, row) => `
+    <button class="btn btn-sm btn-outline-primary btn-editar" data-id="${id}" title="Editar">
+      ${icon(faPenToSquare).html.join("")}
+    </button>
+    <button class="btn btn-sm btn-outline-${row.estatus === 1 ? 'secondary' : 'success'} btn-toggle-estatus" data-id="${id}" data-estatus="${row.estatus}">
+      ${icon(faWarning).html.join("")}
+    </button>
+    <button class="btn btn-sm btn-outline-danger btn-eliminar" data-id="${id}" title="Eliminar">
+      ${icon(faTrash).html.join("")}
+    </button>
+    `
+   }
   ];
 
   if (loading) return <p>Cargando productos...</p>;
@@ -109,6 +133,7 @@ export default function ProductosTable() {
         className="table table-striped table-hover"
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onToggleEstatus={handleToggleEstatus}
       />
 
       <ProductModal
