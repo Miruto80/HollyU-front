@@ -10,11 +10,22 @@ import { icon } from "@fortawesome/fontawesome-svg-core";
 import { faPenToSquare, faTrash, faWarning } from "@fortawesome/free-solid-svg-icons";
 
 export default function ProductosTable() {
-   const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [productId, setProductId] = useState(null);
   const { data: productos, loading, error, refetch } = useGetFetch("/productos");
   const handleEdit = (id) => {
-    console.log("Editar producto", id);
+    setProductId(id);
     setShowModal(true);
+  };
+
+  const handleCreate = () => {
+    setProductId(null);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setProductId(null);
   };
 
   const { remove, DeleteModal } = useDeleteFetch("/productos");
@@ -63,17 +74,6 @@ export default function ProductosTable() {
       render: (data) => data.Genero?.nombre ?? "-"
     },
     {
-      title: "Bota",
-      data: null,
-      render: (data) => {
-        const tipos = data.Tipos_bota?.map(tipo => tipo.nombre) ?? [];
-        if (data.Tipo_botum?.nombre && !tipos.includes(data.Tipo_botum.nombre)) {
-          tipos.unshift(data.Tipo_botum.nombre);
-        }
-        return tipos.length ? tipos.join(", ") : "-";
-      }
-    },
-    {
   title: "Precio",
   data: null,
   render: (data) => `$${Number(data.precio).toLocaleString()}`
@@ -112,7 +112,7 @@ export default function ProductosTable() {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>Productos</h3>
-        <button className="btn btn-dark" onClick={() => setShowModal(true)}>
+        <button className="btn btn-dark" onClick={handleCreate}>
           + Registrar producto
         </button>
       </div>
@@ -138,8 +138,10 @@ export default function ProductosTable() {
 
       <ProductModal
         show={showModal}
-        onClose={() => setShowModal(false)}
+        productId={productId}
+        onClose={handleCloseModal}
         onCreated={refetch}
+        onUpdated={refetch}
       />
       <DeleteModal />
     </div>
