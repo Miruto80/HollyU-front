@@ -72,12 +72,27 @@ export default function Sales() {
       data: null,
       render: (d) => `<span class="badge bg-secondary">${d.Estados_pedido?.nombre ?? "-"}</span>`
     },
-   {
+  {
   title: "Acción",
   data: null,
   orderable: false,
   render: (_, __, d) => {
     const estadoPedido = d.Estados_pedido?.nombre;
+
+    const producciones = d.Producciones || [];
+
+    const produccionTerminada =
+      producciones.length > 0 &&
+      producciones.every(
+        (p) => p.Estados_produccion?.nombre === "Terminado"
+      );
+
+    const puedePasarAListo =
+      estadoPedido === "En producción" &&
+      produccionTerminada;
+
+    const puedePasarAEntregado =
+      estadoPedido === "Listo para entrega";
 
     return `
       <button 
@@ -89,16 +104,18 @@ export default function Sales() {
       </button>
 
       ${
-        ["En producción", "Listo para entrega"].includes(estadoPedido)
+        puedePasarAListo || puedePasarAEntregado
           ? `
             <button 
               class="btn btn-sm btn-primary btn-avanzar" 
               data-id="${d.id}" 
               title="Cambiar estado de entrega"
             >
-              ${estadoPedido === "En producción" 
-                ? "Listo para entrega" 
-                : "Entregado"}
+              ${
+                puedePasarAListo
+                  ? "Listo para entrega"
+                  : "Entregado"
+              }
             </button>
           `
           : ""
