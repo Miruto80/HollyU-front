@@ -131,6 +131,7 @@ export default function Orders() {
       render: (_, __, d) => {
         const estadoPago = d.Pagos?.[0]?.Estados_pago?.nombre;
         const estadoPedido = d.Estados_pedido?.nombre;
+        const esPedidoDeCotizacion = Boolean(d.cotizacion_id);
         const accionesPago = estadoPago === "Pendiente de verificación"
           ? `
         <button class="btn btn-sm btn-success btn-confirmar" data-id="${d.id}" title="Confirmar pago">
@@ -145,7 +146,7 @@ export default function Orders() {
         <button class="btn btn-sm btn-info text-white btn-ver-pedidos" data-id="${d.id}" title="Ver detalle">
           Ver
         </button>
-        ${estadoPago === "Verificado" && ["En producción", "Listo para entrega"].includes(estadoPedido)
+        ${(estadoPago === "Verificado" || esPedidoDeCotizacion) && ["En producción", "Listo para entrega"].includes(estadoPedido)
           ? `<button class="btn btn-sm btn-primary btn-avanzar" data-id="${d.id}" title="Cambiar estado de entrega">
           ${estadoPedido === "En producción" ? "Listo para entrega" : "Entregado"}
         </button>`

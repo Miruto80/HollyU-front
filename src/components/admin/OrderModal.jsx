@@ -19,7 +19,14 @@ export default function OrderModal({ pedidoId, show, onClose }) {
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header" style={{ background: "#f4a896" }}>
-            <h5 className="modal-title text-white">Detalles del Pedido</h5>
+            <h5 className="modal-title text-white">
+              Detalles del Pedido
+              {pedido?.cotizacion_id && (
+                <span className="badge bg-light text-dark ms-2">
+                  Cotización #{pedido.cotizacion_id}
+                </span>
+              )}
+            </h5>
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
 
@@ -61,7 +68,7 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                 <div className="accordion-item">
                   <h2 className="accordion-header">
                     <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pagoEntrega">
-                      💳 Pago y Entrega
+                      💳 Pago
                     </button>
                   </h2>
                   <div id="pagoEntrega" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
