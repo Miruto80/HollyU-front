@@ -125,36 +125,93 @@ export default function Orders() {
       render: (d) => d.Cliente ? `${d.Cliente.nombres} ${d.Cliente.apellidos ?? ""}` : "-"
     },
     {
-      title: "Acción",
-      data: null,
-      orderable: false,
-      render: (_, __, d) => {
-        const estadoPago = d.Pagos?.[0]?.Estados_pago?.nombre;
-        const estadoPedido = d.Estados_pedido?.nombre;
-        const esPedidoDeCotizacion = Boolean(d.cotizacion_id);
-        const accionesPago = estadoPago === "Pendiente de verificación"
-          ? `
-        <button class="btn btn-sm btn-success btn-confirmar" data-id="${d.id}" title="Confirmar pago">
-          ✓
-        </button>
-        <button class="btn btn-sm btn-danger btn-rechazar" data-id="${d.id}" title="Rechazar pago">
-          ✕
-        </button>`
-          : "";
+  title: "Acción",
+  data: null,
+  orderable: false,
+  render: (_, __, d) => {
+    const estadoPago = d.Pagos?.[0]?.Estados_pago?.nombre;
+    const estadoPedido = d.Estados_pedido?.nombre;
+    const esPedidoDeCotizacion = Boolean(d.cotizacion_id);
 
-        return `
-        <button class="btn btn-sm btn-info text-white btn-ver-pedidos" data-id="${d.id}" title="Ver detalle">
-          Ver
+    const producciones = d.Producciones || [];
+
+    const produccionTerminada =
+      producciones.length > 0 &&
+      producciones.every(
+        (produccion) =>
+          produccion.Estados_produccion?.nombre === "Terminado"
+      );
+
+    const accionesPago =
+      estadoPago === "Pendiente de verificación"
+        ? `
+          <button
+            class="btn btn-sm btn-success btn-confirmar"
+            data-id="${d.id}"
+            title="Confirmar pago"
+          >
+            ✓
+          </button>
+
+          <button
+            class="btn btn-sm btn-danger btn-rechazar"
+            data-id="${d.id}"
+            title="Rechazar pago"
+          >
+            ✕
+          </button>
+        `
+        : "";
+
+    let botonAvanzar = "";
+    if (
+      estadoPedido === "En producción" &&
+      produccionTerminada &&
+      (estadoPago === "Verificado" || esPedidoDeCotizacion)
+    ) {
+      botonAvanzar = `
+        <button
+          class="btn btn-sm btn-primary btn-avanzar"
+          data-id="${d.id}"
+          title="Cambiar estado de entrega"
+        >
+          Listo para entrega
         </button>
-        ${(estadoPago === "Verificado" || esPedidoDeCotizacion) && ["En producción", "Listo para entrega"].includes(estadoPedido)
-          ? `<button class="btn btn-sm btn-primary btn-avanzar" data-id="${d.id}" title="Cambiar estado de entrega">
-          ${estadoPedido === "En producción" ? "Listo para entrega" : "Entregado"}
-        </button>`
-          : ""}
-        ${accionesPago}
       `;
-      }
     }
+
+    // LISTO PARA ENTREGA:
+    // Ya puede pasar a Entregado.
+    if (
+      estadoPedido === "Listo para entrega" &&
+      (estadoPago === "Verificado" || esPedidoDeCotizacion)
+    ) {
+      botonAvanzar = `
+        <button
+          class="btn btn-sm btn-primary btn-avanzar"
+          data-id="${d.id}"
+          title="Marcar como entregado"
+        >
+          Entregado
+        </button>
+      `;
+    }
+
+    return `
+      <button
+        class="btn btn-sm btn-info text-white btn-ver-pedidos"
+        data-id="${d.id}"
+        title="Ver detalle"
+      >
+        Ver
+      </button>
+
+      ${botonAvanzar}
+
+      ${accionesPago}
+    `;
+  }
+}
   ];
 
   return (
