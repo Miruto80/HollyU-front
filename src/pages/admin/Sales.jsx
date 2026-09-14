@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
+import api from "../../services/api";
 import SalesModal from "../../components/admin/SalesModal";
 import OrderModal from "../../components/admin/OrderModal";
 
@@ -18,6 +20,26 @@ export default function Sales() {
   const handleView = (id) => {
     setPedidoSeleccionadoId(id);
     setShowDetalle(true);
+  };
+
+  const handleAdvance = async (id) => {
+    const ok = await confirmarAccion({
+      titulo: "¿Cambiar el estado de entrega?",
+      texto: "El pedido avanzará al siguiente estado",
+      icon: "question"
+    });
+    if (!ok) return;
+
+    try {
+      const { data: pedidoActualizado } = await api.patch(`/pedidos/${id}/avanzar-estado`);
+      alertaExito(
+        "Estado actualizado",
+        `El pedido ahora está: ${pedidoActualizado.Estados_pedido?.nombre ?? "actualizado"}`
+      );
+      refetch();
+    } catch {
+      alertaError("Error", "No se pudo cambiar el estado de entrega");
+    }
   };
 
   const columns = [
@@ -50,16 +72,40 @@ export default function Sales() {
       data: null,
       render: (d) => `<span class="badge bg-secondary">${d.Estados_pedido?.nombre ?? "-"}</span>`
     },
-    {
-      title: "Acción",
-      data: "id",
-      orderable: false,
-      render: (id) => `
-        <button class="btn btn-sm btn-info text-white btn-ver-pedidos" data-id="${id}">
-          Ver
-        </button>
-      `
-    }
+   {
+  title: "Acción",
+  data: null,
+  orderable: false,
+  render: (_, __, d) => {
+    const estadoPedido = d.Estados_pedido?.nombre;
+
+    return `
+      <button 
+        class="btn btn-sm btn-info text-white btn-ver-pedidos" 
+        data-id="${d.id}"
+        title="Ver detalle"
+      >
+        Ver
+      </button>
+
+      ${
+        ["En producción", "Listo para entrega"].includes(estadoPedido)
+          ? `
+            <button 
+              class="btn btn-sm btn-primary btn-avanzar" 
+              data-id="${d.id}" 
+              title="Cambiar estado de entrega"
+            >
+              ${estadoPedido === "En producción" 
+                ? "Listo para entrega" 
+                : "Entregado"}
+            </button>
+          `
+          : ""
+      }
+    `;
+  }
+}
   ];
 
   return (
@@ -77,6 +123,7 @@ export default function Sales() {
         loading={loading}
         error={error}
         onView={handleView}
+        onAvanzar={handleAdvance}
         options={{
           language: {
             search: "Buscar:",

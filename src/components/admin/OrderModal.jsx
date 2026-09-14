@@ -71,25 +71,44 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                       💳 Pago
                     </button>
                   </h2>
-                  <div id="pagoEntrega" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
-                    <div className="accordion-body">
-                      {pedido.Pagos?.map(pago => (
-                        <div key={pago.id}>
-                          <p><strong>Método:</strong> {pago.Metodos_pago?.nombre}</p>
-                          <p><strong>Referencia:</strong> {pago.referencia}</p>
-                          <p><strong>Banco origen:</strong> {pago.banco_origen} → <strong>destino:</strong> {pago.banco_destino}</p>
-                          <p><strong>Teléfono emisor:</strong> {pago.telefono_emisor}</p>
-                          <p><strong>Estado:</strong> {pago.Estados_pago?.nombre}</p>
-                          {pago.comprobante && (
-                            <a href={`${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "")}${pago.comprobante}`} target="_blank" rel="noreferrer">
-                              Ver comprobante
-                            </a>
-                          )}
-                        </div>
-                      ))}
-                      <p className="mb-0"><strong>Total pagado:</strong> {Number(pedido.total_bs || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs</p>
-                    </div>
-                  </div>
+                 <div id="pagoEntrega" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
+  <div className="accordion-body">
+    {pedido.Pagos?.map(pago => {
+      const esPagoMovil = pago.Metodos_pago?.nombre === "Pago móvil";
+      const esTransferencia = pago.Metodos_pago?.nombre === "Transferencia";
+
+      return (
+        <div key={pago.id} className="mb-3 pb-3 border-bottom">
+          <p><strong>Método:</strong> {pago.Metodos_pago?.nombre}</p>
+          <p><strong>Monto:</strong> ${Number(pago.monto || 0).toLocaleString()}</p>
+
+          {pago.referencia && (
+            <p><strong>Referencia:</strong> {pago.referencia}</p>
+          )}
+
+          {(esPagoMovil || esTransferencia) && (pago.banco_origen || pago.banco_destino) && (
+            <p>
+              <strong>Banco origen:</strong> {pago.banco_origen || "-"} → <strong>destino:</strong> {pago.banco_destino || "-"}
+            </p>
+          )}
+
+          {esPagoMovil && pago.telefono_emisor && (
+            <p><strong>Teléfono emisor:</strong> {pago.telefono_emisor}</p>
+          )}
+
+          <p><strong>Estado:</strong> {pago.Estados_pago?.nombre}</p>
+
+          {pago.comprobante && (
+            <a href={`${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "")}${pago.comprobante}`} target="_blank" rel="noreferrer">
+              Ver comprobante
+            </a>
+          )}
+        </div>
+      );
+    })}
+    <p className="mb-0"><strong>Total pagado:</strong> {Number(pedido.total_bs || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs</p>
+  </div>
+</div>
                 </div>
 
                 <div className="accordion-item">
