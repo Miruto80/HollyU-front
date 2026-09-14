@@ -180,8 +180,6 @@ export default function Orders() {
       `;
     }
 
-    // LISTO PARA ENTREGA:
-    // Ya puede pasar a Entregado.
     if (
       estadoPedido === "Listo para entrega" &&
       (estadoPago === "Verificado" || esPedidoDeCotizacion)
