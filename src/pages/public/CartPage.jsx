@@ -3,27 +3,22 @@ import { useCart } from "../../hooks/useCart";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import StepIndicator from "../../components/home/StepIndicator";
 import { SERVER_URL } from "../../services/api";
+import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
 import "../../assets/css/CartFlow.css";
 
 const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
 
-const getDiscountForItem = (item, descuentos) => {
+const getDiscountForItem = (item, descuentos, unitPrice) => {
   const now = new Date();
 
   const aplicables = (descuentos || []).filter((descuento) => {
     if (!descuento.activo) return false;
 
-    const fechaInicio = descuento.fecha_inicio
-      ? new Date(descuento.fecha_inicio)
-      : null;
-
-    const fechaFin = descuento.fecha_fin
-      ? new Date(descuento.fecha_fin)
-      : null;
+    const fechaInicio = descuento.fecha_inicio ? new Date(descuento.fecha_inicio) : null;
+    const fechaFin = descuento.fecha_fin ? new Date(descuento.fecha_fin) : null;
 
     if (fechaInicio && now < fechaInicio) return false;
     if (fechaFin && now > fechaFin) return false;
-
 
     const categoryMatch =
       descuento.categoria_id !== null &&
@@ -32,62 +27,54 @@ const getDiscountForItem = (item, descuentos) => {
       item.categoria_id !== undefined &&
       Number(descuento.categoria_id) === Number(item.categoria_id);
 
-    
     const productMatch =
       Array.isArray(descuento.Productos) &&
       descuento.Productos.some(
-        (producto) =>
-          Number(producto.id) === Number(item.producto_id)
+        (producto) => Number(producto.id) === Number(item.producto_id)
       );
 
     return categoryMatch || productMatch;
   });
 
   if (aplicables.length === 0) {
-    return {
-      discountAmount: 0,
-      discountLabel: ""
-    };
+    return { discountAmount: 0, discountLabel: "" };
   }
 
   const descuento = aplicables[0];
-
-  const basePrice = Number(item.precio || 0);
   const quantity = Number(item.cantidad || 1);
   const valor = Number(descuento.valor || 0);
 
   if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
-    const descuentoUnitario = basePrice * (valor / 100);
-
+    const descuentoUnitario = unitPrice * (valor / 100);
     return {
       discountAmount: descuentoUnitario * quantity,
       discountLabel: `${valor.toFixed(2)}% de descuento`
     };
   }
 
-  const discountAmount = valor * quantity;
-
   return {
-    discountAmount,
+    discountAmount: valor * quantity,
     discountLabel: `$${valor.toLocaleString()} de descuento`
   };
 };
 
 export default function CartPage() {
   const navigate = useNavigate();
-  const { items, totalPrecio, updateCantidad, removeItem } = useCart();
+  const { items, updateCantidad, removeItem } = useCart();
   const { data: descuentos = [] } = useGetFetch("/descuentos");
 
   const cantidadTotal = items.reduce((sum, item) => sum + item.cantidad, 0);
 
   const itemsWithDiscount = items.map((item) => {
-    const discountInfo = getDiscountForItem(item, descuentos);
-    const unitPrice = Number(item.precio || 0);
+    const unitPrice = getUnitPrice(item);
+    const discountInfo = getDiscountForItem(item, descuentos, unitPrice);
     const subtotal = item.cantidad * unitPrice;
     const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
 
     return {
       ...item,
+      unitPrice,
+      esMayor: esPrecioMayor(item),
       subtotal,
       discountAmount: discountInfo.discountAmount,
       discountedSubtotal,
@@ -158,13 +145,16 @@ export default function CartPage() {
                         {item.tipo_bota_nombre && <span>Bota: {item.tipo_bota_nombre}</span>}
                       </div>
                     )}
+                    {item.esMayor && (
+                      <span className="cart-flow-discount-tag">Precio al mayor aplicado</span>
+                    )}
                     {item.discountLabel && (
                       <span className="cart-flow-discount-tag">{item.discountLabel}</span>
                     )}
                   </div>
                 </div>
 
-                <span className="cart-flow-price">{formatMoney(item.precio)}</span>
+                <span className="cart-flow-price">{formatMoney(item.unitPrice)}</span>
 
                 <div className="cart-flow-qty">
                   <button type="button" onClick={() => updateCantidad(item.id, item.cantidad - 1)}>-</button>
@@ -203,7 +193,7 @@ export default function CartPage() {
 
             <div className="cart-flow-total-row">
               <span>Total a pagar:</span>
-              <strong>{formatMoney(totalAfterDiscount || totalPrecio)}</strong>
+              <strong>{formatMoney(totalAfterDiscount)}</strong>
             </div>
 
             <button type="button" className="cart-flow-primary" onClick={() => navigate("/entrega")}>
