@@ -15,8 +15,13 @@ export default function SalesModal({ show, onClose, onCreated }) {
 
   const { post, loading } = usePostFetch("/pedidos/presencial");
 
-  const totalVenta = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
-
+const totalVenta = items.reduce(
+  (sum, i) =>
+    sum +
+    (Number(i.precio || 0) * Number(i.cantidad || 0)) -
+    Number(i.descuento || 0),
+  0
+);
   const reset = () => {
     setPaso(0);
     setCliente(null);
@@ -42,7 +47,7 @@ export default function SalesModal({ show, onClose, onCreated }) {
           tipo_bota_id: i.tipo_bota_id,
           cantidad: i.cantidad,
           precio: i.precio,
-          descuento: 0
+          descuento: i.descuento || 0
         })),
         pagos: pagos.map(p => ({
           metodo_pago_id: p.metodo_pago_id,
