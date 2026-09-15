@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../../hooks/useCart";
 import { SERVER_URL } from "../../services/api";
 import "../../assets/css/CartDropdown.css";
@@ -20,14 +20,26 @@ export default function CartDropdown({ show, onClose }) {
       style={{ visibility: show ? "visible" : "hidden" }}
       tabIndex="-1"
     >
-      <div className="offcanvas-header">
-        <h5>Tu carrito</h5>
-        <button type="button" className="btn-close" onClick={onClose}></button>
+      <div className="offcanvas-header justify-content-between align-items-center">
+        <div className="d-flex align-items-center gap-2">
+          <FontAwesomeIcon icon={faCartShopping} />
+          <h5 className="m-0">Tu carrito</h5>
+        </div>
+        
+        <button 
+          type="button" 
+          className="btn-close btn-close-white" 
+          onClick={onClose}
+          aria-label="Close"
+        ></button>
       </div>
 
       <div className="offcanvas-body d-flex flex-column">
         {items.length === 0 ? (
-          <p className="text-muted">Tu carrito está vacío.</p>
+         <div className="offcanvas-body d-flex flex-column align-items-center justify-content-center text-center">
+          <FontAwesomeIcon icon={faCartShopping} className="cart-empty-icon mb-3" />
+          <p className="text-muted fs-5 mb-0">Tu carrito está vacío.</p>
+        </div>
         ) : (
           <>
             <div className="flex-grow-1">

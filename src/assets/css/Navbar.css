@@ -114,7 +114,7 @@
 
   color: #ffffff;
 
-  font-size: 22px;
+  font-size: 25px;
 
   text-decoration: none;
 
@@ -129,23 +129,19 @@
 
 .cart-count {
   position: absolute;
-
-  top: -8px;
-  right: -10px;
+  top: 0px;
+  right: 4px;
 
   background-color: #e5b83f;
-
   color: #080a1c;
+  font-size: 11px;
 
-  font-size: 10px;
-
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 
   border-radius: 50%;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 

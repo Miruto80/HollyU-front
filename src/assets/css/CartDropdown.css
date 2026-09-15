@@ -3,5 +3,17 @@
 }
 
 .offcanvas-backdrop {
-  z-index: 9999 !important;
+  z-index: 9999 !important; 
+}
+
+
+.offcanvas-header{
+  background: #10123d;
+  color: #fff;
+}
+
+.cart-empty-icon {
+  font-size: 48px;
+  color: #6c757d; 
+  opacity: 0.6;
 }
