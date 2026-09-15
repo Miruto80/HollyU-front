@@ -32,7 +32,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="navbar-brand">
             <img
-              src="/src/assets/img/Logo.jpeg"
+              src="/src/assets/img/Logo.png"
               alt="HollyU Uniformes"
               className="hollyu-logo-image"
             />

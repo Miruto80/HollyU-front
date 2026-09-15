@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck} from "@fortawesome/free-solid-svg-icons";
 import "../../assets/css/About.css";
 import aboutImg from "../../assets/img/IMG_9567.webp";
 
@@ -104,11 +106,17 @@ export default function About() {
                 <h3>Valores</h3>
 
                 <ul>
-                  <li>✔ Calidad</li>
-                  <li>✔ Innovación</li>
-                  <li>✔ Compromiso</li>
-                  <li>✔ Puntualidad</li>
-                  <li>✔ Atención personalizada</li>
+                  <li className="d-flex align-items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Calidad </li>
+                  <li className="d-flex align-items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Innovación </li>
+                  <li className="d-flex align-items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Compromiso </li>
+                  <li className="d-flex align-items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Puntualidad </li>
+                  <li className="d-flex align-items-center gap-2">
+                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Atención personalizada </li>
+                 
                 </ul>
 
               </div>
