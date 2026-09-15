@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
 import { usePutFetch } from "../../hooks/usePutFetch";
-import { SERVER_URL } from "../../services/api";
+import api, { SERVER_URL } from "../../services/api";
+import { notifySuccess, notifyError } from "../../utils/Tostify";
+import { confirmarAccion } from "../../utils/Alert";
 import ImageUploaderMultiple from "../ImageUploaderMultiple";
 
 const FORM_INICIAL = {
@@ -38,7 +40,7 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
   const { data: colores } = useGetFetch("/colores");
   const { data: tallas } = useGetFetch("/tallas");
 
-  const { data: productoExistente, loading: cargandoProducto } = useGetFetch(
+  const { data: productoExistente, loading: cargandoProducto, refetch: refetchProducto } = useGetFetch(
     show && productId ? `/productos/${productId}` : null,
     [productId, show]
   );
@@ -107,6 +109,49 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
       };
     });
   };
+
+  const handleEliminarImagen = async (imagenId) => {
+    const ok = await confirmarAccion({
+      titulo: "¿Eliminar esta imagen?",
+      texto: "Esta acción no se puede deshacer",
+      icon: "warning"
+    });
+    if (!ok) return;
+
+    try {
+      await api.delete(`/productos/${productId}/imagenes/${imagenId}`);
+      notifySuccess("Imagen eliminada");
+      refetchProducto();
+    } catch {
+      notifyError("No se pudo eliminar la imagen");
+    }
+  };
+
+  const handleReemplazarImagen = async (imagenId, file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("imagen", file);
+
+    try {
+      await api.put(`/productos/${productId}/imagenes/${imagenId}`, formData);
+      notifySuccess("Imagen reemplazada");
+      refetchProducto();
+    } catch {
+      notifyError("No se pudo reemplazar la imagen");
+    }
+  };
+
+  const handleMarcarPrincipal = async (imagenId) => {
+    try {
+      await api.put(`/productos/${productId}/imagenes/${imagenId}/principal`);
+      notifySuccess("Imagen principal actualizada");
+      refetchProducto();
+    } catch {
+      notifyError("No se pudo actualizar la imagen principal");
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -306,29 +351,64 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                     onChange={handleChange}
                   />
                 </div>
+<div className="col-12">
+  <label className="form-label">
+    {esEdicion ? "Imágenes actuales" : "Imágenes del producto"}
+  </label>
 
-                <div className="col-12">
-                  <label className="form-label">
-                    {esEdicion ? "Agregar más imágenes" : "Imágenes del producto"}
-                  </label>
+  {esEdicion && productoExistente?.Producto_imagenes?.length > 0 && (
+    <div className="d-flex flex-wrap gap-3 mb-3">
+      {productoExistente.Producto_imagenes.map(img => (
+        <div key={img.id} className="text-center" style={{ width: 90 }}>
+          <div style={{ position: "relative" }}>
+            <img
+              src={`${SERVER_URL}${img.imagen}`}
+              alt="actual"
+              style={{
+                width: 80, height: 80, objectFit: "cover", borderRadius: 6,
+                border: img.principal ? "3px solid #198754" : "1px solid #ccc"
+              }}
+            />
+            <button
+              type="button"
+              className="btn btn-sm btn-danger"
+              style={{ position: "absolute", top: -8, right: -8, borderRadius: "50%", padding: "0 6px", lineHeight: "20px" }}
+              onClick={() => handleEliminarImagen(img.id)}
+              title="Eliminar"
+            >
+              ×
+            </button>
+          </div>
 
-                  {esEdicion && productoExistente?.Producto_imagenes?.length > 0 && (
-                    <div className="d-flex flex-wrap gap-2 mb-2">
-                      {productoExistente.Producto_imagenes.map(img => (
-                        <img
-                          key={img.id}
-                          src={`${SERVER_URL}${img.imagen}`}
-                          alt="actual"
-                          style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 6, opacity: 0.85 }}
-                        />
-                      ))}
-                    </div>
-                  )}
+          {img.principal ? (
+            <small className="text-success d-block mt-1">Principal</small>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-link btn-sm p-0 d-block mx-auto mt-1"
+              onClick={() => handleMarcarPrincipal(img.id)}
+            >
+              Marcar principal
+            </button>
+          )}
 
-                  <ImageUploaderMultiple onImagesSelected={setImagenes} />
-                </div>
-              </div>
+          <label className="btn btn-outline-secondary btn-sm mt-1 w-100" style={{ fontSize: 11 }}>
+            Cambiar
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: "none" }}
+              onChange={(e) => handleReemplazarImagen(img.id, e.target.files?.[0])}
+            />
+          </label>
+        </div>
+      ))}
+    </div>
+  )}
 
+  <ImageUploaderMultiple onImagesSelected={setImagenes} />
+</div>
+</div>
               <hr className="my-4" />
 
               {esEdicion && (
