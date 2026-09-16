@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useLogout } from "../../hooks/useLogout";
 import {
     faHouse,
     faBox,
@@ -21,16 +20,15 @@ import SidebarItem from "./SidebarItem";
 import "../../assets/css/Sidebar.css";
 
 export default function Sidebar({ isOpen, onClose }) {
-    const handleLogout = useLogout();
+    
 
     return (
-
         <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
 
             <div className="sidebar-logo">
 
                 <img
-                    src="/images/logo-holyholy.png"
+                    src="/src/assets/img/Logo.png"
                     alt="HolyHoly"
                 />
 
@@ -121,21 +119,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
             </div>
 
-            <div className="sidebar-footer">
-
-                <button
-                    type="button"
-                    className="logout-button btn btn-link"
-                    onClick={handleLogout}
-                >
-
-                    <FontAwesomeIcon icon={faRightFromBracket} />
-
-                    Cerrar sesión
-
-                </button>
-
-            </div>
+            
 
         </aside>
 

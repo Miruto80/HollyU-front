@@ -1,13 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useLogout } from "../../hooks/useLogout";
 import {
   faBars,
   faBell,
   faSearch,
+  faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "../../assets/css/AdminNav.css";
 
 export default function AdminNavbar({ onToggleSidebar }) {
+   const handleLogout = useLogout();
   return (
     <header className="admin-navbar">
 
@@ -49,22 +52,13 @@ export default function AdminNavbar({ onToggleSidebar }) {
 
         </button>
 
-        <div className="admin-user">
-
-          <img
-            src="https://i.pravatar.cc/100"
-            alt="Administrador"
-          />
-
-          <div>
-
-            <h6>Administrador</h6>
-
-            <small>HolyHoly</small>
-
-          </div>
-
-        </div>
+        <button 
+        type="button"
+        onClick={handleLogout}
+        className="btn btn-logout d-flex align-items-center">
+          <FontAwesomeIcon icon={faRightFromBracket} className="me-2" />
+          Cerrar sesión
+        </button>
 
       </div>
 
