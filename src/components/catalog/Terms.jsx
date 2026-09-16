@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileContract } from '@fortawesome/free-solid-svg-icons';
 
 export const openTermsModal = () => {
   window.dispatchEvent(new CustomEvent("openTermsModal"));
@@ -126,10 +128,13 @@ export default function Terms() {
                   style={{
                     width: "2rem",
                     height: "2rem",
-                    background: "#fce7f3",
+                    background: "#fff6de",
                   }}
                 >
-                  <i className="fa-solid fa-file-contract" style={{ color: "#ec4899", fontSize: "0.85rem" }} />
+                  <FontAwesomeIcon 
+                    icon={faFileContract} 
+                    style={{ color: "#e5b83f", fontSize: "0.85rem" }} 
+                  />
                 </div>
                 <h3 id="terms-title" className="mb-0 fw-bold text-dark" style={{ fontSize: "1.05rem" }}>
                   Términos y Condiciones
@@ -147,15 +152,15 @@ export default function Terms() {
               </button>
             </div>
 
-            <div className="modal-body p-0" style={{ background: "#f8fafc", maxHeight: "72vh" }}>
+            <div className="modal-body p-0" style={{ background: "#fff", maxHeight: "72vh" }}>
               <div className="p-4" style={{ overflowY: "auto" }}>
                 {termSections.map((section, index) => (
                   <div
                     key={section.title}
                     className="mb-3 border rounded-4"
                     style={{
-                      background: section.highlight ? "#fff1f7" : "#f8fafc",
-                      borderColor: section.highlight ? "#f9a8d4" : "#e2e8f0",
+                      background: section.highlight ? "#eff0ff" : "#fff",
+                      borderColor: section.highlight ? "#4b518a" : "#fff",
                     }}
                   >
                     <details open={index === 0}>
@@ -168,7 +173,7 @@ export default function Terms() {
                           cursor: "pointer",
                           padding: "0.9rem 1rem",
                           fontWeight: 700,
-                          color: section.highlight ? "#831843" : "#1f2937",
+                          color: section.highlight ? "#080a1c" : "#1f2937",
                         }}
                       >
                         <span>{section.title}</span>
@@ -205,8 +210,8 @@ export default function Terms() {
                 className="btn btn-pink px-4 py-2 fw-semibold"
                 onClick={() => setIsOpen(false)}
                 style={{
-                  background: "#ec4899",
-                  color: "#fff",
+                  background: "#e5b83f",
+                  color: "#000000",
                   borderRadius: "0.8rem",
                   border: "none",
                 }}

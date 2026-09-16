@@ -1,4 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
 import { useCart } from "../../hooks/useCart";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import StepIndicator from "../../components/home/StepIndicator";
@@ -6,7 +9,7 @@ import { SERVER_URL } from "../../services/api";
 import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
 import "../../assets/css/CartFlow.css";
 
-const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
+const formatMoney = (value) => `$ ${Number(value || 0).toLocaleString()}`;
 
 const getDiscountForItem = (item, descuentos, unitPrice) => {
   const now = new Date();
@@ -115,9 +118,9 @@ export default function CartPage() {
             <div className="cart-flow-table-head">
               <span>Acción</span>
               <span>Producto</span>
-              <span>Precio</span>
-              <span>Cantidad</span>
-              <span>Subtotal</span>
+              <span className="text-center">Precio</span>
+              <span className="text-center">Cantidad</span>
+              <span className="text-center">Subtotal</span>
             </div>
 
             {itemsWithDiscount.map((item) => (
@@ -154,7 +157,7 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <span className="cart-flow-price">{formatMoney(item.unitPrice)}</span>
+                <span className="cart-flow-price text-center">{formatMoney(item.unitPrice)}</span>
 
                 <div className="cart-flow-qty">
                   <button type="button" onClick={() => updateCantidad(item.id, item.cantidad - 1)}>-</button>
@@ -172,7 +175,7 @@ export default function CartPage() {
             ))}
 
             <button type="button" className="cart-flow-back-btn" onClick={() => navigate("/catalog")}>
-              ← Seguir buscando
+               <FontAwesomeIcon icon={faArrowLeft} className="ms-2" /> Seguir buscando
             </button>
           </section>
 

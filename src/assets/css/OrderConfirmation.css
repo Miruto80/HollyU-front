@@ -1,13 +1,13 @@
 .order-confirmation-page {
   min-height: 70vh;
   padding-bottom: 4rem;
-  background: #f8f7f3;
+  background: #f3f1f2;
 }
 
 .order-confirmation-loading,
 .order-confirmation-card,
 .order-confirmation-panel {
-  max-width: 980px;
+  max-width: 1350px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -58,7 +58,7 @@
 }
 
 .order-confirmation-intro {
-  max-width: 560px;
+  max-width: 756px;
   margin: 0 auto 1.5rem;
   color: #68707a;
 }
@@ -69,8 +69,8 @@
   align-items: center;
   padding: .7rem 1rem;
   border-radius: 8px;
-  background: #f2f0ea;
-  color: #68707a;
+  background: #f3f1f2;
+  color: #000000;
 }
 
 .order-confirmation-number strong {
@@ -128,7 +128,8 @@
 .order-confirmation-bs {
   margin-top: .5rem;
   color: #198754;
-  font-size: .9rem;
+  font-weight: 700;
+  font-size: 1 rem;
   text-align: right;
 }
 
@@ -153,16 +154,17 @@
 .order-confirmation-button {
   display: inline-block;
   padding: .75rem 1.3rem;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #0b2545;
+  width: 40%;
   color: #fff;
   text-decoration: none;
   font-weight: 600;
 }
 
 .order-confirmation-button:hover {
-  background: #d4af37;
-  color: #0b2545;
+  background: #051120;
+  color: #fff;
 }
 
 @media (max-width: 575px) {

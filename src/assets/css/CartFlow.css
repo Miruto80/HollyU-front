@@ -10,11 +10,9 @@
 }
 
 .cart-flow-title {
-  font-size: clamp(2.2rem, 3vw, 3rem);
-  font-weight: 800;
-  color: #1f1f1f;
+  font-weight: 700;
+  color:#0b2545;
   margin: 0;
-  letter-spacing: -0.04em;
 }
 
 .cart-flow-subtitle {
@@ -57,8 +55,8 @@
   font-size: 0.74rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #7a7a7a;
-  font-weight: 700;
+  color: #363636;
+  font-weight: 650;
   padding: 0.75rem 0 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
@@ -124,58 +122,70 @@
 
 .cart-flow-price,
 .cart-flow-subtotal {
-  font-weight: 700;
+  font-weight: 500;
+  font-weight: 500;
   color: #222;
+  text-align: center;     
+  display: flex;
+  flex-direction: column;  
+  align-items: center;    
+  justify-content: center; 
+  width: 100%;
 }
 
 .cart-flow-subtotal-box {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;    
+  text-align: center;
+  font-weight: 900;     
   gap: 0.2rem;
+  width: 100%;            
 }
 
 .cart-flow-discount-amount {
   color: #1b9b63;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .cart-flow-qty {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  padding: 0.3rem 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 10px;
-  width: fit-content;
-  background: #fff;
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px;
 }
 
 .cart-flow-qty button {
-  border: none;
-  background: transparent;
-  width: 24px;
-  height: 24px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #333;
+  background-color: #f1f3f5; 
+  border: 1px solid #dee2e6; 
+  color: #495057;           
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.cart-flow-qty button:hover {
+  background-color: #e9ecef; 
 }
 
 .cart-flow-qty span {
-  min-width: 22px;
+  font-weight: 600;
+  min-width: 20px;
   text-align: center;
-  font-weight: 700;
-  color: #111;
 }
 
 .cart-flow-back-btn {
-  margin-top: 1.5rem;
+  margin-top: 1.3rem;
   border: none;
   background: #0f1b2d;
   color: white;
-  font-weight: 700;
+  font-weight: 600;
   border-radius: 12px;
   padding: 0.95rem 1.3rem;
   min-width: 220px;
@@ -197,7 +207,7 @@
 .cart-flow-summary h3 {
   margin: 0 0 1rem;
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 400;
   color: #222;
 }
 
@@ -225,7 +235,7 @@
 .cart-flow-total-row strong {
   color: #1b9b63;
   font-size: 1.6rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .cart-flow-primary,
@@ -234,14 +244,14 @@
   border: none;
   border-radius: 12px;
   padding: 0.95rem 1rem;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cart-flow-primary {
-  margin-top: 1.2rem;
-  background: linear-gradient(90deg, #1bbd8c, #13a78d);
+  margin-top: 1.3rem;
+  background: #1b9b63;
   color: #fff;
   box-shadow: 0 12px 25px rgba(26, 180, 125, 0.18);
 }
@@ -277,8 +287,8 @@
 }
 
 .delivery-option.selected {
-  border-color: rgba(255, 87, 154, 0.8);
-  box-shadow: 0 12px 30px rgba(255, 87, 154, 0.14);
+  border-color: rgb(229, 184, 63);
+  box-shadow: 0 12px 30px rgba(229, 184, 63, 0.14);
 }
 
 .delivery-icon {
@@ -296,7 +306,7 @@
 .delivery-text h3 {
   margin: 0 0 0.3rem;
   font-size: 1.12rem;
-  font-weight: 700;
+  font-weight: 400;
   color: #202020;
 }
 
@@ -326,7 +336,7 @@
   gap: 0.4rem;
   color: #333;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .delivery-details input,
@@ -343,8 +353,8 @@
 
 .delivery-details input:focus,
 .delivery-details select:focus {
-  outline: 2px solid rgba(255, 87, 154, 0.3);
-  border-color: #ff579a;
+  outline: 2px solid rgba(8, 10, 28, 0.3);
+  border-color: #080a1c;
 }
 
 .delivery-form-grid {
