@@ -6,9 +6,12 @@ export default function PagoPaso({ pagos, setPagos, total }) {
 
   const [nuevoPago, setNuevoPago] = useState({ metodo_pago_id: "", monto: "" });
 
-  const totalPagado = pagos.reduce((sum, p) => sum + Number(p.monto), 0);
-  const restante = total - totalPagado;
+ const totalPagado = pagos.reduce(
+  (sum, p) => sum + Number(p.monto || 0),
+  0
+);
 
+const restante = Number((total - totalPagado).toFixed(2));
   const agregarPago = () => {
     if (!nuevoPago.metodo_pago_id || !nuevoPago.monto) return;
 
@@ -26,7 +29,10 @@ export default function PagoPaso({ pagos, setPagos, total }) {
         <div className="col-4">
           <div className="border rounded p-2">
             <small className="text-muted">Total venta</small>
-            <h5>${total.toLocaleString()}</h5>
+          <h5>${Number(total).toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+})}</h5>
           </div>
         </div>
         <div className="col-4">

@@ -9,6 +9,7 @@ import { usePostFetch } from "../../hooks/usePostFetch";
 import { SERVER_URL } from "../../services/api";
 import { obtenerTasaDolar } from "../../utils/Tasa";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
+import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
 import "../../assets/css/Checkout.css";
 
 const BANCOS_VENEZUELA = [
@@ -27,7 +28,7 @@ const DELIVERY_STORAGE_KEY = "hollyu.delivery";
 
 const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
 
-const getDiscountForItem = (item, descuentos) => {
+const getDiscountForItem = (item, descuentos, unitPrice) => {
   const now = new Date();
 
   const aplicables = (descuentos || []).filter((descuento) => {
@@ -48,11 +49,10 @@ const getDiscountForItem = (item, descuentos) => {
   if (!aplicables.length) return { discountAmount: 0, discountLabel: "" };
 
   const descuento = aplicables[0];
-  const basePrice = Number(item.precio || 0);
   const quantity = Number(item.cantidad || 1);
 
   if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
-    const descuentoUnitario = basePrice * (Number(descuento.valor || 0) / 100);
+    const descuentoUnitario = unitPrice * (Number(descuento.valor || 0) / 100);
     return {
       discountAmount: descuentoUnitario * quantity,
       discountLabel: `${Number(descuento.valor).toFixed(2)}% de descuento`
@@ -68,7 +68,7 @@ const getDiscountForItem = (item, descuentos) => {
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, totalPrecio, clearCart } = useCart();
+  const { items, clearCart } = useCart();
 
   const isLogged = Boolean(localStorage.getItem("accessToken"));
   const [tasaDia, setTasaDia] = useState(1);
@@ -91,21 +91,24 @@ export default function Checkout() {
   const { post: postPedido, loading: enviando } = usePostFetch("/pedidos");
 
   const itemsWithDiscount = items.map((item) => {
-    const discountInfo = getDiscountForItem(item, descuentos);
-    const subtotal = Number(item.cantidad || 0) * Number(item.precio || 0);
-    const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
+  const unitPrice = getUnitPrice(item);
+  const discountInfo = getDiscountForItem(item, descuentos, unitPrice);
+  const subtotal = Number(item.cantidad || 0) * unitPrice;
+  const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
 
-    return {
-      ...item,
-      subtotal,
-      discountAmount: Number(discountInfo.discountAmount || 0),
-      discountedSubtotal,
-      discountLabel: discountInfo.discountLabel,
-    };
-  });
-
-  const totalDiscount = itemsWithDiscount.reduce((sum, item) => sum + item.discountAmount, 0);
-  const totalConDescuento = Math.max(0, totalPrecio - totalDiscount);
+  return {
+    ...item,
+    unitPrice,
+    esMayor: esPrecioMayor(item),
+    subtotal,
+    discountAmount: Number(discountInfo.discountAmount || 0),
+    discountedSubtotal,
+    discountLabel: discountInfo.discountLabel,
+  };
+});
+const totalSubtotalSinDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.subtotal, 0);
+const totalDiscount = itemsWithDiscount.reduce((sum, item) => sum + item.discountAmount, 0);
+const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.discountedSubtotal, 0);
 
   const [pagoForm, setPagoForm] = useState({
     bancoOrigen: "",
@@ -169,7 +172,7 @@ export default function Checkout() {
         talla_id: item.talla_id,
         tipo_bota_id: item.tipo_bota_id,
         cantidad: item.cantidad,
-        precio: item.precio,
+        precio: item.unitPrice,
         descuento: Number(item.discountAmount || 0)
       }));
 
@@ -351,42 +354,44 @@ export default function Checkout() {
               </p>
 
               {itemsWithDiscount.map((item) => (
-                <div className="checkout-item" key={item.id}>
-                  <img
-                    src={item.imagen ? `${SERVER_URL}${item.imagen}` : "/images/no-image.jpg"}
-                    alt={item.nombre}
-                  />
-                  <div className="checkout-item-info">
-                    <p className="mb-1 fw-semibold">{item.nombre}</p>
-                    {item.talla_nombre && (
-                      <p className="mb-0 text-muted small">Talla: {item.talla_nombre}</p>
-                    )}
-                    {item.color_nombre && (
-                      <p className="mb-0 text-muted small">Color: {item.color_nombre}</p>
-                    )}
-                    {item.tipo_bota_nombre && (
-                      <p className="mb-0 text-muted small">Bota: {item.tipo_bota_nombre}</p>
-                    )}
-                    <p className="mb-0 text-muted small">
-                      Cantidad: {item.cantidad} × ${Number(item.precio).toLocaleString()}
-                    </p>
-                    <p className="mb-0 fw-semibold">
-                      Subtotal: {formatMoney(item.discountedSubtotal)}
-                    </p>
-                    {item.discountAmount > 0 && (
-                      <p className="mb-0 text-success small">
-                        Descuento aplicado: -{formatMoney(item.discountAmount)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-
+               <div className="checkout-item" key={item.id}>
+               <img
+                src={item.imagen ? `${SERVER_URL}${item.imagen}` : "/images/no-image.jpg"}
+                alt={item.nombre}
+               />
+    <div className="checkout-item-info">
+      <p className="mb-1 fw-semibold">{item.nombre}</p>
+      {item.talla_nombre && (
+        <p className="mb-0 text-muted small">Talla: {item.talla_nombre}</p>
+      )}
+      {item.color_nombre && (
+        <p className="mb-0 text-muted small">Color: {item.color_nombre}</p>
+      )}
+      {item.tipo_bota_nombre && (
+        <p className="mb-0 text-muted small">Bota: {item.tipo_bota_nombre}</p>
+      )}
+      <p className="mb-0 text-muted small">
+        Cantidad: {item.cantidad} × {formatMoney(item.unitPrice)}
+      </p>
+      {item.esMayor && (
+        <p className="mb-0 text-success small fw-semibold">Precio al mayor aplicado</p>
+      )}
+      <p className="mb-0 fw-semibold">
+        Subtotal: {formatMoney(item.discountedSubtotal)}
+      </p>
+      {item.discountAmount > 0 && (
+        <p className="mb-0 text-success small">
+          Descuento aplicado: -{formatMoney(item.discountAmount)}
+        </p>
+      )}
+    </div>
+  </div>
+))}
               <hr />
 
               <div className="d-flex justify-content-between mb-1">
-                <span>Subtotal:</span>
-                <span>{formatMoney(totalPrecio)}</span>
+               <span>Subtotal:</span>
+                <span>{formatMoney(totalSubtotalSinDescuento)}</span>
               </div>
 
               {totalDiscount > 0 && (

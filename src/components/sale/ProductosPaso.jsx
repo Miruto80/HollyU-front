@@ -1,9 +1,50 @@
 import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { notifyError } from "../../utils/Tostify";
+import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
+
+const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
+
+const getDiscountForProducto = (producto, cantidad, unitPrice, descuentos) => {
+  const now = new Date();
+
+  const aplicables = (descuentos || []).filter((descuento) => {
+    if (!descuento.activo) return false;
+
+    const fechaInicio = descuento.fecha_inicio ? new Date(descuento.fecha_inicio) : null;
+    const fechaFin = descuento.fecha_fin ? new Date(descuento.fecha_fin) : null;
+
+    if (fechaInicio && now < fechaInicio) return false;
+    if (fechaFin && now > fechaFin) return false;
+
+    const categoryMatch = descuento.categoria_id != null && Number(descuento.categoria_id) === Number(producto.categoria_id);
+    const productMatch = Array.isArray(descuento.Productos) && descuento.Productos.some((p) => Number(p.id) === Number(producto.id));
+
+    return categoryMatch || productMatch;
+  });
+
+  if (!aplicables.length) return { discountAmount: 0, discountLabel: "" };
+
+  const descuento = aplicables[0];
+
+  if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
+    const descuentoUnitario = unitPrice * (Number(descuento.valor || 0) / 100);
+    return {
+      discountAmount: descuentoUnitario * cantidad,
+      discountLabel: `${Number(descuento.valor).toFixed(2)}% de descuento`
+    };
+  }
+
+  const fixedAmount = Number(descuento.valor || 0);
+  return {
+    discountAmount: fixedAmount * cantidad,
+    discountLabel: `${formatMoney(fixedAmount)} de descuento`
+  };
+};
 
 export default function ProductosPaso({ items, setItems }) {
   const { data: productos } = useGetFetch("/productos");
+  const { data: descuentos = [] } = useGetFetch("/descuentos");
 
   const [productoSeleccionadoId, setProductoSeleccionadoId] = useState("");
   const { data: detalle, loading: cargandoDetalle } = useGetFetch(
@@ -19,6 +60,14 @@ export default function ProductosPaso({ items, setItems }) {
 
   const modelo = detalle?.Modelos?.find(m => String(m.id) === String(modeloId));
   const tela = modelo?.Modelo_telas?.find(t => String(t.id) === String(telaId));
+
+  const cantidadNum = Number(cantidad) || 0;
+  const unitPricePreview = detalle
+    ? getUnitPrice({ precio: detalle.precio, precio_mayor: detalle.precio_mayor, cantidad: cantidadNum })
+    : 0;
+  const esMayorPreview = detalle
+    ? esPrecioMayor({ precio_mayor: detalle.precio_mayor, cantidad: cantidadNum })
+    : false;
 
   const resetSeleccion = () => {
     setProductoSeleccionadoId("");
@@ -37,10 +86,14 @@ export default function ProductosPaso({ items, setItems }) {
     if (!colorId) { notifyError("Selecciona un color"); return; }
     if (!tallaId) { notifyError("Selecciona una talla"); return; }
     if (detalle.Tipos_bota?.length > 0 && !tipoBotaId) { notifyError("Selecciona un tipo de bota"); return; }
-    if (!cantidad || cantidad < 1) { notifyError("Cantidad inválida"); return; }
+    if (!cantidadNum || cantidadNum < 1) { notifyError("Cantidad inválida"); return; }
 
     const colorObj = tela.Modelo_telas_colores.find(c => String(c.id) === String(colorId));
     const tallaObj = modelo.Modelo_tallas.find(t => String(t.id) === String(tallaId));
+
+    const unitPrice = getUnitPrice({ precio: detalle.precio, precio_mayor: detalle.precio_mayor, cantidad: cantidadNum });
+    const esMayor = esPrecioMayor({ precio_mayor: detalle.precio_mayor, cantidad: cantidadNum });
+    const discountInfo = getDiscountForProducto(detalle, cantidadNum, unitPrice, descuentos);
 
     setItems(prev => [
       ...prev,
@@ -58,8 +111,11 @@ export default function ProductosPaso({ items, setItems }) {
         talla_nombre: tallaObj.Talla.nombre,
         tipo_bota_id: tipoBotaId,
         tipo_bota_nombre: detalle.Tipos_bota?.find(t => String(t.id) === String(tipoBotaId))?.nombre,
-        precio: Number(detalle.precio),
-        cantidad: Number(cantidad)
+        precio: unitPrice,
+        esMayor,
+        descuento: Number(discountInfo.discountAmount || 0),
+        discountLabel: discountInfo.discountLabel,
+        cantidad: cantidadNum
       }
     ]);
 
@@ -70,7 +126,7 @@ export default function ProductosPaso({ items, setItems }) {
     setItems(prev => prev.filter(i => i.key !== key));
   };
 
-  const totalItems = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
+  const totalItems = items.reduce((sum, i) => sum + (i.precio * i.cantidad - i.descuento), 0);
 
   return (
     <div>
@@ -203,13 +259,18 @@ export default function ProductosPaso({ items, setItems }) {
           </div>
           <div className="col-md-3">
             <label className="form-label">Precio unitario</label>
-            <input className="form-control" value={`$${Number(detalle.precio).toLocaleString()}`} disabled />
+            <input className="form-control" value={formatMoney(unitPricePreview)} disabled />
           </div>
           <div className="col-md-3">
             <button type="button" className="btn btn-dark w-100" onClick={agregarItem}>
               + Agregar producto
             </button>
           </div>
+          {esMayorPreview && (
+            <div className="col-12">
+              <span className="badge bg-success">Precio al mayor aplicado (12+ unidades)</span>
+            </div>
+          )}
         </div>
       )}
 
@@ -226,8 +287,10 @@ export default function ProductosPaso({ items, setItems }) {
               <th>Tela</th>
               <th>Color</th>
               <th>Talla</th>
+              <th>Bota</th>
               <th>Cant.</th>
               <th>Precio</th>
+              <th>Descuento</th>
               <th>Subtotal</th>
               <th></th>
             </tr>
@@ -240,9 +303,16 @@ export default function ProductosPaso({ items, setItems }) {
                 <td>{item.tela_nombre}</td>
                 <td>{item.color_nombre}</td>
                 <td>{item.talla_nombre}</td>
+                <td>{item.tipo_bota_nombre || "-"}</td>
                 <td>{item.cantidad}</td>
-                <td>${item.precio.toLocaleString()}</td>
-                <td>${(item.precio * item.cantidad).toLocaleString()}</td>
+                <td>
+                  {formatMoney(item.precio)}
+                  {item.esMayor && <div className="small text-success">Al mayor</div>}
+                </td>
+                <td className="text-danger">
+                  {item.descuento > 0 ? `-${formatMoney(item.descuento)}` : "-"}
+                </td>
+                <td>{formatMoney(item.precio * item.cantidad - item.descuento)}</td>
                 <td>
                   <button
                     type="button"
@@ -257,8 +327,8 @@ export default function ProductosPaso({ items, setItems }) {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan="7" className="text-end fw-bold">Total:</td>
-              <td className="fw-bold" colSpan="2">${totalItems.toLocaleString()}</td>
+              <td colSpan="9" className="text-end fw-bold">Total:</td>
+              <td className="fw-bold" colSpan="2">{formatMoney(totalItems)}</td>
             </tr>
           </tfoot>
         </table>

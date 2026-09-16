@@ -78,6 +78,7 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
             categoria_id: detalle.categoria_id,
             nombre: detalle.nombre,
             precio: detalle.precio,
+            precio_mayor: detalle.precio_mayor, 
             imagen: imagenRelativa,
             modelo_id: modelo?.id,
             tipo_tela_id: tela?.tipo_tela_id ?? tela?.Tipos_tela?.id,
