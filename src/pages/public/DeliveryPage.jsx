@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStore, faTruck, faMotorcycle, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import StepIndicator from "../../components/home/StepIndicator";
 import "../../assets/css/CartFlow.css";
 
@@ -10,19 +12,19 @@ const DELIVERY_OPTIONS = [
     id: "store",
     title: "Tienda física",
     subtitle: "Retiro presencial",
-    icon: "🏪",
+    icon: faStore,
   },
   {
     id: "shipping",
     title: "Envíos nacionales",
     subtitle: "Agencias de envío",
-    icon: "🚚",
+    icon: faTruck,
   },
   {
     id: "delivery",
     title: "Delivery",
     subtitle: "Envío a domicilio",
-    icon: "🏍️",
+    icon: faMotorcycle,
   },
 ];
 
@@ -174,7 +176,7 @@ export default function DeliveryPage() {
               className={`delivery-option ${selected === option.id ? "selected" : ""}`}
               onClick={() => setSelected(option.id)}
             >
-              <div className="delivery-icon">{option.icon}</div>
+              <div className="delivery-icon"><FontAwesomeIcon icon={option.icon}  /></div>
               <div className="delivery-text">
                 <h3>{option.title}</h3>
                 <p>{option.subtitle}</p>
@@ -187,11 +189,11 @@ export default function DeliveryPage() {
 
         <div className="cart-flow-actions">
           <button type="button" className="cart-flow-back-btn" onClick={() => navigate("/cart")}>
-            ← Regresar al carrito
+            <FontAwesomeIcon icon={faArrowLeft} className="ms-2" /> Regresar al carrito
           </button>
 
           <button type="button" className="cart-flow-primary" onClick={continueToCheckout}>
-            Continuar al Pago →
+            Continuar al Pago <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
           </button>
         </div>
       </div>

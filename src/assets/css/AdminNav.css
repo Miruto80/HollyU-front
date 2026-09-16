@@ -192,6 +192,19 @@
 
 }
 
+
+.btn-logout {
+  background-color: #E5B83F; 
+  border-color: #fdca3e;
+  color: #080808;
+}
+
+.btn-logout:hover {
+  background-color: #d1a732;
+  border-color: #fdca3e;
+  color: #000000;
+}
+
 @media (max-width: 992px) {
     .sidebar-toggle{
         display:flex;
