@@ -35,37 +35,37 @@ const totalVenta = items.reduce(
   };
 
   const handleFinalizar = async () => {
-    try {
-      await post({
-        cliente_id: cliente.id,
-        items: items.map(i => ({
-          producto_id: i.producto_id,
-          modelo_id: i.modelo_id,
-          tipo_tela_id: i.tipo_tela_id,
-          color_id: i.color_id,
-          talla_id: i.talla_id,
-          tipo_bota_id: i.tipo_bota_id,
-          cantidad: i.cantidad,
-          precio: i.precio,
-          descuento: i.descuento || 0
-        })),
-        pagos: pagos.map(p => ({
-          metodo_pago_id: p.metodo_pago_id,
-          monto: p.monto,
-          referencia: p.referencia,
-          banco_origen: p.banco_origen,
-          banco_destino: p.banco_destino,
-          telefono_emisor: p.telefono_emisor
-        }))
-      });
+  try {
+    await post({
+      cliente_id: cliente.id,
+      items: items.map(i => ({
+        producto_id: i.producto_id,
+        producto_modelo_id: i.producto_modelo_id,  
+        modelo_tela_id: i.modelo_tela_id,          
+        color_id: i.color_id,
+        talla_id: i.talla_id,
+        tipo_bota_id: i.tipo_bota_id || null,       
+        cantidad: Number(i.cantidad),
+        precio: Number(i.precio),
+        descuento: Number(i.descuento || 0)
+      })),
+      pagos: pagos.map(p => ({
+        metodo_pago_id: p.metodo_pago_id,
+        monto: Number(p.monto),
+        referencia: p.referencia || null,
+        banco_origen: p.banco_origen || null,
+        banco_destino: p.banco_destino || null,
+        telefono_emisor: p.telefono_emisor || null
+      }))
+    });
 
-      notifySuccess("Venta registrada correctamente");
-      onCreated?.();
-      handleClose();
-    } catch (error) {
-      notifyError(error.response?.data?.message || "No se pudo registrar la venta");
-    }
-  };
+    notifySuccess("Venta registrada correctamente");
+    onCreated?.();
+    handleClose();
+  } catch (error) {
+    notifyError(error.response?.data?.message || "No se pudo registrar la venta");
+  }
+};
 
   if (!show) return null;
 

@@ -146,62 +146,83 @@ export default function OrderModal({ pedidoId, show, onClose }) {
                 </div>
 
                 <div className="accordion-item">
-                  <h2 className="accordion-header">
-                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#detalleVenta">
-                      🛍️ Detalles de la Venta
-                    </button>
-                  </h2>
-                  <div id="detalleVenta" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
-                    <div className="accordion-body">
-                      <div className="table-responsive">
-                        <table className="table table-sm align-middle">
-                          <thead>
-                            <tr>
-                              <th>Producto</th>
-                              <th className="text-end">Cantidad</th>
-                              <th className="text-end">Precio ($)</th>
-                              <th className="text-end">Subtotal ($)</th>
-                              <th className="text-end">Descuento ($)</th>
-                              <th className="text-end">Total ($)</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {pedido.Detalle_pedidos?.map(item => (
-                              <tr key={item.id}>
-                                <td>
-                                  <strong>{item.Producto?.nombre}</strong>
-                                  <div className="text-muted small">
-                                    {item.Modelo?.nombre} · {item.Tipos_tela?.nombre} · Talla {item.Talla?.nombre}
-                                    {(item.Color?.nombre || item.Colore?.nombre) && ` · ${item.Color?.nombre || item.Colore.nombre}`}
-                                    {item.Tipo_botum?.nombre && ` · ${item.Tipo_botum.nombre}`}
-                                  </div>
-                                </td>
-                                <td className="text-end">{item.cantidad}</td>
-                                <td className="text-end">${Number(item.precio || 0).toLocaleString()}</td>
-                                <td className="text-end">${(Number(item.cantidad || 0) * Number(item.precio || 0)).toLocaleString()}</td>
-                                <td className="text-end">${Number(item.descuento || 0).toLocaleString()}</td>
-                                <td className="text-end">${Math.max(0, Number(item.cantidad || 0) * Number(item.precio || 0) - Number(item.descuento || 0)).toLocaleString()}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="d-flex justify-content-between mt-3">
-                        <strong>Subtotal:</strong>
-                        <strong>${Number(pedido.subtotal || 0).toLocaleString()}</strong>
-                      </div>
-                      <div className="d-flex justify-content-between text-danger">
-                        <strong>Descuento aplicado:</strong>
-                        <strong>-${Number(pedido.descuento || 0).toLocaleString()}</strong>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <strong>Total:</strong>
-                        <strong>${Number(pedido.total || 0).toLocaleString()}</strong>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+  <h2 className="accordion-header">
+    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#detalleVenta">
+      🛍️ Detalles de la Venta
+    </button>
+  </h2>
+  <div id="detalleVenta" className="accordion-collapse collapse" data-bs-parent="#pedidoAccordion">
+    <div className="accordion-body">
+      <div className="table-responsive">
+        <table className="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th className="text-end">Cantidad</th>
+              <th className="text-end">Precio ($)</th>
+              <th className="text-end">Subtotal ($)</th>
+              <th className="text-end">Descuento ($)</th>
+              <th className="text-end">Total ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pedido.Detalle_pedidos?.map(item => {
+              // 1. Extraemos el modelo desde Producto_modelo
+              const nombreModelo = item.Producto_modelo?.Modelo?.nombre;
 
+              // 2. Extraemos el tipo de tela desde la relación con Producto_modelo o Modelo_tela
+              const tipoTela = item.Producto_modelo?.Modelo_telas?.[0]?.Tipos_tela?.nombre 
+                || item.Modelo_tela?.Tipos_tela?.nombre;
+
+              // 3. Obtenemos el nombre del color
+              const nombreColor = item.Colore?.nombre || item.Color?.nombre;
+
+              // 4. Obtenemos la talla y el tipo de bota
+              const nombreTalla = item.Talla?.nombre;
+              const tipoBota = item.Tipo_bota?.nombre || item.Tipo_botum?.nombre;
+
+              return (
+                <tr key={item.id}>
+                  <td>
+                    <strong>{item.Producto?.nombre}</strong>
+                    <div className="text-muted small">
+                      {[
+                        nombreModelo,
+                        tipoTela,
+                        nombreTalla && `Talla ${nombreTalla}`,
+                        nombreColor,
+                        tipoBota
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </div>
+                  </td>
+                  <td className="text-end">{item.cantidad}</td>
+                  <td className="text-end">${Number(item.precio || 0).toLocaleString()}</td>
+                  <td className="text-end">${(Number(item.cantidad || 0) * Number(item.precio || 0)).toLocaleString()}</td>
+                  <td className="text-end">${Number(item.descuento || 0).toLocaleString()}</td>
+                  <td className="text-end">${Math.max(0, Number(item.cantidad || 0) * Number(item.precio || 0) - Number(item.descuento || 0)).toLocaleString()}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="d-flex justify-content-between mt-3">
+        <strong>Subtotal:</strong>
+        <strong>${Number(pedido.subtotal || 0).toLocaleString()}</strong>
+      </div>
+      <div className="d-flex justify-content-between text-danger">
+        <strong>Descuento aplicado:</strong>
+        <strong>-${Number(pedido.descuento || 0).toLocaleString()}</strong>
+      </div>
+      <div className="d-flex justify-content-between">
+        <strong>Total:</strong>
+        <strong>${Number(pedido.total || 0).toLocaleString()}</strong>
+      </div>
+    </div>
+  </div>
+</div>
               </div>
             )}
           </div>
