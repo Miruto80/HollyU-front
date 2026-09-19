@@ -165,16 +165,16 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
 
     try {
       const itemsPayload = itemsWithDiscount.map(item => ({
-        producto_id: item.producto_id,
-        modelo_id: item.modelo_id,
-        tipo_tela_id: item.tipo_tela_id,
-        color_id: item.color_id,
-        talla_id: item.talla_id,
-        tipo_bota_id: item.tipo_bota_id,
-        cantidad: item.cantidad,
-        precio: item.unitPrice,
-        descuento: Number(item.discountAmount || 0)
-      }));
+  producto_id: item.producto_id,
+  producto_modelo_id: item.producto_modelo_id,
+  modelo_tela_id: item.modelo_tela_id, 
+  color_id: item.color_id,
+  talla_id: item.talla_id,
+  tipo_bota_id: item.tipo_bota_id,
+  cantidad: item.cantidad,
+  precio: item.unitPrice,
+  descuento: Number(item.discountAmount || 0)
+}));
 
       const formData = new FormData();
       formData.append("cliente_id", clienteId);
@@ -361,6 +361,9 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
                />
     <div className="checkout-item-info">
       <p className="mb-1 fw-semibold">{item.nombre}</p>
+      {item.modelo && (
+    <p className="mb-0 text-muted small">Modelo: {item.modelo}</p>
+  )}
       {item.talla_nombre && (
         <p className="mb-0 text-muted small">Talla: {item.talla_nombre}</p>
       )}
