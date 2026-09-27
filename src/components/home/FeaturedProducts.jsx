@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useGetFetch } from "../../hooks/useGetFetch";
@@ -9,6 +10,7 @@ import "../../assets/css/FeaturedProducts.css";
 
 export default function FeaturedProducts() {
   const { data: products, loading } = useGetFetch("/productos/mas-vendidos?limit=6");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const options = {
     type: "loop",
@@ -49,7 +51,19 @@ export default function FeaturedProducts() {
 
             return (
               <SplideSlide key={product.id}>
-                <Link to={`/product/${product.id}`} className="featured-card">
+                <div
+                  className="featured-card"
+                  role="button"
+                  tabIndex={0}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setSelectedProduct(product)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedProduct(product);
+                    }
+                  }}
+                >
                   <div className="featured-image">
                     <img src={imgSrc} alt={product.nombre} loading="lazy" />
                     <span className="featured-badge">Destacado</span>
@@ -69,7 +83,7 @@ export default function FeaturedProducts() {
                       <span className="featured-arrow">→</span>
                     </div>
                   </div>
-                </Link>
+                </div>
               </SplideSlide>
             );
           })}
@@ -81,6 +95,13 @@ export default function FeaturedProducts() {
           </Link>
         </div>
       </div>
+
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </section>
   );
 }
