@@ -123,12 +123,15 @@ export default function CartPage() {
               <span className="text-center">Subtotal</span>
             </div>
 
-            {itemsWithDiscount.map((item) => (
-              <div className="cart-flow-item-row" key={item.id}>
+            {itemsWithDiscount.map((item, index) => (
+              <div 
+                className="cart-flow-item-row" 
+                key={item.idCart || `${item.id}-${item.modelo || index}`}
+              >
                 <button
                   type="button"
                   className="cart-flow-remove"
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item.id, item.modelo)}
                   aria-label={`Eliminar ${item.nombre}`}
                 >
                   ×
@@ -141,13 +144,17 @@ export default function CartPage() {
                   />
                   <div className="cart-flow-product-meta">
                     <strong>{item.nombre}</strong>
-                    {(item.talla_nombre || item.color_nombre || item.tipo_bota_nombre) && (
+                    
+
+                    {(item.modelo || item.talla_nombre || item.color_nombre || item.tipo_bota_nombre) && (
                       <div className="cart-flow-product-details">
+                        {item.modelo && <span>Modelo: {item.modelo}</span>}
                         {item.talla_nombre && <span>Talla: {item.talla_nombre}</span>}
                         {item.color_nombre && <span>Color: {item.color_nombre}</span>}
                         {item.tipo_bota_nombre && <span>Bota: {item.tipo_bota_nombre}</span>}
                       </div>
                     )}
+
                     {item.esMayor && (
                       <span className="cart-flow-discount-tag">Precio al mayor aplicado</span>
                     )}
@@ -160,9 +167,9 @@ export default function CartPage() {
                 <span className="cart-flow-price text-center">{formatMoney(item.unitPrice)}</span>
 
                 <div className="cart-flow-qty">
-                  <button type="button" onClick={() => updateCantidad(item.id, item.cantidad - 1)}>-</button>
+                  <button type="button" onClick={() => updateCantidad(item.id, item.cantidad - 1, item.modelo)}>-</button>
                   <span>{item.cantidad}</span>
-                  <button type="button" onClick={() => updateCantidad(item.id, item.cantidad + 1)}>+</button>
+                  <button type="button" onClick={() => updateCantidad(item.id, item.cantidad + 1, item.modelo)}>+</button>
                 </div>
 
                 <div className="cart-flow-subtotal-box">
@@ -196,7 +203,7 @@ export default function CartPage() {
 
             <div className="cart-flow-total-row">
               <span>Total a pagar:</span>
-              <strong>{formatMoney(totalAfterDiscount)}</strong>
+              <span><strong>{formatMoney(totalAfterDiscount)}</strong></span>
             </div>
 
             <button type="button" className="cart-flow-primary" onClick={() => navigate("/entrega")}>

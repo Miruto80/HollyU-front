@@ -8,7 +8,11 @@ export default function ProductDetailsModal({ productId, onClose }) {
 
   if (!productId) return null;
 
-  const modelos = producto?.Modelos ?? [];
+const modelos = producto?.Producto_modelos?.map(pm => ({
+  ...pm.Modelo,
+  Modelo_telas: pm.Modelo_telas,
+  Modelo_tallas: pm.Modelo_tallas
+})) ?? [];
   const precioMayor = Number(producto?.precio_mayor || 0).toLocaleString();
 
   return (

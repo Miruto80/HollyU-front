@@ -36,15 +36,15 @@ export default function CartDropdown({ show, onClose }) {
 
       <div className="offcanvas-body d-flex flex-column">
         {items.length === 0 ? (
-         <div className="offcanvas-body d-flex flex-column align-items-center justify-content-center text-center">
-          <FontAwesomeIcon icon={faCartShopping} className="cart-empty-icon mb-3" />
-          <p className="text-muted fs-5 mb-0">Tu carrito está vacío.</p>
-        </div>
+          <div className="offcanvas-body d-flex flex-column align-items-center justify-content-center text-center">
+            <FontAwesomeIcon icon={faCartShopping} className="cart-empty-icon mb-3" />
+            <p className="text-muted fs-5 mb-0">Tu carrito está vacío.</p>
+          </div>
         ) : (
           <>
             <div className="flex-grow-1">
-              {items.map(item => (
-                <div key={item.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
+              {items.map((item, index) => (
+                <div key={item.idCart || `${item.id}-${item.modelo || index}`} className="d-flex gap-3 mb-3 pb-3 border-bottom">
                   <img
                     src={item.imagen ? `${SERVER_URL}${item.imagen}` : "/images/no-image.jpg"}
                     alt={item.nombre}
@@ -53,6 +53,14 @@ export default function CartDropdown({ show, onClose }) {
 
                   <div className="flex-grow-1">
                     <h6 className="mb-1">{item.nombre}</h6>
+                    
+                    {/* Renderizado del modelo o variante */}
+                    {item.modelo && (
+                      <span className="badge bg-light text-secondary border mb-1 d-inline-block fw-normal" style={{ fontSize: "0.75rem" }}>
+                        Modelo: {item.modelo}
+                      </span>
+                    )}
+
                     <p className="mb-1 text-muted">
                       ${Number(item.precio).toLocaleString()}
                     </p>
@@ -60,14 +68,14 @@ export default function CartDropdown({ show, onClose }) {
                     <div className="d-flex align-items-center gap-2">
                       <button
                         className="btn btn-sm btn-outline-secondary"
-                        onClick={() => updateCantidad(item.id, item.cantidad - 1)}
+                        onClick={() => updateCantidad(item.id, item.cantidad - 1, item.modelo)}
                       >
                         -
                       </button>
                       <span>{item.cantidad}</span>
                       <button
                         className="btn btn-sm btn-outline-secondary"
-                        onClick={() => updateCantidad(item.id, item.cantidad + 1)}
+                        onClick={() => updateCantidad(item.id, item.cantidad + 1, item.modelo)}
                       >
                         +
                       </button>
@@ -75,8 +83,8 @@ export default function CartDropdown({ show, onClose }) {
                   </div>
 
                   <button
-                    className="btn btn-sm btn-link text-danger"
-                    onClick={() => removeItem(item.id)}
+                    className="btn btn-sm btn-link text-danger align-self-start"
+                    onClick={() => removeItem(item.id, item.modelo)}
                     aria-label="Eliminar"
                   >
                     <FontAwesomeIcon icon={faTrash} />

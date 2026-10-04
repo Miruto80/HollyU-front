@@ -57,23 +57,27 @@ export default function OrderConfirmation() {
           <div className="col-lg-7">
             <section className="order-confirmation-panel">
               <h2>Resumen del pedido</h2>
-              {detalles.map((detalle) => (
-                <div className="order-confirmation-item" key={detalle.id}>
-                  <div>
-                    <strong>{detalle.Producto?.nombre || "Producto personalizado"}</strong>
-                    <p>
-                      {detalle.Talla?.nombre && `Talla: ${detalle.Talla.nombre}`}
-                      {detalle.Color?.nombre && ` · Color: ${detalle.Color.nombre}`}
-                      {detalle.Tipo_bota?.nombre && ` · Bota: ${detalle.Tipo_bota.nombre}`}
-                    </p>
-                  </div>
-                  <div className="text-end">
-                    <span>{detalle.cantidad} × {formatCurrency(detalle.precio)}</span>
-                    <strong>{formatCurrency(detalle.cantidad * detalle.precio)}</strong>
-                  </div>
-                </div>
-              ))}
+             {detalles.map((detalle) => {
+  const partes = [
+    detalle.Producto_modelo?.Modelo?.nombre && `Modelo: ${detalle.Producto_modelo.Modelo.nombre}`,
+    detalle.Talla?.nombre && `Talla: ${detalle.Talla.nombre}`,
+    detalle.Colore?.nombre && `Color: ${detalle.Colore.nombre}`,
+    detalle.Tipo_botum?.nombre && `Bota: ${detalle.Tipo_botum.nombre}`
+  ].filter(Boolean);
 
+  return (
+    <div className="order-confirmation-item" key={detalle.id}>
+      <div>
+        <strong>{detalle.Producto?.nombre || "Producto personalizado"}</strong>
+        {partes.length > 0 && <p>{partes.join(" · ")}</p>}
+      </div>
+      <div className="text-end">
+        <span>{detalle.cantidad} × {formatCurrency(detalle.precio)}</span>
+        <strong>{formatCurrency(detalle.cantidad * detalle.precio)}</strong>
+      </div>
+    </div>
+  );
+})}
               <hr />
               <div className="order-confirmation-total">
                 <span>Total</span>

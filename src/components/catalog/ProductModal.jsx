@@ -13,12 +13,14 @@ import hero from "../../assets/img/hero.png";
 
 export default function ProductModal({ product, onClose }) {
     const [detalle, setDetalle] = useState(null);
+    const [modeloSeleccionado, setModeloSeleccionado] = useState(null);
     const [colorSeleccionado, setColorSeleccionado] = useState(null);
     const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
     const [tipoBotaSeleccionado, setTipoBotaSeleccionado] = useState(null);
     const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
     const [mostrarDatosCliente, setMostrarDatosCliente] = useState(false);
     const [descripcionSolicitud, setDescripcionSolicitud] = useState("");
+    
     const isLogged = Boolean(localStorage.getItem("accessToken"));
     const { data: clienteLogueado, loading: cargandoCliente } = useGetFetch(
         isLogged ? "/clientes/me" : null
@@ -27,37 +29,67 @@ export default function ProductModal({ product, onClose }) {
     const { addItem } = useCart();
 
     useEffect(() => {
-        if (!product) return;
+    if (!product) return;
 
-        api.get(`/productos/${product.id}`)
-            .then((r) => setDetalle(r.data))
-            .catch((error) => {
-                console.error("Error cargando producto:", error);
-            });
+    api.get(`/productos/${product.id}`)
+        .then((r) => {
+            setDetalle(r.data);
+            
+            if (r.data?.Producto_modelos?.length > 0) {
+                const primerPM = r.data.Producto_modelos[0];
+                setModeloSeleccionado({
+                    ...primerPM.Modelo,
+                    Modelo_telas: primerPM.Modelo_telas,
+                    Modelo_tallas: primerPM.Modelo_tallas,
+                    producto_modelo_id: primerPM.id
+                });
+            }
+        })
+        .catch((error) => {
+            console.error("Error cargando producto:", error);
+        });
 
-        return () => {
-            setDetalle(null);
-            setColorSeleccionado(null);
-            setTallaSeleccionada(null);
-            setTipoBotaSeleccionado(null);
-            setMostrarSolicitud(false);
-            setMostrarDatosCliente(false);
-            setDescripcionSolicitud("");
-        };
-    }, [product]);
-
+    return () => {
+        setDetalle(null);
+        setModeloSeleccionado(null);
+        setColorSeleccionado(null);
+        setTallaSeleccionada(null);
+        setTipoBotaSeleccionado(null);
+        setMostrarSolicitud(false);
+        setMostrarDatosCliente(false);
+        setDescripcionSolicitud("");
+    };
+}, [product]);
     if (!product || !detalle) return null;
 
-    const modelo = detalle.Modelos?.[0];
-    const tela = modelo?.Modelo_telas?.[0];
+    const modelosDisponibles = (detalle.Producto_modelos || []).map((pm) => ({
+    ...pm.Modelo,
+    Modelo_telas: pm.Modelo_telas,
+    Modelo_tallas: pm.Modelo_tallas,
+    producto_modelo_id: pm.id
+}));
+
+const modelo = modeloSeleccionado || modelosDisponibles[0];
+const tela = modelo?.Modelo_telas?.[0];
     const tieneStock = Number(detalle.stock) > 0;
 
     const imagenes = detalle.Producto_imagenes?.length > 0
-    ? detalle.Producto_imagenes
-    : [{ imagen: null }]; 
+        ? detalle.Producto_imagenes
+        : [{ imagen: null }]; 
 
-const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen; 
+    const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen; 
+
+    const handleCambioModelo = (mod) => {
+        setModeloSeleccionado(mod);
+        setColorSeleccionado(null);
+        setTallaSeleccionada(null);
+    };
+
     const handleAgregarCarrito = () => {
+        if (modelosDisponibles.length > 0 && !modeloSeleccionado) {
+            notifyError("Selecciona un modelo");
+            return;
+        }
         if (!colorSeleccionado) {
             notifyError("Selecciona un color");
             return;
@@ -71,24 +103,24 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
             return;
         }
 
-        
-        addItem({
-            id: `${detalle.id}-${modelo?.id ?? ""}-${colorSeleccionado.color.id}-${tallaSeleccionada.Talla.id}-${tipoBotaSeleccionado?.id ?? ""}`,
-            producto_id: detalle.id,
-            categoria_id: detalle.categoria_id,
-            nombre: detalle.nombre,
-            precio: detalle.precio,
-            precio_mayor: detalle.precio_mayor, 
-            imagen: imagenRelativa,
-            modelo_id: modelo?.id,
-            tipo_tela_id: tela?.tipo_tela_id ?? tela?.Tipos_tela?.id,
-            color_id: colorSeleccionado.color.id,
-            color_nombre: colorSeleccionado.color.nombre,
-            talla_id: tallaSeleccionada.Talla.id,
-            talla_nombre: tallaSeleccionada.Talla.nombre,
-            tipo_bota_id: tipoBotaSeleccionado?.id ?? null,
-            tipo_bota_nombre: tipoBotaSeleccionado?.nombre ?? null
-        });
+      addItem({
+    id: `${detalle.id}-${modelo?.id ?? ""}-${colorSeleccionado.color.id}-${tallaSeleccionada.Talla.id}-${tipoBotaSeleccionado?.id ?? ""}`,
+    producto_id: detalle.id,
+    categoria_id: detalle.categoria_id,
+    nombre: detalle.nombre,
+    precio: detalle.precio,
+    precio_mayor: detalle.precio_mayor, 
+    imagen: imagenRelativa,
+    modelo: modelo?.nombre ?? null,
+    producto_modelo_id: modelo?.producto_modelo_id,
+    modelo_tela_id: tela?.id,
+    color_id: colorSeleccionado.color.id,
+    color_nombre: colorSeleccionado.color.nombre,
+    talla_id: tallaSeleccionada.Talla.id,
+    talla_nombre: tallaSeleccionada.Talla.nombre,
+    tipo_bota_id: tipoBotaSeleccionado?.id ?? null,
+    tipo_bota_nombre: tipoBotaSeleccionado?.nombre ?? null
+});
 
         notifySuccess("Producto agregado al carrito");
         setColorSeleccionado(null);
@@ -175,27 +207,27 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                         <div className="row g-4 align-items-center">
 
                             <div className="col-12 col-lg-6">
-    <Splide
-        options={{
-            type: imagenes.length > 1 ? 'loop' : 'slide',
-            perPage: 1,
-            arrows: imagenes.length > 1,
-            pagination: imagenes.length > 1,
-            drag: imagenes.length > 1
-        }}
-        aria-label="Imágenes del producto"
-    >
-        {imagenes.map((img, index) => (
-            <SplideSlide key={img.id ?? index}>
-                <img
-                    src={img.imagen ? `${SERVER_URL}${img.imagen}` : hero}
-                    className="img-fluid product-main-image"
-                    alt={`${detalle.nombre} ${index + 1}`}
-                />
-            </SplideSlide>
-        ))}
-    </Splide>
-</div>
+                                <Splide
+                                    options={{
+                                        type: imagenes.length > 1 ? 'loop' : 'slide',
+                                        perPage: 1,
+                                        arrows: imagenes.length > 1,
+                                        pagination: imagenes.length > 1,
+                                        drag: imagenes.length > 1
+                                    }}
+                                    aria-label="Imágenes del producto"
+                                >
+                                    {imagenes.map((img, index) => (
+                                        <SplideSlide key={img.id ?? index}>
+                                            <img
+                                                src={img.imagen ? `${SERVER_URL}${img.imagen}` : hero}
+                                                className="img-fluid product-main-image"
+                                                alt={`${detalle.nombre} ${index + 1}`}
+                                            />
+                                        </SplideSlide>
+                                    ))}
+                                </Splide>
+                            </div>
 
                             <div className="col-12 col-lg-6">
 
@@ -207,11 +239,9 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                                     {detalle.descripcion}
                                 </p>
 
-                                {tela && (
-                                    <h3 className="my-4 text-primary">
-                                        ${Number(detalle.precio).toLocaleString()}
-                                    </h3>
-                                )}
+                                <h3 className="my-4 text-primary">
+                                    ${Number(detalle.precio).toLocaleString()}
+                                </h3>
 
                                 <p className={`alert ${tieneStock ? "alert-success" : "alert-warning"} mb-4`}>
                                     {tieneStock
@@ -219,6 +249,26 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                                         : "Producto sin stock, pasará a producción"}
                                 </p>
 
+                                {/* Selección de Modelo */}
+                                {modelosDisponibles.length > 0 && (
+                                    <div className="mb-3">
+                                        <h6 className="mb-2">Modelos</h6>
+                                        <div className="d-flex flex-wrap gap-2">
+                                            {modelosDisponibles.map((m) => (
+                                                <button
+                                                    key={m.id}
+                                                    type="button"
+                                                    className={`btn ${modelo?.id === m.id ? "btn-dark" : "btn-outline-dark"}`}
+                                                    onClick={() => handleCambioModelo(m)}
+                                                >
+                                                    {m.nombre || `Modelo ${m.id}`}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Selección de Colores dinámicos según el modelo */}
                                 <div className="mb-3">
                                     <h6 className="mb-2">
                                         Colores
@@ -236,7 +286,7 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                                                 className="color-circle"
                                                 onClick={() => setColorSeleccionado(c)}
                                                 style={{
-                                                    backgroundColor: c.color.codigo_hex,
+                                                    backgroundColor: c.color.codigo,
                                                     cursor: "pointer",
                                                     border: colorSeleccionado?.id === c.id
                                                         ? "3px solid #000"
@@ -248,11 +298,9 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                                     </div>
                                 </div>
 
+                                {/* Selección de Tallas dinámicas según el modelo */}
                                 <div>
-                                    <h6 className="mb-2">
-                                        Tallas
-                                    </h6>
-
+                                    <h6 className="mb-2">Tallas</h6>
                                     <div className="d-flex flex-wrap gap-2">
                                         {modelo?.Modelo_tallas?.map((t) => (
                                             <button
@@ -267,6 +315,7 @@ const imagenRelativa = detalle.Producto_imagenes?.[0]?.imagen;
                                     </div>
                                 </div>
 
+                                {/* Tipo de bota si aplica */}
                                 {detalle.Tipos_bota?.length > 0 && (
                                     <div className="mt-4">
                                         <h6 className="mb-2">Tipo de bota</h6>
