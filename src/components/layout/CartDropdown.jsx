@@ -34,7 +34,7 @@ export default function CartDropdown({ show, onClose }) {
         ></button>
       </div>
 
-      <div className="offcanvas-body d-flex flex-column">
+      <div className="offcanvas-body d-flex flex-column p-3">
         {items.length === 0 ? (
           <div className="offcanvas-body d-flex flex-column align-items-center justify-content-center text-center">
             <FontAwesomeIcon icon={faCartShopping} className="cart-empty-icon mb-3" />
@@ -42,7 +42,7 @@ export default function CartDropdown({ show, onClose }) {
           </div>
         ) : (
           <>
-            <div className="flex-grow-1">
+            <div className="flex-grow-1 overflow-y-auto mb-3">
               {items.map((item, index) => (
                 <div key={item.idCart || `${item.id}-${item.modelo || index}`} className="d-flex gap-3 mb-3 pb-3 border-bottom">
                   <img
@@ -93,15 +93,22 @@ export default function CartDropdown({ show, onClose }) {
               ))}
             </div>
 
-            <div className="mt-auto">
-              <div className="d-flex justify-content-between mb-3">
-                <strong>Total</strong>
-                <strong>${totalPrecio.toLocaleString()}</strong>
-              </div>
-              <button className="btn btn-dark w-100" onClick={handleFinalizarPedido}>
-                Finalizar pedido
-              </button>
-            </div>
+            <div className="mt-auto  bg-light p-3 rounded">
+            
+            
+              <div className="subir-en-movil">
+                
+                <div className="d-flex justify-content-between mb-3">
+                  <strong>Total</strong>
+                  <strong>${totalPrecio.toLocaleString()}</strong>
+                </div>
+                
+                <button className="btn btn-dark w-100" onClick={handleFinalizarPedido}>
+                  Finalizar pedido
+                </button>
+                
+              </div>  
+          </div>
           </>
         )}
       </div>

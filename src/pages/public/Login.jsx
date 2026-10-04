@@ -18,7 +18,7 @@ export default function Login() {
               <div className="col-lg-6 d-none d-lg-flex login-image">
 
                 <img
-                  src="/src/assets/img/Logo.jpeg"
+                  src="/src/assets/img/loginholly.webp"
                   alt="HolyHoly"
                 />
 
