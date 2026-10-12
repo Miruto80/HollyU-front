@@ -144,9 +144,9 @@
 
   padding: 12px 24px;
 
-  background-color: #080a1c;
+  background-color: #e5b83f;
 
-  color: #ffffff;
+  color: #0f1106;
 
   text-decoration: none;
 
@@ -154,9 +154,9 @@
 }
 
 .hero-button:hover {
-  background-color: #e5b83f;
+  background-color: #080a1cb3;
 
-  color: #080a1c;
+  color: #e5b83f;
 }
 
 .hero-control {
@@ -172,7 +172,7 @@
 
   border: none;
 
-  background-color: rgba(8, 10, 28, 0.7);
+  background-color: #080a1cb3;
 
   color: #ffffff;
 
@@ -219,4 +219,15 @@
     font-size: 3rem;
   }
 
+  .subir-en-telf {
+    position: relative;
+    top: 0;
+  }
+
+  @media (max-width: 768px) {
+    .subir-en-telf {
+      position: relative;
+      top: -50px; 
+    }
+  }
 }
