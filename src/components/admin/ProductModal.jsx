@@ -637,7 +637,15 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                 {paso === 0 ? "Cancelar" : "Anterior"}
               </button>
               {paso < PASOS.length - 1 ? (
-                <button type="button" className="btn btn-dark" onClick={handleSiguiente}>
+                <button
+                  type="button"
+                  className="btn btn-dark"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSiguiente();
+                  }}
+                >
                   Siguiente
                 </button>
               ) : (
