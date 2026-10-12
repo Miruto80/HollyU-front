@@ -27,6 +27,8 @@ const BUILDER_INICIAL = {
   tallas: []
 };
 
+const PASOS = ["Información", "Imágenes", "Modelos"];
+
 export default function ProductoModal({ show, productId, onClose, onCreated, onUpdated }) {
   const esEdicion = Boolean(productId);
 
@@ -51,6 +53,7 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
   const [builder, setBuilder] = useState(BUILDER_INICIAL); // modelo que se está armando
   const [imagenes, setImagenes] = useState([]);
   const [editarEstructura, setEditarEstructura] = useState(false);
+  const [paso, setPaso] = useState(0);
 
   // Precargar datos cuando estamos editando
   useEffect(() => {
@@ -93,6 +96,7 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
       setBuilder(BUILDER_INICIAL);
       setImagenes([]);
       setEditarEstructura(false);
+      setPaso(0);
     }
   }, [show]);
 
@@ -140,6 +144,15 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
     setModelosList(prev => prev.filter(m => m.key !== key));
   };
 
+  const handleSiguiente = () => {
+    if (paso === 0 && (!form.nombre.trim() || !form.categoria_id || form.precio === "")) {
+      notifyError("Completa el nombre, la categoría y el precio del producto");
+      return;
+    }
+
+    setPaso(prev => Math.min(prev + 1, PASOS.length - 1));
+  };
+
   const handleEliminarImagen = async (imagenId) => {
     const ok = await confirmarAccion({
       titulo: "¿Eliminar esta imagen?",
@@ -183,6 +196,17 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (paso < PASOS.length - 1) {
+      handleSiguiente();
+      return;
+    }
+
+    if (!form.nombre.trim() || !form.categoria_id || form.precio === "") {
+      setPaso(0);
+      notifyError("Completa el nombre, la categoría y el precio del producto");
+      return;
+    }
 
     if ((!esEdicion || editarEstructura) && modelosList.length === 0) {
       notifyError("Agrega al menos un modelo");
@@ -267,7 +291,24 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                 </div>
               )}
 
-              <div className="row g-3">
+              <div className="d-flex justify-content-center gap-4 mb-4">
+                {PASOS.map((nombrePaso, indice) => (
+                  <div
+                    key={nombrePaso}
+                    className={`text-center ${indice === paso ? "fw-bold text-dark" : "text-muted"}`}
+                  >
+                    <div
+                      className={`rounded-circle d-inline-flex align-items-center justify-content-center mb-1 ${indice === paso ? "bg-dark text-white" : "bg-light"}`}
+                      style={{ width: 32, height: 32 }}
+                    >
+                      {indice + 1}
+                    </div>
+                    <div className="small">{nombrePaso}</div>
+                  </div>
+                ))}
+              </div>
+
+              {paso === 0 && <div className="row g-3">
                 <div className="col-md-12">
                   <label className="form-label">Nombre</label>
                   <input name="nombre" className="form-control" value={form.nombre} onChange={handleChange} required />
@@ -380,7 +421,9 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                     onChange={handleChange}
                   />
                 </div>
+              </div>}
 
+              {paso === 1 && <div className="row g-3">
                 <div className="col-12">
                   <label className="form-label">
                     {esEdicion ? "Imágenes actuales" : "Imágenes del producto"}
@@ -438,150 +481,170 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
 
                   <ImageUploaderMultiple onImagesSelected={setImagenes} />
                 </div>
-              </div>
+              </div>}
 
-              <hr className="my-4" />
+              {paso === 2 && <>
+                <hr className="my-4" />
 
-              {esEdicion && (
-                <div className="form-check form-switch mb-3">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="editarEstructura"
-                    checked={editarEstructura}
-                    onChange={(e) => setEditarEstructura(e.target.checked)}
-                  />
-                  <label className="form-check-label" htmlFor="editarEstructura">
-                    Editar modelos, telas, colores y tallas
-                  </label>
-                  <div className="form-text">
-                    Solo se puede hacer si el producto aún no tiene pedidos asociados.
-                  </div>
-                </div>
-              )}
-
-              {(!esEdicion || editarEstructura) && (
-                <>
-                  <h6>Modelos del producto</h6>
-
-                  {modelosList.length > 0 && (
-                    <table className="table table-sm mb-3">
-                      <thead>
-                        <tr>
-                          <th>Modelo</th>
-                          <th>Tela</th>
-                          <th>Colores</th>
-                          <th>Tallas</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {modelosList.map(m => (
-                          <tr key={m.key}>
-                            <td>{m.modeloNombre}</td>
-                            <td>{m.tela_nombre}</td>
-                            <td>{m.colores_nombres?.join(", ")}</td>
-                            <td>{m.tallas_nombres?.join(", ")}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-outline-danger"
-                                onClick={() => quitarModelo(m.key)}
-                              >
-                                ×
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-
-                  <div className="border rounded p-3">
-                    <div className="row g-3">
-                      <div className="col-md-6">
-                        <label className="form-label">Nombre del modelo</label>
-                        <input
-                          className="form-control"
-                          list="modelos-catalogo"
-                          value={builder.modeloNombre}
-                          onChange={(e) => setBuilder(prev => ({ ...prev, modeloNombre: e.target.value }))}
-                          placeholder="Ej: Cuello V"
-                        />
-                        <datalist id="modelos-catalogo">
-                          {modelosCatalogo?.map(m => (
-                            <option key={m.id} value={m.nombre} />
-                          ))}
-                        </datalist>
-                        <div className="form-text">
-                          Escribe un nombre existente para reutilizarlo, o uno nuevo para crearlo.
-                        </div>
-                      </div>
-
-                      <div className="col-md-6">
-                        <label className="form-label">Tipo de tela</label>
-                        <select
-                          className="form-select"
-                          value={builder.tipo_tela_id}
-                          onChange={(e) => setBuilder(prev => ({ ...prev, tipo_tela_id: e.target.value }))}
-                        >
-                          <option value="">Seleccione...</option>
-                          {tiposTela?.map(t => (
-                            <option key={t.id} value={t.id}>{t.nombre}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="col-12">
-                        <label className="form-label">Colores</label>
-                        <div className="d-flex gap-2 flex-wrap">
-                          {colores?.map(c => (
-                            <span
-                              key={c.id}
-                              onClick={() => toggleBuilderMulti("colores", c.id)}
-                              style={{
-                                width: 28, height: 28, borderRadius: "50%",
-                                background: c.codigo_hex, cursor: "pointer",
-                                border: builder.colores.includes(c.id) ? "3px solid #000" : "1px solid #ccc"
-                              }}
-                              title={c.nombre}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="col-12">
-                        <label className="form-label">Tallas</label>
-                        <div className="d-flex gap-2 flex-wrap">
-                          {tallas?.map(t => (
-                            <button
-                              key={t.id}
-                              type="button"
-                              className={`btn btn-sm ${builder.tallas.includes(t.id) ? "btn-dark" : "btn-outline-dark"}`}
-                              onClick={() => toggleBuilderMulti("tallas", t.id)}
-                            >
-                              {t.nombre}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="col-12">
-                        <button type="button" className="btn btn-dark" onClick={agregarModelo}>
-                          + Agregar modelo
-                        </button>
-                      </div>
+                {esEdicion && (
+                  <div className="form-check form-switch mb-3">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="editarEstructura"
+                      checked={editarEstructura}
+                      onChange={(e) => setEditarEstructura(e.target.checked)}
+                    />
+                    <label className="form-check-label" htmlFor="editarEstructura">
+                      Editar modelos, telas, colores y tallas
+                    </label>
+                    <div className="form-text">
+                      Solo se puede hacer si el producto aún no tiene pedidos asociados.
                     </div>
                   </div>
-                </>
-              )}
+                )}
+
+                {esEdicion && !editarEstructura && (
+                  <div className="alert alert-info">
+                    La estructura de modelos existente se conservará sin cambios.
+                  </div>
+                )}
+
+                {(!esEdicion || editarEstructura) && (
+                  <>
+                    <h6>Modelos del producto</h6>
+
+                    {modelosList.length > 0 && (
+                      <table className="table table-sm mb-3">
+                        <thead>
+                          <tr>
+                            <th>Modelo</th>
+                            <th>Tela</th>
+                            <th>Colores</th>
+                            <th>Tallas</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {modelosList.map(m => (
+                            <tr key={m.key}>
+                              <td>{m.modeloNombre}</td>
+                              <td>{m.tela_nombre}</td>
+                              <td>{m.colores_nombres?.join(", ")}</td>
+                              <td>{m.tallas_nombres?.join(", ")}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-danger"
+                                  onClick={() => quitarModelo(m.key)}
+                                >
+                                  ×
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+
+                    <div className="border rounded p-3">
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <label className="form-label">Nombre del modelo</label>
+                          <input
+                            className="form-control"
+                            list="modelos-catalogo"
+                            value={builder.modeloNombre}
+                            onChange={(e) => setBuilder(prev => ({ ...prev, modeloNombre: e.target.value }))}
+                            placeholder="Ej: Cuello V"
+                          />
+                          <datalist id="modelos-catalogo">
+                            {modelosCatalogo?.map(m => (
+                              <option key={m.id} value={m.nombre} />
+                            ))}
+                          </datalist>
+                          <div className="form-text">
+                            Escribe un nombre existente para reutilizarlo, o uno nuevo para crearlo.
+                          </div>
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Tipo de tela</label>
+                          <select
+                            className="form-select"
+                            value={builder.tipo_tela_id}
+                            onChange={(e) => setBuilder(prev => ({ ...prev, tipo_tela_id: e.target.value }))}
+                          >
+                            <option value="">Seleccione...</option>
+                            {tiposTela?.map(t => (
+                              <option key={t.id} value={t.id}>{t.nombre}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="col-12">
+                          <label className="form-label">Colores</label>
+                          <div className="d-flex gap-2 flex-wrap">
+                            {colores?.map(c => (
+                              <span
+                                key={c.id}
+                                onClick={() => toggleBuilderMulti("colores", c.id)}
+                                style={{
+                                  width: 28, height: 28, borderRadius: "50%",
+                                  background: c.codigo_hex, cursor: "pointer",
+                                  border: builder.colores.includes(c.id) ? "3px solid #000" : "1px solid #ccc"
+                                }}
+                                title={c.nombre}
+                              />
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="col-12">
+                          <label className="form-label">Tallas</label>
+                          <div className="d-flex gap-2 flex-wrap">
+                            {tallas?.map(t => (
+                              <button
+                                key={t.id}
+                                type="button"
+                                className={`btn btn-sm ${builder.tallas.includes(t.id) ? "btn-dark" : "btn-outline-dark"}`}
+                                onClick={() => toggleBuilderMulti("tallas", t.id)}
+                              >
+                                {t.nombre}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="col-12">
+                          <button type="button" className="btn btn-dark" onClick={agregarModelo}>
+                            + Agregar modelo
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>}
             </div>
 
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-              <button type="submit" className="btn btn-dark" disabled={guardandoActual}>
-                {guardandoActual ? "Guardando..." : esEdicion ? "Guardar cambios" : "Registrar producto"}
+            <div className="modal-footer d-flex justify-content-between">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => paso === 0 ? onClose() : setPaso(prev => prev - 1)}
+              >
+                {paso === 0 ? "Cancelar" : "Anterior"}
               </button>
+              {paso < PASOS.length - 1 ? (
+                <button type="button" className="btn btn-dark" onClick={handleSiguiente}>
+                  Siguiente
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-dark" disabled={guardandoActual}>
+                  {guardandoActual ? "Guardando..." : esEdicion ? "Guardar cambios" : "Registrar producto"}
+                </button>
+              )}
             </div>
           </form>
         </div>
