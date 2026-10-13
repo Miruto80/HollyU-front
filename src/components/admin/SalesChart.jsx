@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 
 import { Line } from "react-chartjs-2";
+import { useGetFetch } from "../../hooks/useGetFetch";
 
 ChartJS.register(
   CategoryScale,
@@ -22,28 +23,53 @@ ChartJS.register(
 );
 
 const SalesChart = () => {
+  const { data: pedidos = [], loading, error } = useGetFetch("/pedidos");
+  const meses = Array.from({ length: 6 }, (_, index) => {
+    const fecha = new Date();
+    fecha.setDate(1);
+    fecha.setHours(0, 0, 0, 0);
+    fecha.setMonth(fecha.getMonth() - 5 + index);
+
+    return {
+      year: fecha.getFullYear(),
+      month: fecha.getMonth(),
+      label: fecha.toLocaleDateString("es-VE", {
+        month: "short",
+        year: "2-digit",
+      }),
+    };
+  });
+  const ventasPorMes = new Map(
+    meses.map(({ year, month }) => [`${year}-${month}`, 0])
+  );
+
+  pedidos.forEach((pedido) => {
+    const tienePagoVerificado = pedido.Pagos?.some(
+      (pago) => pago.Estados_pago?.nombre === "Verificado"
+    );
+    const fecha = new Date(pedido.fecha);
+    const total = Number(pedido.total);
+
+    if (!tienePagoVerificado || Number.isNaN(fecha.getTime()) || !Number.isFinite(total)) {
+      return;
+    }
+
+    const claveMes = `${fecha.getFullYear()}-${fecha.getMonth()}`;
+
+    if (ventasPorMes.has(claveMes)) {
+      ventasPorMes.set(claveMes, ventasPorMes.get(claveMes) + total);
+    }
+  });
+
+  const ventas = meses.map(({ year, month }) => ventasPorMes.get(`${year}-${month}`));
+  const hayVentas = ventas.some((venta) => venta > 0);
   const data = {
-    labels: [
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-    ],
+    labels: meses.map(({ label }) => label),
 
     datasets: [
       {
-        label: "Ventas ($)",
-
-        data: [
-          1800,
-          2500,
-          2100,
-          3400,
-          4200,
-          3900,
-        ],
+        label: "Ventas web ($)",
+        data: ventas,
 
         borderColor: "#17195A",
 
@@ -74,7 +100,7 @@ const SalesChart = () => {
 
       title: {
         display: true,
-        text: "Ventas de los últimos 6 meses",
+        text: "Ventas web de los últimos 6 meses",
         font: {
           size: 18,
         },
@@ -84,7 +110,9 @@ const SalesChart = () => {
     scales: {
       y: {
         beginAtZero: true,
-
+        ticks: {
+          callback: (value) => `$ ${Number(value).toLocaleString("es-VE")}`,
+        },
         grid: {
           color: "#ececec",
         },
@@ -102,20 +130,27 @@ const SalesChart = () => {
     <div className="card dashboard-chart">
 
       <div className="card-body">
-
         <div
           style={{
             height: "350px",
           }}
         >
-          <Line
-            data={data}
-            options={options}
-          />
+          {loading ? (
+            <p role="status">Cargando ventas...</p>
+          ) : error ? (
+            <p role="alert">No se pudieron cargar las ventas.</p>
+          ) : (
+            <>
+              <Line data={data} options={options} />
+              {!hayVentas && (
+                <p className="text-center text-muted mt-2">
+                  No hay ventas web verificadas en los últimos 6 meses.
+                </p>
+              )}
+            </>
+          )}
         </div>
-
       </div>
-
     </div>
   );
 };
