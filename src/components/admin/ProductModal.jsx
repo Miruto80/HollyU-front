@@ -53,6 +53,7 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
   const [builder, setBuilder] = useState(BUILDER_INICIAL); // modelo que se está armando
   const [imagenes, setImagenes] = useState([]);
   const [editarEstructura, setEditarEstructura] = useState(false);
+  const [editingModelKey, setEditingModelKey] = useState(null);
   const [paso, setPaso] = useState(0);
 
   // Precargar datos cuando estamos editando
@@ -96,6 +97,7 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
       setBuilder(BUILDER_INICIAL);
       setImagenes([]);
       setEditarEstructura(false);
+      setEditingModelKey(null);
       setPaso(0);
     }
   }, [show]);
@@ -123,25 +125,47 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
 
     const telaObj = tiposTela?.find(t => String(t.id) === String(builder.tipo_tela_id));
 
-    setModelosList(prev => [
-      ...prev,
-      {
-        key: `new_${Date.now()}_${Math.random()}`,
-        modeloNombre: builder.modeloNombre.trim(),
-        tipo_tela_id: builder.tipo_tela_id,
-        tela_nombre: telaObj?.nombre,
-        colores: builder.colores,
-        colores_nombres: colores?.filter(c => builder.colores.includes(c.id)).map(c => c.nombre) ?? [],
-        tallas: builder.tallas,
-        tallas_nombres: tallas?.filter(t => builder.tallas.includes(t.id)).map(t => t.nombre) ?? []
-      }
-    ]);
+    const modeloActualizado = {
+      key: editingModelKey ?? `new_${Date.now()}_${Math.random()}`,
+      modeloNombre: builder.modeloNombre.trim(),
+      tipo_tela_id: builder.tipo_tela_id,
+      tela_nombre: telaObj?.nombre,
+      colores: builder.colores,
+      colores_nombres: colores?.filter(c => builder.colores.includes(c.id)).map(c => c.nombre) ?? [],
+      tallas: builder.tallas,
+      tallas_nombres: tallas?.filter(t => builder.tallas.includes(t.id)).map(t => t.nombre) ?? []
+    };
+
+    setModelosList(prev => editingModelKey
+      ? prev.map(m => m.key === editingModelKey ? modeloActualizado : m)
+      : [...prev, modeloActualizado]
+    );
 
     setBuilder(BUILDER_INICIAL);
+    setEditingModelKey(null);
   };
 
   const quitarModelo = (key) => {
     setModelosList(prev => prev.filter(m => m.key !== key));
+    if (editingModelKey === key) {
+      setBuilder(BUILDER_INICIAL);
+      setEditingModelKey(null);
+    }
+  };
+
+  const editarModelo = (modelo) => {
+    setBuilder({
+      modeloNombre: modelo.modeloNombre,
+      tipo_tela_id: modelo.tipo_tela_id,
+      colores: modelo.colores,
+      tallas: modelo.tallas
+    });
+    setEditingModelKey(modelo.key);
+  };
+
+  const cancelarEdicionModelo = () => {
+    setBuilder(BUILDER_INICIAL);
+    setEditingModelKey(null);
   };
 
   const handleSiguiente = () => {
@@ -499,8 +523,8 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                       Editar modelos, telas, colores y tallas
                     </label>
                     <div className="form-text">
-  Los modelos ya usados en pedidos se conservan como historial (no se eliminan ni se modifican) y se reemplazan por la nueva estructura que definas aquí.
-</div>
+                      Los modelos ya usados en pedidos se conservan como historial (no se eliminan ni se modifican) y se reemplazan por la nueva estructura que definas aquí.
+                    </div>
                   </div>
                 )}
 
@@ -523,6 +547,7 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                             <th>Colores</th>
                             <th>Tallas</th>
                             <th></th>
+                            <th></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -532,6 +557,15 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                               <td>{m.tela_nombre}</td>
                               <td>{m.colores_nombres?.join(", ")}</td>
                               <td>{m.tallas_nombres?.join(", ")}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-dark"
+                                  onClick={() => editarModelo(m)}
+                                >
+                                  Editar
+                                </button>
+                              </td>
                               <td>
                                 <button
                                   type="button"
@@ -618,8 +652,17 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
 
                         <div className="col-12">
                           <button type="button" className="btn btn-dark" onClick={agregarModelo}>
-                            + Agregar modelo
+                            {editingModelKey ? "Guardar cambios del modelo" : "+ Agregar modelo"}
                           </button>
+                          {editingModelKey && (
+                            <button
+                              type="button"
+                              className="btn btn-outline-secondary ms-2"
+                              onClick={cancelarEdicionModelo}
+                            >
+                              Cancelar edición
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
