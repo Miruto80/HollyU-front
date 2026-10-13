@@ -499,8 +499,8 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                       Editar modelos, telas, colores y tallas
                     </label>
                     <div className="form-text">
-                      Solo se puede hacer si el producto aún no tiene pedidos asociados.
-                    </div>
+  Los modelos ya usados en pedidos se conservan como historial (no se eliminan ni se modifican) y se reemplazan por la nueva estructura que definas aquí.
+</div>
                   </div>
                 )}
 
