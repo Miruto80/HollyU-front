@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 import { useLogout } from "../../hooks/useLogout";
 import {
   faBars,
@@ -42,15 +43,14 @@ export default function AdminNavbar({ onToggleSidebar }) {
 
       <div className="admin-navbar-right">
 
-        <button className="icon-button">
-
+        <Link
+          to="/admin/notificaciones"
+          className="icon-button d-flex align-items-center justify-content-center text-decoration-none text-reset"
+          aria-label="Ver notificaciones"
+          title="Ver notificaciones"
+        >
           <FontAwesomeIcon icon={faBell} />
-
-          <span className="notification-badge">
-            3
-          </span>
-
-        </button>
+        </Link>
 
         <button 
         type="button"

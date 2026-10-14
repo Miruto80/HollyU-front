@@ -14,6 +14,7 @@ import Quotes from "../pages/admin/Quotes";
 import Personalizations from "../pages/admin/Personalizations";
 import Discounts from "../pages/admin/Discounts";
 import Sales from "../pages/admin/Sales.jsx";
+import Notifications from "../pages/admin/Notifications.jsx";
 
 function AdminRoutes() {
 
@@ -46,6 +47,8 @@ function AdminRoutes() {
                 <Route path="descuentos" element={<Discounts />} />
 
                 <Route path="ventas" element={<Sales />} />
+
+                <Route path="notificaciones" element={<Notifications />} />
             </Route>
 
         </Routes>

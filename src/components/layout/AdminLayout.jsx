@@ -3,9 +3,14 @@ import { Outlet } from "react-router-dom";
 
 import Sidebar from "../admin/Sidebar";
 import AdminNav from "../admin/AdminNav";
+import { useNotifications } from "../../hooks/useNotifications";
 
 export default function AdminLayout () {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    useNotifications("pedido_web");
+    useNotifications("personalizaciones");
+    useNotifications("producciones");
 
     return (
         <div className="admin-layout">
