@@ -1,202 +1,65 @@
-.admin-navbar{
-
-    height:70px;
-
-    background:#fff;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:0 30px;
-
-    border-bottom:1px solid #e9ecef;
-
-    position:sticky;
-
-    top:0;
-
-    z-index:1000;
-
+.admin-navbar {
+    height: 70px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid #e9ecef;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.admin-navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
+.admin-navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-.sidebar-toggle{
-
-    display:none;
-
-    width:42px;
-
-    height:42px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#080A1C;
-
-    color:#E5B83F;
-
-    transition:.25s;
-
+.sidebar-toggle {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    background: #080A1C;
+    color: #E5B83F;
+    transition: .25s;
 }
 
-.sidebar-toggle:hover{
-
-    background:#17195A;
-
+.sidebar-toggle:hover {
+    background: #17195A;
 }
 
-.search-box{
-
-    display:flex;
-
-    align-items:center;
-
-    background:#f5f5f5;
-
-    border-radius:12px;
-
-    padding:0 15px;
-
-    width:320px;
-
-    height:45px;
-
+.admin-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-.search-box input{
-
-    border:none;
-
-    background:none;
-
-    width:100%;
-
-    outline:none;
-
-    margin-left:12px;
-
+.icon-button {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 12px;
+    background: #f5f5f5;
+    font-size: 18px;
+    transition: background 0.2s;
 }
 
-.search-icon{
-
-    color:#999;
-
+.icon-button:hover {
+    background: #e2e8f0;
 }
-
-.admin-navbar-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:25px;
-
-}
-
-.icon-button{
-
-    position:relative;
-
-    width:45px;
-
-    height:45px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#f5f5f5;
-
-    font-size:18px;
-
-}
-
-.notification-badge{
-
-    position:absolute;
-
-    top:6px;
-
-    right:6px;
-
-    width:18px;
-
-    height:18px;
-
-    border-radius:50%;
-
-    background:#E5B83F;
-
-    color:#080A1C;
-
-    font-size:11px;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-weight:600;
-
-}
-
-.admin-user{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    cursor:pointer;
-
-}
-
-.admin-user img{
-
-    width:42px;
-
-    height:42px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-}
-
-.admin-user h6{
-
-    margin:0;
-
-    font-weight:600;
-
-}
-
-.admin-user small{
-
-    color:#777;
-
-}
-
 
 .btn-logout {
   background-color: #E5B83F; 
   border-color: #fdca3e;
   color: #080808;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 10px 16px;
 }
 
 .btn-logout:hover {
@@ -205,48 +68,36 @@
   color: #000000;
 }
 
+/* Responsivo */
 @media (max-width: 992px) {
-    .sidebar-toggle{
-        display:flex;
-        justify-content:center;
-        align-items:center;
+    .sidebar-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    .admin-navbar{
-        gap:12px;
-        padding:0 18px;
+    .admin-navbar {
+        padding: 0 20px;
     }
 
-    .search-box{
-        width:100%;
-        max-width:550px;
-    }
-
-    .admin-navbar-right{
-        gap:14px;
+    .admin-navbar-right {
+        gap: 15px;
     }
 }
 
-@media (max-width: 768px) {
-    .admin-navbar{
-        flex-wrap:wrap;
-        padding:10px 16px;
+/* Responsivo para Teléfonos*/
+@media (max-width: 576px) {
+    .admin-navbar {
+        padding: 0 12px;
+        height: 65px;
     }
 
-    .admin-navbar-left,
-    .admin-navbar-right{
-        width:100%;
+    .admin-navbar-right {
+        gap: 10px;
     }
 
-    .admin-navbar-left{
-        gap:10px;
-    }
-
-    .search-box{
-        width:100%;
-    }
-
-    .admin-user small{
-        display:none;
+    .btn-logout {
+        padding: 8px 12px;
+        font-size: 14px;
     }
 }

@@ -6,6 +6,21 @@
 
 }
 
+.custom-table thead th {
+
+  background-color: #1e293b !important; 
+  color: #ffffff !important;         
+  font-weight: 600;
+  vertical-align: middle;
+  
+}
+
+.ShoFor {
+
+  background-color: #1e293b !important; 
+  
+}
+
 .admin-content{
 
     flex:1;
