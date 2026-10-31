@@ -1,0 +1,201 @@
+.image-uploader {
+  --image-uploader-blue: #0b2545;
+  --image-uploader-blue-light: #17466c;
+  --image-uploader-gold: #c9a24a;
+  --image-uploader-gold-light: #f3e8c9;
+}
+
+.image-uploader-dropzone {
+  display: flex;
+  min-height: 220px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 2rem 1.5rem;
+  color: var(--image-uploader-blue);
+  text-align: center;
+  cursor: pointer;
+  border: 2px dashed rgba(11, 37, 69, 0.28);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at top, rgba(201, 162, 74, 0.1), transparent 58%),
+    linear-gradient(135deg, #f7f9fc, #fffdf7);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-uploader-dropzone:hover,
+.image-uploader-dropzone:focus-visible,
+.image-uploader-dropzone.is-drag-active {
+  border-color: var(--image-uploader-gold);
+  background:
+    radial-gradient(ellipse at top, rgba(201, 162, 74, 0.17), transparent 58%),
+    linear-gradient(135deg, #f0f5fa, #fffaf0);
+  box-shadow: 0 8px 24px rgba(11, 37, 69, 0.08);
+  outline: none;
+}
+
+.image-uploader-dropzone.is-drag-active {
+  transform: scale(1.01);
+}
+
+.image-uploader-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 0.2rem;
+  place-items: center;
+  color: var(--image-uploader-blue);
+  border: 1px solid rgba(201, 162, 74, 0.5);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fff, var(--image-uploader-gold-light));
+  box-shadow: 0 5px 14px rgba(11, 37, 69, 0.09);
+}
+
+.image-uploader-icon svg {
+  width: 27px;
+  height: 27px;
+  stroke: var(--image-uploader-blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.image-uploader-title {
+  color: var(--image-uploader-blue);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.image-uploader-description {
+  color: #5c6875;
+  font-size: 0.92rem;
+}
+
+.image-uploader-browse {
+  color: var(--image-uploader-blue-light);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--image-uploader-gold);
+  text-underline-offset: 3px;
+}
+
+.image-uploader-formats {
+  color: #77818b;
+  font-size: 0.78rem;
+}
+
+.image-uploader-limit {
+  margin-top: 0.2rem;
+  padding: 0.3rem 0.7rem;
+  color: var(--image-uploader-blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(201, 162, 74, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.image-uploader-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.image-uploader-previews-heading {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  color: var(--image-uploader-blue);
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
+.image-uploader-previews-heading span:last-child {
+  color: #7a6840;
+  font-weight: 600;
+}
+
+.image-uploader-preview {
+  position: relative;
+  width: 104px;
+  padding: 5px;
+  border: 1px solid rgba(201, 162, 74, 0.45);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(11, 37, 69, 0.08);
+}
+
+.image-uploader-preview img {
+  display: block;
+  width: 100%;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.image-uploader-primary {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  padding: 0.2rem 0.4rem;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: var(--image-uploader-blue);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.image-uploader-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  place-items: center;
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--image-uploader-blue);
+  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.2);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.image-uploader-remove:hover {
+  background: #9b3333;
+  transform: scale(1.08);
+}
+
+.image-uploader-filename {
+  display: block;
+  overflow: hidden;
+  margin-top: 0.35rem;
+  color: #5c6875;
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-uploader-error {
+  margin: 0.75rem 0 0;
+  color: #a12d2d;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 576px) {
+  .image-uploader-dropzone {
+    min-height: 200px;
+    padding: 1.5rem 1rem;
+  }
+
+  .image-uploader-description {
+    font-size: 0.85rem;
+  }
+}

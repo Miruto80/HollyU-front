@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import "./ImageUploaderMultiple.css";
 
 export default function ImageUploaderMultiple({ onImagesSelected, maxFiles = 8 }) {
   const [items, setItems] = useState([]); // [{ file, preview }]
@@ -43,56 +44,61 @@ export default function ImageUploaderMultiple({ onImagesSelected, maxFiles = 8 }
   }, []);
 
   return (
-    <div>
+    <div className="image-uploader">
       <div
         {...getRootProps()}
-        className="border rounded p-4 text-center"
-        style={{
-          cursor: "pointer",
-          background: isDragActive ? "#f0f0f0" : "#fafafa",
-          borderStyle: "dashed"
-        }}
+        className={`image-uploader-dropzone${isDragActive ? " is-drag-active" : ""}`}
       >
         <input {...getInputProps()} />
-        <p className="mb-0 text-muted">
-          {isDragActive
-            ? "Soltá las imágenes acá..."
-            : `Arrastrá imágenes o hacé clic (máx. ${maxFiles})`}
-        </p>
+        <span className="image-uploader-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-3" />
+          </svg>
+        </span>
+        <span className="image-uploader-title">
+          {isDragActive ? "Soltá tus imágenes aquí" : "Agregá imágenes del producto"}
+        </span>
+        <span className="image-uploader-description">
+          Arrastralas y soltá aquí, o <span className="image-uploader-browse">explorá tus archivos</span>
+        </span>
+        <span className="image-uploader-formats">JPG, PNG o WEBP · Máximo 5 MB por imagen</span>
+        <span className="image-uploader-limit">Hasta {maxFiles} imágenes</span>
       </div>
 
       {items.length > 0 && (
-        <div className="d-flex flex-wrap gap-2 mt-3">
+        <div className="image-uploader-previews">
+          <div className="image-uploader-previews-heading">
+            <span>Imágenes seleccionadas</span>
+            <span>{items.length} / {maxFiles}</span>
+          </div>
           {items.map((item, index) => (
-            <div key={index} style={{ position: "relative" }}>
+            <div className="image-uploader-preview" key={item.preview}>
               <img
                 src={item.preview}
-                alt={`preview-${index}`}
-                style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 6 }}
+                alt={item.file.name}
               />
               {index === 0 && (
-                <span
-                  className="badge bg-dark"
-                  style={{ position: "absolute", top: 2, left: 2, fontSize: 10 }}
-                >
-                  Principal
-                </span>
+                <span className="image-uploader-primary">Principal</span>
               )}
               <button
                 type="button"
-                className="btn btn-sm btn-danger"
-                style={{ position: "absolute", top: -6, right: -6, borderRadius: "50%", padding: "0 6px" }}
+                className="image-uploader-remove"
                 onClick={() => removeItem(index)}
+                aria-label={`Quitar ${item.file.name}`}
+                title="Quitar imagen"
               >
-                ×
+                <span aria-hidden="true">×</span>
               </button>
+              <span className="image-uploader-filename" title={item.file.name}>
+                {item.file.name}
+              </span>
             </div>
           ))}
         </div>
       )}
 
       {fileRejections.length > 0 && (
-        <p className="text-danger small mt-2">
+        <p className="image-uploader-error" role="alert">
           Algún archivo es inválido. Solo JPG, PNG o WEBP, máximo 5MB cada uno.
         </p>
       )}
