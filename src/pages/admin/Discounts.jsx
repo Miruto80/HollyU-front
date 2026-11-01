@@ -3,6 +3,12 @@ import ReusableDataTable from "../../components/common/ReusableDataTable";
 import DiscountModal from "../../components/admin/DiscountModal";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { useDeleteFetch } from "../../hooks/useDeleteFetch";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faTags,
+
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Discounts() {
   const { data: descuentos = [], loading, error, refetch } = useGetFetch("/descuentos");
@@ -81,32 +87,53 @@ export default function Discounts() {
   ];
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Descuentos</h3>
-        <button className="btn btn-dark" onClick={handleCreate}>+ Crear descuento</button>
-      </div>
+    <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
+      <div className="card shadow-sm border-0">
+        <div className="card-body p-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+              <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faTags} style={{ color: "#ffc107" }} /> Descuentos</h3>
 
-      <ReusableDataTable
-        data={descuentos}
-        columns={columns}
-        loading={loading}
-        error={error}
-        options={{
-          language: {
-            search: "Buscar:",
-            lengthMenu: "Mostrar _MENU_ registros",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron descuentos"
-          }
-        }}
-        className="table table-striped table-hover"
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+               <button className="btn btn-dark" onClick={handleCreate}>+ Crear descuento</button>
+            </div>
 
-      <DiscountModal show={showModal} onClose={() => setShowModal(false)} onSaved={refetch} descuento={editing} />
-      <DeleteModal />
+              <ReusableDataTable
+                data={descuentos}
+                columns={columns}
+                loading={loading}
+                error={error}
+                options={{
+                  columnDefs: [
+                    { targets: 0, className: "text-center" }, 
+                    { targets: 1, className: "text-start" },  
+                    { targets: 2, className: "text-start" },  
+                    { targets: 3, className: "text-start" },  
+                    { targets: 4, className: "text-start" },  
+                    { targets: 5, className: "text-start" },  
+                    { targets: 6, className: "text-start" },  
+                    { targets: 7, className: "text-start" },  
+                    
+                  ],                  
+                  language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    zeroRecords: "No se encontraron descuentos",
+                    paginate: {
+                      previous: "Anterior",           
+                      next: "Siguiente"               
+                    }                    
+                  }
+                }}
+                className="table table-striped table-hover mb-0 custom-table"
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+
+              <DiscountModal show={showModal} onClose={() => setShowModal(false)} onSaved={refetch} descuento={editing} />
+              <DeleteModal />
+
+          </div>
+        </div>
     </div>
   );
 }

@@ -3,6 +3,12 @@ import { useGetFetch } from '../../hooks/useGetFetch';
 import api from '../../services/api';
 import { notifySuccess, notifyError } from '../../utils/Tostify';
 import { confirmarAccion } from '../../utils/Alert';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faReceipt,
+
+} from "@fortawesome/free-solid-svg-icons";
 
 const formatCurrency = (value) => `$${Number(value || 0).toLocaleString()}`;
 
@@ -101,26 +107,48 @@ export default function Quotes() {
   ];
 
   return (
-    <div className="container mt-4">
-      <h3 className="mb-3">Cotizaciones</h3>
+    <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
+      <div className="card shadow-sm border-0">
+        <div className="card-body p-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+              <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faReceipt} style={{ color: "#ffc107" }} /> Cotizaciones</h3>
+            </div>
 
-      <ReusableDataTable
-        data={cotizaciones}
-        columns={columns}
-        loading={loading}
-        error={error}
-        onProduction={handleProduction}
-        options={{
-          language: {
-            search: 'Buscar:',
-            lengthMenu: 'Mostrar _MENU_ registros',
-            info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-            zeroRecords: 'No se encontraron cotizaciones'
-          }
-        }}
-        className="table table-striped table-hover"
-      />
+            <ReusableDataTable
+              data={cotizaciones}
+              columns={columns}
+              loading={loading}
+              error={error}
+              onProduction={handleProduction}
+              options={{
+                columnDefs: [
+                { targets: 0, className: "text-center" }, 
+                { targets: 1, className: "text-start" },  
+                { targets: 2, className: "text-start" },  
+                { targets: 3, className: "text-start" },  
+                { targets: 4, className: "text-start" },  
+                { targets: 5, className: "text-start" },  
+                { targets: 6, className: "text-start" },  
+                { targets: 7, className: "text-start" },  
+                { targets: 8, className: "text-start" }  
+                
+              ],                
+                language: {
+                  search: 'Buscar:',
+                  lengthMenu: 'Mostrar _MENU_ registros',
+                  info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                  zeroRecords: 'No se encontraron cotizaciones',
+                    paginate: {
+                      previous: "Anterior",           
+                      next: "Siguiente"               
+                    }                  
+                }
+              }}
+              className="table table-striped table-hover mb-0 custom-table"
+            /> 
 
+        </div>
+      </div>
     </div>
   );
 }

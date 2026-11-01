@@ -2,7 +2,11 @@ import { useState } from "react";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPalette,
+  faCirclePlus,
+} from "@fortawesome/free-solid-svg-icons";
 export default function Colors() {
   const { data: colores = [], loading, error, refetch } = useGetFetch("/colores");
   const { post, loading: saving, error: saveError } = usePostFetch("/colores");
@@ -38,38 +42,76 @@ export default function Colors() {
   ];
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Colores</h3>
-        <button className="btn btn-dark" onClick={() => setShowForm((visible) => !visible)}>
-          {showForm ? "Cancelar" : "+ Registrar color"}
-        </button>
-      </div>
 
-      {showForm && (
-        <form className="card card-body mb-4" onSubmit={handleSubmit}>
-          {saveError && (
-            <div className="alert alert-danger">
-              {saveError.response?.data?.message || "No se pudo registrar el color."}
+
+    <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
+      <div className="card shadow-sm border-0">
+        <div className="card-body p-4">
+          
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+            <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faPalette} style={{ color: "#ffc107" }} /> Color</h3>
+           
+            <button className="btn btn-dark" onClick={() => setShowForm((visible) => !visible)}>
+              {showForm ? "Cancelar" : "+ Registrar color"}
+            </button>
+          </div>
+          
+          {/* Formulario*/}
+          {showForm && (
+            <div className="card ShoFor border-0 mb-5">
+              <div className="card-body">
+
+                <div className="card  border-0 ">
+                  <div className="card-body">
+                    
+                    <div className="mb-3">
+                      <h5 className="card-title fw-bold text-dark mb-1"> <FontAwesomeIcon icon={faCirclePlus} style={{ color: "#ffc107" }} /> Registrar nuevo color</h5>
+                      <p className="text-muted small mb-0">Ingresa el nombre y codigo del color que deseas agregar al sistema.</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit}>
+                      {saveError && (
+                        <div className="alert alert-danger">
+                          {saveError.response?.data?.message || "No se pudo registrar la talla."}
+                        </div>
+                      )}
+                      <div className="row g-3 align-items-end">
+                          <div className="col-12 col-md-6">
+                              <label className="form-label" htmlFor="color-nombre">Nombre</label>
+                              <input 
+                                  id="color-nombre" 
+                                  className="form-control" 
+                                  value={nombre} 
+                                  onChange={(event) => setNombre(event.target.value)} 
+                                  required 
+                              />
+                          </div>
+
+                          <div className="col-6 col-md-3">
+                              <label className="form-label" htmlFor="color-hex">Código HEX</label>
+                              <input 
+                                  id="color-hex" 
+                                  type="color" 
+                                  className="form-control form-control-color w-50" 
+                                  value={codigoHex} 
+                                  onChange={(event) => setCodigoHex(event.target.value)} 
+                                  title="Seleccionar color" 
+                              />
+                          </div>
+                          
+                          <div className="col-6 col-md-3">
+                              <button className="btn btn-primary w-100" type="submit" disabled={saving}>
+                                  {saving ? "Guardando..." : "Guardar"}
+                              </button>
+                          </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+             </div>
             </div>
           )}
-          <div className="row g-3 align-items-end">
-            <div className="col-md-6">
-              <label className="form-label" htmlFor="color-nombre">Nombre</label>
-              <input id="color-nombre" className="form-control" value={nombre} onChange={(event) => setNombre(event.target.value)} required />
-            </div>
-            <div className="col-md-3">
-              <label className="form-label" htmlFor="color-hex">Código HEX</label>
-              <input id="color-hex" type="color" className="form-control form-control-color" value={codigoHex} onChange={(event) => setCodigoHex(event.target.value)} title="Seleccionar color" />
-            </div>
-            <div className="col-md-3">
-              <button className="btn btn-primary w-100" type="submit" disabled={saving}>
-                {saving ? "Guardando..." : "Guardar"}
-              </button>
-            </div>
-          </div>
-        </form>
-      )}
 
       <ReusableDataTable
         data={colores}
@@ -77,15 +119,30 @@ export default function Colors() {
         loading={loading}
         error={error}
         options={{
+          columnDefs: [
+            { targets: 0, className: "text-center" }, 
+            { targets: 1, className: "text-start" },  
+            { targets: 2, className: "text-start" },
+            { targets: 3, className: "text-start" }
+          
+          ],
           language: {
             search: "Buscar:",
             lengthMenu: "Mostrar _MENU_ registros",
             info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron resultados"
+            zeroRecords: "No se encontraron resultados",
+            paginate: {
+                previous: "Anterior",           
+                next: "Siguiente"               
+            }
           }
         }}
-        className="table table-striped table-hover"
+        className="table table-striped table-hover mb-0 custom-table"
       />
+      
+
+        </div>
+      </div>
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default function Sidebar({ isOpen, onClose }) {
           >
             <FontAwesomeIcon icon={faXmark} />
           </button>
-        </div>
+        </div> 
 
         <div className="sidebar-menu">
           <SidebarItem

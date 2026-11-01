@@ -5,6 +5,13 @@ import { useGetFetch } from '../../hooks/useGetFetch';
 import api, { SERVER_URL } from '../../services/api';
 import { alertaError, alertaExito, confirmarAccion } from '../../utils/Alert';
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faWandMagicSparkles,
+
+} from "@fortawesome/free-solid-svg-icons";
+
 
 const statusClass = (status = '') => status === 'cotizada'
   ? 'bg-success'
@@ -114,27 +121,50 @@ export default function Personalizations() {
   ];
 
   return (
-    <div className="container mt-4">
-      <h3 className="mb-3">Solicitudes personalizadas</h3>
-      <ReusableDataTable
-        data={personalizaciones}
-        columns={columns}
-        loading={loading}
-        error={error}
-        onQuote={handleQuote}
-        onReject={handleReject}
-        onImagePreview={handleImagePreview}
-        options={{
-          language: {
-            search: 'Buscar:',
-            lengthMenu: 'Mostrar _MENU_ registros',
-            info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-            zeroRecords: 'No se encontraron solicitudes personalizadas'
-          }
-        }}
-        className="table table-striped table-hover"
-      />
-      <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
+    <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
+      <div className="card shadow-sm border-0">
+        <div className="card-body p-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+              <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faWandMagicSparkles} style={{ color: "#ffc107" }} /> Solicitudes personalizadas</h3>
+            </div>  
+
+              <ReusableDataTable
+                data={personalizaciones}
+                columns={columns}
+                loading={loading}
+                error={error}
+                onQuote={handleQuote}
+                onReject={handleReject}
+                onImagePreview={handleImagePreview}
+                options={{
+                  columnDefs: [
+                    { targets: 0, className: "text-center" }, 
+                    { targets: 1, className: "text-start" },  
+                    { targets: 2, className: "text-start" },  
+                    { targets: 3, className: "text-start" },  
+                    { targets: 4, className: "text-start" },  
+                    { targets: 5, className: "text-start" },  
+                    { targets: 6, className: "text-start" },  
+                    
+                  ],
+                  language: {
+                    search: 'Buscar:',
+                    lengthMenu: 'Mostrar _MENU_ registros',
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                    zeroRecords: 'No se encontraron solicitudes personalizadas',
+                    paginate: {
+                      previous: "Anterior",           
+                      next: "Siguiente"               
+                    }
+                  }
+                }}
+                className="table table-striped table-hover mb-0 custom-table"
+
+              />
+              <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
+
+          </div>
+        </div>
     </div>
   );
 }

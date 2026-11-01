@@ -6,6 +6,12 @@ import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
 import OrderModal from "../../components/admin/OrderModal";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faClipboardList,
+
+} from "@fortawesome/free-solid-svg-icons";
 const ESTADO_PAGO_VERIFICADO = 2;
 const ESTADO_PAGO_RECHAZADO = 3;
 
@@ -213,34 +219,54 @@ export default function Orders() {
   ];
 
   return (
-    <div className="container mt-4">
-      <h3 className="mb-3">Pedido Web</h3>
+    <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
+      <div className="card shadow-sm border-0">
+        <div className="card-body p-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+              <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faClipboardList} style={{ color: "#ffc107" }} /> Pedidos</h3>
+            </div>
 
-      <ReusableDataTable
-        data={pedidos}
-        columns={columns}
-        loading={loading}
-        error={error}
-        onView={handleView}
-        onConfirm={handleConfirm}
-        onReject={handleReject}
-        onAvanzar={handleAdvance}
-        options={{
-          language: {
-            search: "Buscador:",
-            lengthMenu: "Mostrar _MENU_ registros",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron resultados"
-          }
-        }}
-        className="table table-striped table-hover"
-      />
+            <ReusableDataTable
+              data={pedidos}
+              columns={columns}
+              loading={loading}
+              error={error}
+              onView={handleView}
+              onConfirm={handleConfirm}
+              onReject={handleReject}
+              onAvanzar={handleAdvance}
+              options={{
+                columnDefs: [
+                { targets: 0, className: "text-center" }, 
+                { targets: 1, className: "text-start" },  
+                { targets: 2, className: "text-start" },  
+                { targets: 3, className: "text-start" },  
+                { targets: 4, className: "text-start" },  
+                { targets: 5, className: "text-start" },  
+                { targets: 6, className: "text-start" },  
+                
+              ],
+                language: {
+                  search: "Buscador:",
+                  lengthMenu: "Mostrar _MENU_ registros",
+                  info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                  zeroRecords: "No se encontraron resultados",
+                    paginate: {
+                      previous: "Anterior",           
+                      next: "Siguiente"               
+                    }
+                }
+              }}
+              className="table table-striped table-hover mb-0 custom-table"
+            />
 
-      <OrderModal
-        pedidoId={pedidoSeleccionadoId}
-        show={showDetalle}
-        onClose={() => setShowDetalle(false)}
-      />
+            <OrderModal
+              pedidoId={pedidoSeleccionadoId}
+              show={showDetalle}
+              onClose={() => setShowDetalle(false)}
+            />
+        </div>
+      </div>
     </div>
   );
 }

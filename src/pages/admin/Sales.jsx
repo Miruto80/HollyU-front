@@ -5,6 +5,12 @@ import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
 import api from "../../services/api";
 import SalesModal from "../../components/admin/SalesModal";
 import OrderModal from "../../components/admin/OrderModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faMoneyBillWave,
+
+} from "@fortawesome/free-solid-svg-icons";
 
 const TIPO_VENTA_PRESENCIAL = 3;
 
@@ -126,43 +132,61 @@ export default function Sales() {
   ];
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Ventas Presenciales</h3>
-        <button className="btn btn-dark" onClick={() => setShowRegistro(true)}>
-          + Registrar venta
-        </button>
+    <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
+      <div className="card shadow-sm border-0">
+        <div className="card-body p-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+              <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faMoneyBillWave} style={{ color: "#ffc107" }} /> Ventas Presenciales</h3>
+              <button className="btn btn-dark" onClick={() => setShowRegistro(true)}>
+                + Registrar venta
+              </button>
+            </div>
+
+              <ReusableDataTable
+                data={ventas}
+                columns={columns}
+                loading={loading}
+                error={error}
+                onView={handleView}
+                onAvanzar={handleAdvance}
+                options={{
+                  columnDefs: [
+                    { targets: 0, className: "text-center" }, 
+                    { targets: 1, className: "text-start" },  
+                    { targets: 2, className: "text-start" },  
+                    { targets: 3, className: "text-start" },  
+                    { targets: 4, className: "text-start" },  
+                    { targets: 5, className: "text-start" },  
+                    { targets: 6, className: "text-start" },  
+                    
+                  ],  
+                  language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    zeroRecords: "No se encontraron resultados",
+                    paginate: {
+                      previous: "Anterior",           
+                      next: "Siguiente"               
+                    }
+                  }
+                }}
+                className="table table-striped table-hover mb-0 custom-table"
+              />
+
+              <SalesModal
+                show={showRegistro}
+                onClose={() => setShowRegistro(false)}
+                onCreated={refetch}
+              />
+
+              <OrderModal
+                pedidoId={pedidoSeleccionadoId}
+                show={showDetalle}
+                onClose={() => setShowDetalle(false)}
+              />
+        </div>
       </div>
-
-      <ReusableDataTable
-        data={ventas}
-        columns={columns}
-        loading={loading}
-        error={error}
-        onView={handleView}
-        onAvanzar={handleAdvance}
-        options={{
-          language: {
-            search: "Buscar:",
-            lengthMenu: "Mostrar _MENU_ registros",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron resultados"
-          }
-        }}
-        className="table table-striped table-hover"
-      />
-
-      <SalesModal
-        show={showRegistro}
-        onClose={() => setShowRegistro(false)}
-        onCreated={refetch}
-      />
-
-      <OrderModal
-        pedidoId={pedidoSeleccionadoId}
-        show={showDetalle}
-        onClose={() => setShowDetalle(false)}
-      />
     </div>
   );
 }
