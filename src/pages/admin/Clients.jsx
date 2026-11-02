@@ -80,37 +80,39 @@ export default function Clients() {
               <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faUsers} style={{ color: "#ffc107" }} /> Clientes</h3>
           </div>
 
-      <ReusableDataTable
-        data={clientes}
-        columns={columns}
-        loading={loading}
-        error={error}
-        options={{
-          columnDefs: [
-                { targets: 0, className: "text-start" }, 
-                { targets: 1, className: "text-start" },  
-                { targets: 2, className: "text-start" },  
-                { targets: 3, className: "text-start" },  
-                { targets: 4, className: "text-start" },  
-                { targets: 5, className: "text-center" },  
-                { targets: 6, className: "text-center" },  
-                
-              ],
-          language: {
-            search: "Buscar:",
-            lengthMenu: "Mostrar _MENU_ registros",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron resultados",
-            paginate: {
-                  previous: "Anterior",           
-                  next: "Siguiente"               
+          <div className="table-responsive">
+            <ReusableDataTable
+              data={clientes}
+              columns={columns}
+              loading={loading}
+              error={error}
+              options={{
+                responsive: true,
+                columnDefs: [
+                      { targets: 0, className: "text-start" }, 
+                      { targets: 1, className: "text-start" },  
+                      { targets: 2, className: "text-start" },  
+                      { targets: 3, className: "text-start" },  
+                      { targets: 4, className: "text-start" },  
+                      { targets: 5, className: "text-center" },  
+                      { targets: 6, className: "text-center" },  
+                      
+                    ],
+                language: {
+                  search: "Buscar:",
+                  lengthMenu: "Mostrar _MENU_ registros",
+                  info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                  zeroRecords: "No se encontraron resultados",
+                  paginate: {
+                        previous: "Anterior",           
+                        next: "Siguiente"               
+                      }
                 }
-          }
-        }}
-        className="table table-striped table-hover mb-0 custom-table"
-        onView={handleView}
-      />
-
+              }}
+              className="table table-striped table-hover mb-0 custom-table"
+              onView={handleView}
+            />
+          </div>
       {modalOpen && (
         <div
           className="modal fade show d-block"
