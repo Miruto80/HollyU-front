@@ -1,140 +1,90 @@
 .admin-layout{
-
     display:flex;
-
     min-height:100vh;
+}
 
+.custom-table thead th {
+  background-color: #1e293b !important; 
+  color: #ffffff !important;         
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.ShoFor {
+  background-color: #1e293b !important; 
 }
 
 .admin-content{
-
     flex:1;
-
     margin-left:270px;
-
     background:#f7f8fc;
-
 }
+
 .dashboard-card{
-
     background:#fff;
-
     border-radius:15px;
-
     padding:25px;
-
     display:flex;
-
     align-items:center;
-
     gap:20px;
-
     box-shadow:0 10px 20px rgba(0,0,0,.08);
-
 }
 
 .dashboard-icon{
-
     width:60px;
-
     height:60px;
-
     border-radius:15px;
-
     color:white;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     font-size:24px;
-
+    flex-shrink:0; 
 }
 
 .dashboard-card h3{
-
     margin:0;
-
     font-weight:700;
-
 }
 
 .dashboard-card span{
-
     color:#777;
-
 }
 
 .dashboard-table{
-
     border:none;
-
     border-radius:15px;
-
     box-shadow:0 10px 20px rgba(0,0,0,.08);
-
 }
 
 .dashboard-chart{
-
     border:none;
-
-    border-radius:15px;
-
-    box-shadow:0 10px 20px rgba(0,0,0,.08);
-
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
     min-height:420px;
-
 }
 
 .chart-placeholder{
-
     height:330px;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     border:2px dashed #ddd;
-
     color:#999;
-
     border-radius:10px;
-
 }
 
-.dashboard-chart{
-
-    border:none;
-
-    border-radius:18px;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-
-}
+/* --- RESPONSIVO  CARDS --- */
 
 @media (max-width: 1200px) {
     .admin-content{
         margin-left:0;
-    }
-
-    .dashboard-card{
-        flex-wrap:wrap;
-        gap:16px;
     }
 }
 
 @media (max-width: 992px) {
     .admin-content{
         margin-left:0;
-    }
-
-    .dashboard-card{
-        padding:20px;
     }
 
     .dashboard-chart,
@@ -145,9 +95,8 @@
 
 @media (max-width: 768px) {
     .dashboard-card{
-        flex-direction:column;
-        align-items:flex-start;
         padding:18px;
+        gap:15px;
     }
 
     .dashboard-card .dashboard-icon{

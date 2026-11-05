@@ -22,107 +22,104 @@ import "../../assets/css/Sidebar.css";
 export default function Sidebar({ isOpen, onClose }) {
     
 
-    return (
-        <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
+   return (
+    <>
+      <div 
+        className={`sidebar-overlay ${isOpen ? "active" : ""}`} 
+        onClick={onClose}
+      />
 
-            <div className="sidebar-logo">
+      <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
+        <div className="sidebar-logo">
+          <img
+            src="/src/assets/img/Logo.png"
+            alt="HolyHoly"
+          />
 
-                <img
-                    src="/src/assets/img/Logo.png"
-                    alt="HolyHoly"
-                />
+          <button
+            type="button"
+            className="sidebar-close"
+            onClick={onClose}
+            aria-label="Cerrar menú"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
+        </div> 
 
-                <button
-                    type="button"
-                    className="sidebar-close"
-                    onClick={onClose}
-                    aria-label="Cerrar menú"
-                >
-                    <FontAwesomeIcon icon={faXmark} />
-                </button>
+        <div className="sidebar-menu">
+          <SidebarItem
+            to="/admin"
+            icon={faHouse}
+            text="Dashboard"
+          />
 
-            </div>
+          <SidebarItem
+            to="/admin/productos"
+            icon={faBox}
+            text="Productos"
+          />
 
-            <div className="sidebar-menu">
+          <SidebarItem
+            to="/admin/categorias"
+            icon={faLayerGroup}
+            text="Categorías"
+          />
 
-                <SidebarItem
-                    to="/admin"
-                    icon={faHouse}
-                    text="Dashboard"
-                />
+          <SidebarItem
+            to="/admin/colores"
+            icon={faPalette}
+            text="Colores"
+          />
 
-                <SidebarItem
-                    to="/admin/productos"
-                    icon={faBox}
-                    text="Productos"
-                />
+          <SidebarItem
+            to="/admin/tallas"
+            icon={faRulerCombined}
+            text="Tallas"
+          />
 
-                <SidebarItem
-                    to="/admin/categorias"
-                    icon={faLayerGroup}
-                    text="Categorías"
-                />
+          <SidebarItem
+            to="/admin/clientes"
+            icon={faUsers}
+            text="Clientes"
+          />
 
-                <SidebarItem
-                    to="/admin/colores"
-                    icon={faPalette}
-                    text="Colores"
-                />
+          <SidebarItem
+            to="/admin/pedidos"
+            icon={faClipboardList}
+            text="Pedidos"
+          />
+          
+          <SidebarItem
+            to="/admin/producciones"
+            icon={faMoneyBillWave}
+            text="Producciones"
+          />
 
-                <SidebarItem
-                    to="/admin/tallas"
-                    icon={faRulerCombined}
-                    text="Tallas"
-                />
+          <SidebarItem
+            to="/admin/descuentos"
+            icon={faTags}
+            text="Descuentos"
+          />
 
-                <SidebarItem
-                    to="/admin/clientes"
-                    icon={faUsers}
-                    text="Clientes"
-                />
+          <SidebarItem
+            to="/admin/cotizaciones"
+            icon={faReceipt}
+            text="Cotizaciones"
+          />
 
-                <SidebarItem
-                    to="/admin/pedidos"
-                    icon={faClipboardList}
-                    text="Pedidos"
-                />
-                
-                <SidebarItem
-                    to="/admin/producciones"
-                    icon={faMoneyBillWave}
-                    text="Producciones"
-                />
+          <SidebarItem
+            to="/admin/personalizaciones"
+            icon={faWandMagicSparkles}
+            text="Personalizaciones"
+          />
 
-                <SidebarItem
-                    to="/admin/descuentos"
-                    icon={faTags}
-                    text="Descuentos"
-                />
-
-                <SidebarItem
-                    to="/admin/cotizaciones"
-                    icon={faReceipt}
-                    text="Cotizaciones"
-                />
-
-                <SidebarItem
-                    to="/admin/personalizaciones"
-                    icon={faWandMagicSparkles}
-                    text="Personalizaciones"
-                />
-
-                <SidebarItem
-                    to="/admin/ventas"
-                    icon={faMoneyBillWave}
-                    text="Ventas"
-                />
-
-            </div>
-
-            
-
-        </aside>
-
-    );
-
+          <SidebarItem
+            to="/admin/ventas"
+            icon={faMoneyBillWave}
+            text="Ventas"
+          />
+        </div>
+      </aside>
+    </>
+  );
 };

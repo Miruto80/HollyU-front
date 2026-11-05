@@ -14,35 +14,18 @@ export default function AdminNavbar({ onToggleSidebar }) {
    const handleLogout = useLogout();
   return (
     <header className="admin-navbar">
-
       <div className="admin-navbar-left">
-
         <button
           type="button"
           className="sidebar-toggle"
           onClick={onToggleSidebar}
+          aria-label="Alternar barra lateral"
         >
           <FontAwesomeIcon icon={faBars} />
         </button>
-
-        <div className="search-box">
-
-          <FontAwesomeIcon
-            icon={faSearch}
-            className="search-icon"
-          />
-
-          <input
-            type="text"
-            placeholder="Buscar..."
-          />
-
-        </div>
-
       </div>
 
       <div className="admin-navbar-right">
-
         <Link
           to="/admin/notificaciones"
           className="icon-button d-flex align-items-center justify-content-center text-decoration-none text-reset"
@@ -53,15 +36,16 @@ export default function AdminNavbar({ onToggleSidebar }) {
         </Link>
 
         <button 
-        type="button"
-        onClick={handleLogout}
-        className="btn btn-logout d-flex align-items-center">
+          type="button"
+          onClick={handleLogout}
+          className="btn btn-logout d-flex align-items-center"
+        >
           <FontAwesomeIcon icon={faRightFromBracket} className="me-2" />
-          Cerrar sesión
+        
+          <span>Cerrar</span>
+          <span className="d-none d-sm-inline ms-1">sesión</span>
         </button>
-
       </div>
-
     </header>
   );
 };
