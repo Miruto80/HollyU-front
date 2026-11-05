@@ -1,5 +1,6 @@
 // src/utils/alert.js
 import Swal from "sweetalert2";
+import "../assets/css/Alert.css";
 
 export const confirmarAccion = async ({
   titulo = "¿Estás seguro?",
@@ -38,4 +39,11 @@ export const alertaError = (titulo, texto = "") => {
     icon: "error",
     confirmButtonColor: "#000"
   });
+};
+
+export const obtenerMensajeError = (error, mensajePredeterminado) => {
+  const mensaje = error?.response?.data?.message || error?.response?.data?.error;
+  return typeof mensaje === "string" && mensaje.trim()
+    ? mensaje
+    : mensajePredeterminado;
 };
