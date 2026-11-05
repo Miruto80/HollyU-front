@@ -1,42 +1,69 @@
-import { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { usePostFetch } from "../../hooks/usePostFetch";
-import { notifyError } from "../../utils/Tostify";
+import { FORMATO_TELEFONO_VENEZOLANO, formatearTelefonoVenezolano } from "../../utils/Telefono";
+import { alertaError, obtenerMensajeError } from "../../utils/Alert";
 
 const TIPO_CLIENTE_PARTICULAR = 1;
 
 export default function GuestDataModal({ show, onConfirm, onClose }) {
   const { post, loading } = usePostFetch("/clientes/buscar-o-crear");
 
-  const [datos, setDatos] = useState({
-    nombres: "",
-    apellidos: "",
-    documento: "",
-    telefono: "",
-    email: ""
+  const formik = useFormik({
+    initialValues: {
+      nombres: "",
+      apellidos: "",
+      documento: "",
+      telefono: "",
+      email: ""
+    },
+    validationSchema: Yup.object({
+      nombres: Yup.string().trim().required("Ingresa tus nombres"),
+      apellidos: Yup.string(),
+      documento: Yup.string().matches(/^\d*$/, "El documento solo debe contener números"),
+      telefono: Yup.string().matches(FORMATO_TELEFONO_VENEZOLANO, {
+        message: "Usa el formato 04xx-xxxxxxxx",
+        excludeEmptyString: true
+      }),
+      email: Yup.string().trim().email("Ingresa un correo válido").required("Ingresa tu correo electrónico")
+    }),
+    onSubmit: async (values) => {
+      try {
+        const cliente = await post({
+          ...values,
+          tipo_cliente_id: TIPO_CLIENTE_PARTICULAR
+        });
+        onConfirm(cliente);
+      } catch (submitError) {
+        await alertaError(
+          "No se pudieron guardar tus datos",
+          obtenerMensajeError(submitError, "Intenta de nuevo.")
+        );
+      }
+    }
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDatos((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    const errors = await formik.validateForm();
+    formik.setTouched(
+      Object.keys(formik.values).reduce((touched, field) => ({ ...touched, [field]: true }), {}),
+      false
+    );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!datos.nombres || !datos.email) {
-      notifyError("Completa al menos tu nombre y email");
+    const firstError = Object.values(errors).find((message) => typeof message === "string");
+    if (firstError) {
+      await alertaError("Revisa el formulario", firstError);
       return;
     }
 
-    try {
-      const cliente = await post({
-        ...datos,
-        tipo_cliente_id: TIPO_CLIENTE_PARTICULAR
-      });
-      onConfirm(cliente);
-    } catch {
-      notifyError("No se pudo registrar tus datos, intenta de nuevo");
-    }
+    await formik.submitForm();
+  };
+
+  const fieldError = (name) => formik.touched[name] && formik.errors[name];
+  const fieldClass = (name) => {
+    if (!formik.touched[name]) return "";
+    return formik.errors[name] ? "is-invalid" : "is-valid";
   };
 
   if (!show) return null;
@@ -65,70 +92,87 @@ export default function GuestDataModal({ show, onConfirm, onClose }) {
               Necesitamos estos datos para procesar tu pedido.
             </p>
 
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleFormSubmit} noValidate>
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label className="form-label">Nombres</label>
+                  <label className="form-label" htmlFor="guest-nombres">Nombres</label>
                   <input
                     type="text"
                     name="nombres"
-                    className="form-control"
-                    value={datos.nombres}
-                    onChange={handleChange}
-                    required
+                    id="guest-nombres"
+                    className={`form-control ${fieldClass("nombres")}`}
+                    value={formik.values.nombres}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                   />
+                  {fieldError("nombres") && <div className="invalid-feedback">{fieldError("nombres")}</div>}
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Apellidos</label>
+                  <label className="form-label" htmlFor="guest-apellidos">Apellidos</label>
                   <input
                     type="text"
                     name="apellidos"
-                    className="form-control"
-                    value={datos.apellidos}
-                    onChange={handleChange}
+                    id="guest-apellidos"
+                    className={`form-control ${fieldClass("apellidos")}`}
+                    value={formik.values.apellidos}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                   />
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Documento</label>
+                  <label className="form-label" htmlFor="guest-documento">Documento</label>
                   <input
                     type="text"
                     name="documento"
-                    className="form-control"
-                    value={datos.documento}
-                    onChange={handleChange}
+                    id="guest-documento"
+                    className={`form-control ${fieldClass("documento")}`}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={formik.values.documento}
+                    onChange={(event) => formik.setFieldValue("documento", event.target.value.replace(/\D/g, ""))}
+                    onBlur={formik.handleBlur}
                   />
+                  {fieldError("documento") && <div className="invalid-feedback">{fieldError("documento")}</div>}
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Teléfono</label>
+                  <label className="form-label" htmlFor="guest-telefono">Teléfono</label>
                   <input
                     type="text"
                     name="telefono"
-                    className="form-control"
-                    value={datos.telefono}
-                    onChange={handleChange}
+                    id="guest-telefono"
+                    className={`form-control ${fieldClass("telefono")}`}
+                    inputMode="numeric"
+                    pattern="04[0-9]{2}-[0-9]{8}"
+                    placeholder="0412-12345678"
+                    value={formik.values.telefono}
+                    onChange={(event) => formik.setFieldValue("telefono", formatearTelefonoVenezolano(event.target.value))}
+                    onBlur={formik.handleBlur}
                   />
+                  {fieldError("telefono") && <div className="invalid-feedback">{fieldError("telefono")}</div>}
                 </div>
 
                 <div className="col-12">
-                  <label className="form-label">Email</label>
+                  <label className="form-label" htmlFor="guest-email">Email</label>
                   <input
                     type="email"
                     name="email"
-                    className="form-control"
-                    value={datos.email}
-                    onChange={handleChange}
-                    required
+                    id="guest-email"
+                    className={`form-control ${fieldClass("email")}`}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                   />
+                  {fieldError("email") && <div className="invalid-feedback">{fieldError("email")}</div>}
                 </div>
               </div>
 
               <button
                 type="submit"
                 className="btn btn-dark w-100 mt-4 py-2"
-                disabled={loading}
+                disabled={loading || formik.isSubmitting}
               >
                 {loading ? "Guardando..." : "Continuar"}
               </button>

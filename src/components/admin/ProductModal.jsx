@@ -102,8 +102,34 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
     }
   }, [show]);
 
+  const handleNumericKeyDown = (e, mode) => {
+    const { key, ctrlKey, metaKey, altKey } = e;
+
+    if (ctrlKey || metaKey || altKey) return;
+
+    const allowedKeys = ["Backspace", "Delete", "Tab", "ArrowLeft", "ArrowRight", "Home", "End", "Enter"];
+    if (allowedKeys.includes(key)) return;
+
+    if (mode === "integer" && /^\d$/.test(key)) return;
+    if (mode === "decimal" && (/^\d$/.test(key) || key === ".")) return;
+
+    e.preventDefault();
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === "stock" || name === "tiempo_fabricacion") {
+      setForm(prev => ({ ...prev, [name]: value.replace(/\D/g, "") }));
+      return;
+    }
+
+    if (name === "precio" || name === "precio_mayor") {
+      const sanitized = value.replace(/[^\d.]/g, "");
+      setForm(prev => ({ ...prev, [name]: sanitized }));
+      return;
+    }
+
     setForm(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
@@ -168,10 +194,40 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
     setEditingModelKey(null);
   };
 
+  const validarFormularioInicial = () => {
+    if (!form.nombre.trim()) return "Ingresa el nombre del producto";
+    if (!form.categoria_id) return "Selecciona una categoría";
+
+    const precio = Number(form.precio);
+    if (form.precio === "" || Number.isNaN(precio) || precio <= 0) {
+      return "El precio base debe ser mayor a 0";
+    }
+
+    const precioMayor = form.precio_mayor === "" ? null : Number(form.precio_mayor);
+    if (precioMayor !== null && (Number.isNaN(precioMayor) || precioMayor < 0)) {
+      return "El precio mayorista no puede ser negativo";
+    }
+
+    const stock = Number(form.stock);
+    if (Number.isNaN(stock) || stock < 0 || !Number.isInteger(stock)) {
+      return "El stock debe ser un número entero mayor o igual a 0";
+    }
+
+    const tiempoFabricacion = Number(form.tiempo_fabricacion);
+    if (Number.isNaN(tiempoFabricacion) || tiempoFabricacion < 1 || !Number.isInteger(tiempoFabricacion)) {
+      return "El tiempo de fabricación debe ser un número entero mayor a 0";
+    }
+
+    return "";
+  };
+
   const handleSiguiente = () => {
-    if (paso === 0 && (!form.nombre.trim() || !form.categoria_id || form.precio === "")) {
-      notifyError("Completa el nombre, la categoría y el precio del producto");
-      return;
+    if (paso === 0) {
+      const error = validarFormularioInicial();
+      if (error) {
+        notifyError(error);
+        return;
+      }
     }
 
     setPaso(prev => Math.min(prev + 1, PASOS.length - 1));
@@ -226,9 +282,10 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
       return;
     }
 
-    if (!form.nombre.trim() || !form.categoria_id || form.precio === "") {
+    const errorFormulario = validarFormularioInicial();
+    if (errorFormulario) {
       setPaso(0);
-      notifyError("Completa el nombre, la categoría y el precio del producto");
+      notifyError(errorFormulario);
       return;
     }
 
@@ -392,6 +449,11 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                     className="form-control"
                     value={form.tiempo_fabricacion}
                     onChange={handleChange}
+                    onKeyDown={(e) => handleNumericKeyDown(e, "integer")}
+                    min="1"
+                    step="1"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                   />
                 </div>
 
@@ -403,7 +465,11 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                     className="form-control"
                     value={form.stock}
                     onChange={handleChange}
+                    onKeyDown={(e) => handleNumericKeyDown(e, "integer")}
                     min="0"
+                    step="1"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                   />
                 </div>
 
@@ -431,7 +497,11 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                     className="form-control"
                     value={form.precio}
                     onChange={handleChange}
+                    onKeyDown={(e) => handleNumericKeyDown(e, "decimal")}
                     required
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
                   />
                 </div>
 
@@ -443,6 +513,10 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
                     className="form-control"
                     value={form.precio_mayor}
                     onChange={handleChange}
+                    onKeyDown={(e) => handleNumericKeyDown(e, "decimal")}
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
                   />
                 </div>
               </div>}
