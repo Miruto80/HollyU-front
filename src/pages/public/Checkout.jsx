@@ -45,7 +45,7 @@ const pagoSchema = Yup.object({
     .matches(/^\d+$/, "La referencia solo debe contener números")
     .required("Ingresa la referencia bancaria"),
   telefono: Yup.string()
-    .matches(FORMATO_TELEFONO_VENEZOLANO, "Usa el formato 04xx-xxxxxxxx")
+    .matches(FORMATO_TELEFONO_VENEZOLANO, "Usa el formato 04xx-xxxxxxx (11 dígitos)")
     .required("Ingresa el teléfono del emisor"),
   comprobante: Yup.mixed().required("Adjunta el comprobante de pago"),
   aceptaTerminos: Yup.boolean().oneOf([true], "Debes aceptar los términos y condiciones")
@@ -330,8 +330,8 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
                       type="text"
                       name="telefono"
                       inputMode="numeric"
-                      pattern="04[0-9]{2}-[0-9]{8}"
-                      placeholder="0412-12345678"
+                      pattern="04[0-9]{2}-[0-9]{7}"
+                      placeholder="0412-1234567"
                       className={`form-control ${fieldClass("telefono")}`}
                       value={formik.values.telefono}
                       onChange={(event) => formik.setFieldValue("telefono", formatearTelefonoVenezolano(event.target.value))}

@@ -30,7 +30,7 @@ export default function RegisterModal({ show, onClose }) {
         .required("Ingresa tu cédula"),
       email: Yup.string().trim().email("Ingresa un correo válido").required("Ingresa tu correo electrónico"),
       telefono: Yup.string().matches(FORMATO_TELEFONO_VENEZOLANO, {
-        message: "Usa el formato 04xx-xxxxxxxx",
+        message: "Usa el formato 04xx-xxxxxxx (11 dígitos)",
         excludeEmptyString: true
       }),
       password: Yup.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("Ingresa una contraseña"),
@@ -131,7 +131,7 @@ export default function RegisterModal({ show, onClose }) {
               <label className="form-label" htmlFor="register-telefono">Teléfono</label>
               <div className="register-input">
                 <FontAwesomeIcon icon={faPhone} />
-                <input id="register-telefono" name="telefono" inputMode="numeric" pattern="04[0-9]{2}-[0-9]{8}" placeholder="0412-12345678" value={formik.values.telefono} onChange={(event) => formik.setFieldValue("telefono", formatearTelefonoVenezolano(event.target.value))} onBlur={formik.handleBlur} className={fieldClass("telefono")} />
+                <input id="register-telefono" name="telefono" inputMode="numeric" pattern="04[0-9]{2}-[0-9]{7}" placeholder="0412-1234567" value={formik.values.telefono} onChange={(event) => formik.setFieldValue("telefono", formatearTelefonoVenezolano(event.target.value))} onBlur={formik.handleBlur} className={fieldClass("telefono")} />
               </div>
               {fieldError("telefono") && <div className="text-danger small">{fieldError("telefono")}</div>}
             </div>
