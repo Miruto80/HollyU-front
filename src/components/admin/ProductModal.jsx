@@ -4,7 +4,7 @@ import { usePostFetch } from "../../hooks/usePostFetch";
 import { usePutFetch } from "../../hooks/usePutFetch";
 import api, { SERVER_URL } from "../../services/api";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
-import { confirmarAccion } from "../../utils/Alert";
+import { alertaExito, confirmarAccion } from "../../utils/Alert";
 import ImageUploaderMultiple from "../ImageUploaderMultiple";
 
 const FORM_INICIAL = {
@@ -207,6 +207,9 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
     if (precioMayor !== null && (Number.isNaN(precioMayor) || precioMayor < 0)) {
       return "El precio mayorista no puede ser negativo";
     }
+    if (precioMayor !== null && precioMayor > precio) {
+      return "El precio al mayor no puede ser mayor que el precio al detal";
+    }
 
     const stock = Number(form.stock);
     if (Number.isNaN(stock) || stock < 0 || !Number.isInteger(stock)) {
@@ -328,11 +331,13 @@ export default function ProductoModal({ show, productId, onClose, onCreated, onU
       if (esEdicion) {
         await put(productId, formData);
         onUpdated?.();
+        onClose();
       } else {
         await post(formData);
         onCreated?.();
+        onClose();
+        await alertaExito("Producto registrado con éxito");
       }
-      onClose();
     } catch {
       // el error queda en el estado del hook correspondiente
     }
