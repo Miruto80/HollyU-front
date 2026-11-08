@@ -1,7 +1,7 @@
 .product-modal {
     position: fixed;
     inset: 0;
-    z-index: 99999;
+    z-index: 99988;
 
     display: flex;
     align-items: center;
@@ -12,6 +12,11 @@
     background: rgba(11, 37, 69, 0.45);
 
     overflow-y: auto;
+}
+
+
+.Toastify__toast-container {
+    z-index: 999999 !important;
 }
 
 .personalization-modal {
@@ -98,6 +103,21 @@
 
 .personalization-upload-box input {
     display: none;
+}
+
+
+.product-modal-close:hover {
+    background: #aa3541 !important;
+    color: #f5f3f3 !important;
+    border-color: #c2091c !important;
+    transform: none !important;
+}
+
+
+.custom-btn-hover:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 .personalization-upload-icon {
