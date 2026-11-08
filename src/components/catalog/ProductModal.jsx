@@ -8,6 +8,8 @@ import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import GuestModal from "./GuestModal";
 import PersonalizationRequestModal from "./PersonalizationRequestModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import "../../assets/css/ProductModal.css";
 import hero from "../../assets/img/hero.png";
 
@@ -29,48 +31,40 @@ export default function ProductModal({ product, onClose }) {
     const { addItem } = useCart();
 
     useEffect(() => {
-    if (!product) return;
+        if (!product) return;
 
-    api.get(`/productos/${product.id}`)
-        .then((r) => {
-            setDetalle(r.data);
-            
-            if (r.data?.Producto_modelos?.length > 0) {
-                const primerPM = r.data.Producto_modelos[0];
-                setModeloSeleccionado({
-                    ...primerPM.Modelo,
-                    Modelo_telas: primerPM.Modelo_telas,
-                    Modelo_tallas: primerPM.Modelo_tallas,
-                    producto_modelo_id: primerPM.id
-                });
-            }
-        })
-        .catch((error) => {
-            console.error("Error cargando producto:", error);
-        });
+        api.get(`/productos/${product.id}`)
+            .then((r) => {
+                setDetalle(r.data);
+                setModeloSeleccionado(null);
+            })
+            .catch((error) => {
+                console.error("Error cargando producto:", error);
+            });
 
-    return () => {
-        setDetalle(null);
-        setModeloSeleccionado(null);
-        setColorSeleccionado(null);
-        setTallaSeleccionada(null);
-        setTipoBotaSeleccionado(null);
-        setMostrarSolicitud(false);
-        setMostrarDatosCliente(false);
-        setDescripcionSolicitud("");
-    };
-}, [product]);
+        return () => {
+            setDetalle(null);
+            setModeloSeleccionado(null);
+            setColorSeleccionado(null);
+            setTallaSeleccionada(null);
+            setTipoBotaSeleccionado(null);
+            setMostrarSolicitud(false);
+            setMostrarDatosCliente(false);
+            setDescripcionSolicitud("");
+        };
+    }, [product]);
+
     if (!product || !detalle) return null;
 
     const modelosDisponibles = (detalle.Producto_modelos || []).map((pm) => ({
-    ...pm.Modelo,
-    Modelo_telas: pm.Modelo_telas,
-    Modelo_tallas: pm.Modelo_tallas,
-    producto_modelo_id: pm.id
-}));
+        ...pm.Modelo,
+        Modelo_telas: pm.Modelo_telas,
+        Modelo_tallas: pm.Modelo_tallas,
+        producto_modelo_id: pm.id
+    }));
 
-const modelo = modeloSeleccionado || modelosDisponibles[0];
-const tela = modelo?.Modelo_telas?.[0];
+    const modelo = modeloSeleccionado || modelosDisponibles[0];
+    const tela = modeloSeleccionado ? modeloSeleccionado.Modelo_telas?.[0] : modelosDisponibles[0]?.Modelo_telas?.[0];
     const tieneStock = Number(detalle.stock) > 0;
 
     const imagenes = detalle.Producto_imagenes?.length > 0
@@ -103,24 +97,24 @@ const tela = modelo?.Modelo_telas?.[0];
             return;
         }
 
-      addItem({
-    id: `${detalle.id}-${modelo?.id ?? ""}-${colorSeleccionado.color.id}-${tallaSeleccionada.Talla.id}-${tipoBotaSeleccionado?.id ?? ""}`,
-    producto_id: detalle.id,
-    categoria_id: detalle.categoria_id,
-    nombre: detalle.nombre,
-    precio: detalle.precio,
-    precio_mayor: detalle.precio_mayor, 
-    imagen: imagenRelativa,
-    modelo: modelo?.nombre ?? null,
-    producto_modelo_id: modelo?.producto_modelo_id,
-    modelo_tela_id: tela?.id,
-    color_id: colorSeleccionado.color.id,
-    color_nombre: colorSeleccionado.color.nombre,
-    talla_id: tallaSeleccionada.Talla.id,
-    talla_nombre: tallaSeleccionada.Talla.nombre,
-    tipo_bota_id: tipoBotaSeleccionado?.id ?? null,
-    tipo_bota_nombre: tipoBotaSeleccionado?.nombre ?? null
-});
+        addItem({
+            id: `${detalle.id}-${modeloSeleccionado?.id ?? ""}-${colorSeleccionado.color.id}-${tallaSeleccionada.Talla.id}-${tipoBotaSeleccionado?.id ?? ""}`,
+            producto_id: detalle.id,
+            categoria_id: detalle.categoria_id,
+            nombre: detalle.nombre,
+            precio: detalle.precio,
+            precio_mayor: detalle.precio_mayor, 
+            imagen: imagenRelativa,
+            modelo: modeloSeleccionado?.nombre ?? null,
+            producto_modelo_id: modeloSeleccionado?.producto_modelo_id,
+            modelo_tela_id: tela?.id,
+            color_id: colorSeleccionado.color.id,
+            color_nombre: colorSeleccionado.color.nombre,
+            talla_id: tallaSeleccionada.Talla.id,
+            talla_nombre: tallaSeleccionada.Talla.nombre,
+            tipo_bota_id: tipoBotaSeleccionado?.id ?? null,
+            tipo_bota_nombre: tipoBotaSeleccionado?.nombre ?? null
+        });
 
         notifySuccess("Producto agregado al carrito");
         setColorSeleccionado(null);
@@ -192,7 +186,6 @@ const tela = modelo?.Modelo_telas?.[0];
                         <h5 className="product-modal-title">
                             Detalle del producto
                         </h5>
-
                         <button
                             type="button"
                             className="product-modal-close"
@@ -231,34 +224,29 @@ const tela = modelo?.Modelo_telas?.[0];
 
                             <div className="col-12 col-lg-6">
 
-                                <h2 className="product-modal-name">
+                                <h2 className="product-modal-name fs-3 fw-bold mb-1">
                                     {detalle.nombre}
                                 </h2>
 
-                                <p className="mb-4">
-                                    {detalle.descripcion}
-                                </p>
-
-                                <h3 className="my-4 text-primary">
+                                <h3 className="fs-2 fw-bold mb-2" style={{ color: "#000000" }}>
                                     ${Number(detalle.precio).toLocaleString()}
                                 </h3>
 
-                                <p className={`alert ${tieneStock ? "alert-success" : "alert-warning"} mb-4`}>
-                                    {tieneStock
-                                        ? "Disponibilidad inmediata"
-                                        : "Producto sin stock, pasará a producción"}
+                                <p className="text-muted small mb-3">
+                                    {detalle.descripcion}
                                 </p>
 
-                                {/* Selección de Modelo */}
+                                {/* Modelos */}
                                 {modelosDisponibles.length > 0 && (
-                                    <div className="mb-3">
-                                        <h6 className="mb-2">Modelos</h6>
-                                        <div className="d-flex flex-wrap gap-2">
+                                    <div className="mb-2">
+                                        <span className="small fw-bold text-secondary d-block mb-1">Modelo</span>
+                                        <div className="d-flex flex-wrap gap-1">
                                             {modelosDisponibles.map((m) => (
                                                 <button
                                                     key={m.id}
                                                     type="button"
-                                                    className={`btn ${modelo?.id === m.id ? "btn-dark" : "btn-outline-dark"}`}
+                                                    className={`btn btn-sm rounded-pill px-3 py-1 ${modeloSeleccionado?.id === m.id ? "fw-bold text-dark" : "btn-outline-secondary"}`}
+                                                    style={modeloSeleccionado?.id === m.id ? { backgroundColor: "#e5b83f", borderColor: "#e5b83f" } : {}}
                                                     onClick={() => handleCambioModelo(m)}
                                                 >
                                                     {m.nombre || `Modelo ${m.id}`}
@@ -268,29 +256,26 @@ const tela = modelo?.Modelo_telas?.[0];
                                     </div>
                                 )}
 
-                                {/* Selección de Colores dinámicos según el modelo */}
-                                <div className="mb-3">
-                                    <h6 className="mb-2">
-                                        Colores
-                                        {colorSeleccionado && (
-                                            <span className="text-muted fw-normal ms-2">
-                                                — {colorSeleccionado.color.nombre}
-                                            </span>
-                                        )}
-                                    </h6>
-
-                                    <div className="d-flex flex-wrap gap-2 mb-4">
+                                {/* Colores */}
+                                <div className="mb-2">
+                                    <span className="small fw-bold text-secondary d-block mb-1">
+                                        Color {colorSeleccionado && <span className="text-dark fw-normal">— {colorSeleccionado.color.nombre}</span>}
+                                    </span>
+                                    <div className="d-flex flex-wrap gap-2">
                                         {tela?.Modelo_telas_colores?.map((c) => (
                                             <span
                                                 key={c.id}
-                                                className="color-circle"
+                                                className="color-circle rounded-circle shadow-sm"
                                                 onClick={() => setColorSeleccionado(c)}
                                                 style={{
                                                     backgroundColor: c.color.codigo,
+                                                    width: "28px",
+                                                    height: "28px",
+                                                    display: "inline-block",
                                                     cursor: "pointer",
                                                     border: colorSeleccionado?.id === c.id
-                                                        ? "3px solid #000"
-                                                        : "1px solid #ccc"
+                                                        ? "3px solid #e5b83f"
+                                                        : "1px solid #ddd"
                                                 }}
                                                 title={c.color.nombre}
                                             />
@@ -298,15 +283,16 @@ const tela = modelo?.Modelo_telas?.[0];
                                     </div>
                                 </div>
 
-                                {/* Selección de Tallas dinámicas según el modelo */}
-                                <div>
-                                    <h6 className="mb-2">Tallas</h6>
-                                    <div className="d-flex flex-wrap gap-2">
+                                {/* Tallas */}
+                                <div className="mb-2">
+                                    <span className="small fw-bold text-secondary d-block mb-1">Talla</span>
+                                    <div className="d-flex flex-wrap gap-1">
                                         {modelo?.Modelo_tallas?.map((t) => (
                                             <button
                                                 key={t.id}
                                                 type="button"
-                                                className={`btn ${tallaSeleccionada?.id === t.id ? "btn-dark" : "btn-outline-dark"}`}
+                                                className={`btn btn-sm rounded-pill px-3 py-1 ${tallaSeleccionada?.id === t.id ? "fw-bold text-dark" : "btn-outline-secondary"}`}
+                                                style={tallaSeleccionada?.id === t.id ? { backgroundColor: "#e5b83f", borderColor: "#e5b83f" } : {}}
                                                 onClick={() => setTallaSeleccionada(t)}
                                             >
                                                 {t.Talla.nombre}
@@ -315,16 +301,17 @@ const tela = modelo?.Modelo_telas?.[0];
                                     </div>
                                 </div>
 
-                                {/* Tipo de bota si aplica */}
+                                
                                 {detalle.Tipos_bota?.length > 0 && (
-                                    <div className="mt-4">
-                                        <h6 className="mb-2">Tipo de bota</h6>
-                                        <div className="d-flex flex-wrap gap-2">
+                                    <div className="mb-3">
+                                        <span className="small fw-bold text-secondary d-block mb-1">Tipo de bota</span>
+                                        <div className="d-flex flex-wrap gap-1">
                                             {detalle.Tipos_bota.map((tipo) => (
                                                 <button
                                                     key={tipo.id}
                                                     type="button"
-                                                    className={`btn ${tipoBotaSeleccionado?.id === tipo.id ? "btn-dark" : "btn-outline-dark"}`}
+                                                    className={`btn btn-sm rounded-pill px-3 py-1 ${tipoBotaSeleccionado?.id === tipo.id ? "fw-bold text-dark" : "btn-outline-secondary"}`}
+                                                    style={tipoBotaSeleccionado?.id === tipo.id ? { backgroundColor: "#e5b83f", borderColor: "#e5b83f" } : {}}
                                                     onClick={() => setTipoBotaSeleccionado(tipo)}
                                                 >
                                                     {tipo.nombre}
@@ -334,25 +321,36 @@ const tela = modelo?.Modelo_telas?.[0];
                                     </div>
                                 )}
 
-                                <button
-                                    type="button"
-                                    className="btn btn-dark mt-4 w-100 py-3"
-                                    onClick={handleAgregarCarrito}
-                                >
-                                    Agregar al carrito
-                                </button>
+                                {/* Alerta de stock  */}
+                                <div className={`alert ${tieneStock ? "alert-success" : "alert-warning"} py-2 px-3 small mt-4 mb-3 rounded-3`} role="alert">
+                                    {tieneStock ? "Disponibilidad inmediata" : "Producto sin stock, pasará a producción"}
+                                </div>
 
-                                {detalle.permite_personalizacion && (
-                                    <div className="mt-2">
+                                {/* Botones */}
+                                <div className="d-flex flex-column gap-2">
+                                    <button
+                                        type="button"
+                                        className="btn text-white fw-bold btn-sm py-3 rounded-3 shadow-sm custom-btn-hover"
+                                        style={{ backgroundColor: "#10123d", border: "none", transition: "all 0.2s ease" }}
+                                        onClick={handleAgregarCarrito}
+                                    >
+                                        <FontAwesomeIcon icon={faCartPlus} className="me-1" /> Añadir al carrito
+                                    </button>
+
+                                    
+                                    <hr className="my-1 text-muted opacity-25" />
+
+                                    {detalle.permite_personalizacion && (
                                         <button
                                             type="button"
-                                            className="btn btn-outline-dark w-100 py-3"
+                                            className="btn text-white fw-bold btn-sm py-3 rounded-3 shadow-sm custom-btn-hover"
+                                            style={{ backgroundColor: "#393c72", border: "none", transition: "all 0.2s ease" }}
                                             onClick={handleSolicitarPersonalizado}
                                         >
                                             Solicitar personalizado
                                         </button>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
 
                             </div>
                         </div>
