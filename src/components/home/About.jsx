@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck} from "@fortawesome/free-solid-svg-icons";
+import { faBullseye, faCheck, faEye, faGem } from "@fortawesome/free-solid-svg-icons";
 import "../../assets/css/About.css";
 import aboutImg from "../../assets/img/IMG_9567.webp";
 
@@ -55,75 +55,71 @@ export default function About() {
       <section className="about-section">
         <div className="container">
 
-          <div className="text-center mb-5">
-            <h2>Nuestra Historia</h2>
-
-            <p>
-              Nacimos con el objetivo de ofrecer uniformes elegantes,
-              resistentes y completamente personalizados para empresas
-              que desean destacar su imagen corporativa.
+          <div className="about-section-heading">
+            <div>
+              <span className="about-section-eyebrow">Nuestra esencia</span>
+              <h2>Nuestra Historia</h2>
+            </div>
+            <p className="about-section-description">
+              Nacimos con el objetivo de crear uniformes elegantes,
+              resistentes y completamente personalizados, ayudando a
+              cada empresa a vestir su identidad con orgullo.
             </p>
           </div>
 
-          <div className="row g-4">
+          <div className="about-story-grid">
 
-            <div className="col-md-4">
-
-              <div className="about-card">
-
-                <h3>Misión</h3>
-
-                <p>
-                  Proporcionar uniformes de excelente calidad,
-                  funcionales y modernos que fortalezcan la identidad
-                  de nuestros clientes.
-                </p>
-
+            <article className="about-card">
+              <div className="about-card-top">
+                <span className="about-card-icon">
+                  <FontAwesomeIcon icon={faBullseye} />
+                </span>
+                <span className="about-card-number">01</span>
               </div>
+              <h3>Misión</h3>
+              <p>
+                Proporcionar uniformes de excelente calidad,
+                funcionales y modernos que fortalezcan la identidad
+                de nuestros clientes.
+              </p>
+            </article>
+
+            <article className="about-card about-card-featured">
+              <div className="about-card-top">
+                <span className="about-card-icon">
+                  <FontAwesomeIcon icon={faEye} />
+                </span>
+                <span className="about-card-number">02</span>
+              </div>
+              <h3>Visión</h3>
+              <p>
+                Convertirnos en una de las empresas líderes en la
+                confección de uniformes personalizados en
+                Latinoamérica.
+              </p>
+            </article>
+
+            <article className="about-card about-values-card">
+              <div className="about-card-top">
+                <span className="about-card-icon">
+                  <FontAwesomeIcon icon={faGem} />
+                </span>
+                <span className="about-card-number">03</span>
+              </div>
+              <h3>Valores</h3>
+              <ul className="about-values">
+                {["Calidad", "Innovación", "Compromiso", "Puntualidad", "Atención personalizada"].map((value) => (
+                  <li key={value}>
+                    <span className="about-value-check">
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    {value}
+                  </li>
+                ))}
+              </ul>
+            </article>
 
             </div>
-
-            <div className="col-md-4">
-
-              <div className="about-card">
-
-                <h3>Visión</h3>
-
-                <p>
-                  Convertirnos en una de las empresas líderes en la
-                  confección de uniformes personalizados en
-                  Latinoamérica.
-                </p>
-
-              </div>
-
-            </div>
-
-            <div className="col-md-4">
-
-              <div className="about-card">
-
-                <h3>Valores</h3>
-
-                <ul>
-                  <li className="d-flex align-items-center gap-2">
-                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Calidad </li>
-                  <li className="d-flex align-items-center gap-2">
-                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Innovación </li>
-                  <li className="d-flex align-items-center gap-2">
-                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Compromiso </li>
-                  <li className="d-flex align-items-center gap-2">
-                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Puntualidad </li>
-                  <li className="d-flex align-items-center gap-2">
-                    <FontAwesomeIcon icon={faCheck} className="feature-icon" /> Atención personalizada </li>
-                 
-                </ul>
-
-              </div>
-
-            </div>
-
-          </div>
 
         </div>
       </section>
