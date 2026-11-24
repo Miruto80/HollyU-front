@@ -1,5 +1,4 @@
 import Hero from "../../components/home/Hero";
-import PromoStrip from "../../components/home/PromoStrip";
 import CategoriesGrid from "../../components/home/CategoriesGrid";
 import FeaturedProducts from "../../components/home/FeaturedProducts";
 import Testimonials from "../../components/home/Testimonials";
@@ -12,7 +11,6 @@ export default function Home() {
     <>
       <main>
         <Hero />
-      <PromoStrip />
         <About />
         <CustomPersonalization />
         <section aria-label="Categorías" className="container my-5">

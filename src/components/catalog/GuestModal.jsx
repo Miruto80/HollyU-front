@@ -20,11 +20,12 @@ export default function GuestDataModal({ show, onConfirm, onClose }) {
     validationSchema: Yup.object({
       nombres: Yup.string().trim().required("Ingresa tus nombres"),
       apellidos: Yup.string(),
-      documento: Yup.string().matches(/^\d*$/, "El documento solo debe contener números"),
-      telefono: Yup.string().matches(FORMATO_TELEFONO_VENEZOLANO, {
-        message: "Usa el formato 04xx-xxxxxxxx",
-        excludeEmptyString: true
-      }),
+      documento: Yup.string()
+        .matches(/^\d+$/, "El documento solo debe contener números")
+        .required("Ingresa tu documento"),
+      telefono: Yup.string()
+        .matches(FORMATO_TELEFONO_VENEZOLANO, "Usa el formato 04xx-xxxxxxx (11 dígitos)")
+        .required("Ingresa tu teléfono"),
       email: Yup.string().trim().email("Ingresa un correo válido").required("Ingresa tu correo electrónico")
     }),
     onSubmit: async (values) => {
@@ -130,6 +131,7 @@ export default function GuestDataModal({ show, onConfirm, onClose }) {
                     className={`form-control ${fieldClass("documento")}`}
                     inputMode="numeric"
                     pattern="[0-9]*"
+                    required
                     value={formik.values.documento}
                     onChange={(event) => formik.setFieldValue("documento", event.target.value.replace(/\D/g, ""))}
                     onBlur={formik.handleBlur}
@@ -145,8 +147,9 @@ export default function GuestDataModal({ show, onConfirm, onClose }) {
                     id="guest-telefono"
                     className={`form-control ${fieldClass("telefono")}`}
                     inputMode="numeric"
-                    pattern="04[0-9]{2}-[0-9]{8}"
-                    placeholder="0412-12345678"
+                    pattern="04[0-9]{2}-[0-9]{7}"
+                    placeholder="0412-1234567"
+                    required
                     value={formik.values.telefono}
                     onChange={(event) => formik.setFieldValue("telefono", formatearTelefonoVenezolano(event.target.value))}
                     onBlur={formik.handleBlur}

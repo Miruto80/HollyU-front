@@ -2,13 +2,22 @@
   background: linear-gradient(90deg, #080a1c 0%, #10123d 48%, #17195a 100%);
   color: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 10000;
 }
 
 .promo-strip .container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.promo-strip-content {
+  display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.75rem;
+  min-width: 0;
   padding: 0.85rem 0;
 }
 
@@ -16,6 +25,44 @@
   font-size: 0.95rem;
   letter-spacing: 0.4px;
   color: #e7e7e7;
+}
+
+.promo-strip-ticker {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.promo-strip-track {
+  display: flex;
+  width: max-content;
+  animation: promo-strip-move-right 48s linear infinite;
+}
+
+.promo-strip-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
+  white-space: nowrap;
+}
+
+.promo-strip-item {
+  flex: 0 0 auto;
+}
+
+.promo-strip-fallback {
+  margin-right: auto;
+}
+
+@keyframes promo-strip-move-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .promo-strip a {
@@ -32,10 +79,33 @@
 }
 
 @media (max-width: 768px) {
-  .promo-strip .container {
+  .promo-strip-content {
     flex-direction: column;
+    align-items: flex-end;
     gap: 0.5rem;
-    text-align: center;
+    text-align: right;
     padding: 1rem 0.75rem;
+  }
+
+  .promo-strip-ticker {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-strip-track {
+    width: 100%;
+    animation: none;
+    transform: none;
+  }
+
+  .promo-strip-group:not(:first-child) {
+    display: none;
+  }
+
+  .promo-strip-group:first-child {
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: normal;
   }
 }
