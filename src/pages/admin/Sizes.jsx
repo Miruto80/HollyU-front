@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
 import {
@@ -94,7 +95,7 @@ return (
           )}
 
           {/*Tabla */}
-          <div className="table-responsive">
+          <div className="d-none d-lg-block">
             <ReusableDataTable
               data={tallas}
               columns={columns}
@@ -119,6 +120,20 @@ return (
                 }
               }}
               className="table table-striped table-hover mb-0 custom-table"
+            />
+          </div>
+          <div className="d-block d-lg-none">
+            <DataCardList
+              data={tallas}
+              loading={loading}
+              error={error}
+              emptyMessage="No se encontraron tallas"
+              renderCard={(item) => (
+                <>
+                  <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                  <h5 className="mb-1 fw-bold text-dark d-inline-block">{item.nombre || "-"}</h5>
+                </>
+              )}
             />
           </div>
 

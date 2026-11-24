@@ -1,9 +1,9 @@
 .promo-strip {
-  background: linear-gradient(90deg, #080a1c 0%, #10123d 48%, #17195a 100%);
+  background: #0b2545;
   color: #ffffff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  z-index: 10000;
+
+  position: block;
+  z-index: 1;
 }
 
 .promo-strip .container {
@@ -22,7 +22,7 @@
 }
 
 .promo-strip span {
-  font-size: 0.95rem;
+  font-size: 1.50rem;
   letter-spacing: 0.4px;
   color: #e7e7e7;
 }

@@ -24,7 +24,7 @@ function AppRoutes() {
     <>
       <ScrollToTop />
 
-      {!isAdminRoute && <PromoStrip />}
+  
       {!isAdminRoute && <Navbar />}
 
       <Routes location={location} key={location.pathname}>

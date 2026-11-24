@@ -1,14 +1,11 @@
 import { useState } from "react";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import DiscountModal from "../../components/admin/DiscountModal";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { useDeleteFetch } from "../../hooks/useDeleteFetch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import {
-  faTags,
-
-} from "@fortawesome/free-solid-svg-icons";
+import { faTags } from "@fortawesome/free-solid-svg-icons";
 
 export default function Discounts() {
   const { data: descuentos = [], loading, error, refetch } = useGetFetch("/descuentos");
@@ -90,50 +87,107 @@ export default function Discounts() {
     <div className="container-fluid px-2 px-md-4 px-lg-4 py-2">
       <div className="card shadow-sm border-0">
         <div className="card-body p-4">
-            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
-              <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faTags} style={{ color: "#ffc107" }} /> Descuentos</h3>
-
-               <button className="btn btn-dark" onClick={handleCreate}>+ Crear descuento</button>
-            </div>
-
-              <ReusableDataTable
-                data={descuentos}
-                columns={columns}
-                loading={loading}
-                error={error}
-                options={{
-                  columnDefs: [
-                    { targets: 0, className: "text-center" }, 
-                    { targets: 1, className: "text-start" },  
-                    { targets: 2, className: "text-start" },  
-                    { targets: 3, className: "text-start" },  
-                    { targets: 4, className: "text-start" },  
-                    { targets: 5, className: "text-start" },  
-                    { targets: 6, className: "text-start" },  
-                    { targets: 7, className: "text-start" },  
-                    
-                  ],                  
-                  language: {
-                    search: "Buscar:",
-                    lengthMenu: "Mostrar _MENU_ registros",
-                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    zeroRecords: "No se encontraron descuentos",
-                    paginate: {
-                      previous: "Anterior",           
-                      next: "Siguiente"               
-                    }                    
-                  }
-                }}
-                className="table table-striped table-hover mb-0 custom-table"
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-
-              <DiscountModal show={showModal} onClose={() => setShowModal(false)} onSaved={refetch} descuento={editing} />
-              <DeleteModal />
-
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-5">
+            <h3 className="card-title m-0 fw-bold text-dark">
+              <FontAwesomeIcon icon={faTags} style={{ color: "#ffc107" }} /> Descuentos
+            </h3>
+            <button className="btn btn-dark" onClick={handleCreate}>+ Crear descuento</button>
           </div>
+
+          {/* Vista para Laptops y PC (>= 992px) */}
+          <div className="d-none d-lg-block">
+            <ReusableDataTable
+              data={descuentos}
+              columns={columns}
+              loading={loading}
+              error={error}
+              options={{
+                columnDefs: [
+                  { targets: 0, className: "text-center" }, 
+                  { targets: 1, className: "text-start" },  
+                  { targets: 2, className: "text-start" },  
+                  { targets: 3, className: "text-start" },  
+                  { targets: 4, className: "text-start" },  
+                  { targets: 5, className: "text-start" },  
+                  { targets: 6, className: "text-start" },  
+                  { targets: 7, className: "text-start" },  
+                ],                  
+                language: {
+                  search: "Buscar:",
+                  lengthMenu: "Mostrar _MENU_ registros",
+                  info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                  zeroRecords: "No se encontraron descuentos",
+                  paginate: {
+                    previous: "Anterior",           
+                    next: "Siguiente"               
+                  }                    
+                }
+              }}
+              className="table table-striped table-hover mb-0 custom-table"
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
+
+          {/* Vista para Teléfonos y Tablets (< 992px) utilizando DataCardList */}
+          <div className="d-block d-lg-none">
+            <DataCardList
+              data={descuentos}
+              loading={loading}
+              error={error}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              emptyMessage="No se encontraron descuentos"
+              renderCard={(item) => {
+                const tipoNombre = item.Tipos_descuento?.nombre || "";
+                const valorFormateado = tipoNombre.toLowerCase().includes("porcentaje")
+                  ? `${Number(item.valor).toFixed(2)}%`
+                  : `$${Number(item.valor).toLocaleString()}`;
+
+                const inicio = item.fecha_inicio ? new Date(item.fecha_inicio).toLocaleDateString() : "-";
+                const fin = item.fecha_fin ? new Date(item.fecha_fin).toLocaleDateString() : "-";
+
+                return (
+                  <>
+                    <div className="d-flex justify-content-between align-items-start mb-2">
+                      <div>
+                        <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                        <h5 className="mb-1 fw-bold text-dark d-inline-block">{item.nombre}</h5>
+                      </div>
+                      <div>
+                        {item.activo ? (
+                          <span className="badge bg-success">Activo</span>
+                        ) : (
+                          <span className="badge bg-secondary">Inactivo</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="row small text-muted g-2">
+                      <div className="col-6 col-sm-3">
+                        <strong>Tipo:</strong> {tipoNombre || "-"}
+                      </div>
+                      <div className="col-6 col-sm-3">
+                        <strong>Categoría:</strong> {item.Categoria?.nombre || "Sin categoría"}
+                      </div>
+                      <div className="col-6 col-sm-3">
+                        <strong>Valor:</strong> <span className="text-dark fw-bold">{valorFormateado}</span>
+                      </div>
+                      <div className="col-6 col-sm-3">
+                        <strong>Vigencia:</strong> {inicio} al {fin}
+                      </div>
+                    </div>
+                  </>
+                );
+              }}
+            />
+          </div>
+
+          <DiscountModal show={showModal} onClose={() => setShowModal(false)} onSaved={refetch} descuento={editing} />
+          <DeleteModal />
+
         </div>
+      </div>
     </div>
   );
 }

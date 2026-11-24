@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import DataCardList from "../../components/common/DataCardList";
 
 const notificationTypes = {
   pedido_web: "Pedido web",
@@ -39,43 +40,65 @@ export default function Notifications() {
       <h3 className="mb-1">Notificaciones</h3>
       <p className="text-muted mb-4">Historial de eventos notificados en el sistema.</p>
 
-      {loading && <p role="status">Cargando notificaciones...</p>}
-      {error && <div className="alert alert-danger" role="alert">{error}</div>}
-
-      {!loading && !error && notifications.length === 0 && (
-        <div className="alert alert-light border" role="status">
-          Todavía no hay notificaciones.
-        </div>
-      )}
-
-      {!loading && !error && notifications.length > 0 && (
-        <div className="table-responsive">
-          <table className="table table-striped table-hover align-middle">
-            <thead>
-              <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Notificación</th>
-                <th scope="col">Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {notifications.map((notification) => (
-                <tr key={notification.id}>
-                  <td>{new Date(notification.fecha).toLocaleString()}</td>
-                  <td>{notificationTypes[notification.tipo] || notification.tipo}</td>
-                  <td>{notification.mensaje}</td>
-                  <td>
-                    <span className={`badge ${notification.enviado ? "bg-secondary" : "bg-warning text-dark"}`}>
-                      {notification.enviado ? "Notificada" : "Pendiente"}
-                    </span>
-                  </td>
+      <div className="d-none d-lg-block">
+        {loading && <p role="status">Cargando notificaciones...</p>}
+        {error && <div className="alert alert-danger" role="alert">{error}</div>}
+        {!loading && !error && notifications.length === 0 && (
+          <div className="alert alert-light border" role="status">
+            Todavía no hay notificaciones.
+          </div>
+        )}
+        {!loading && !error && notifications.length > 0 && (
+          <div className="table-responsive">
+            <table className="table table-striped table-hover align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">Notificación</th>
+                  <th scope="col">Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {notifications.map((notification) => (
+                  <tr key={notification.id}>
+                    <td>{new Date(notification.fecha).toLocaleString()}</td>
+                    <td>{notificationTypes[notification.tipo] || notification.tipo}</td>
+                    <td>{notification.mensaje}</td>
+                    <td>
+                      <span className={`badge ${notification.enviado ? "bg-secondary" : "bg-warning text-dark"}`}>
+                        {notification.enviado ? "Notificada" : "Pendiente"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      <div className="d-block d-lg-none">
+        <DataCardList
+          data={notifications}
+          loading={loading}
+          error={error}
+          emptyMessage="Todavía no hay notificaciones."
+          renderCard={(notification) => (
+            <>
+              <div className="d-flex justify-content-between align-items-start mb-2">
+                <h5 className="mb-1 fw-bold text-dark">
+                  {notificationTypes[notification.tipo] || notification.tipo}
+                </h5>
+                <span className={`badge ${notification.enviado ? "bg-secondary" : "bg-warning text-dark"}`}>
+                  {notification.enviado ? "Notificada" : "Pendiente"}
+                </span>
+              </div>
+              <p className="mb-2">{notification.mensaje}</p>
+              <small className="text-muted">{new Date(notification.fecha).toLocaleString()}</small>
+            </>
+          )}
+        />
+      </div>
     </div>
   );
 }

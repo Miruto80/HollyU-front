@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ReusableDataTable from '../../components/common/ReusableDataTable';
+import DataCardList from '../../components/common/DataCardList';
 import ImagePreviewModal from '../../components/common/ImagePreviewModal';
 import { useGetFetch } from '../../hooks/useGetFetch';
 import api, { SERVER_URL } from '../../services/api';
@@ -128,39 +129,94 @@ export default function Personalizations() {
               <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faWandMagicSparkles} style={{ color: "#ffc107" }} /> Solicitudes personalizadas</h3>
             </div>  
 
-              <ReusableDataTable
-                data={personalizaciones}
-                columns={columns}
-                loading={loading}
-                error={error}
-                onQuote={handleQuote}
-                onReject={handleReject}
-                onImagePreview={handleImagePreview}
-                options={{
-                  columnDefs: [
-                    { targets: 0, className: "text-center" }, 
-                    { targets: 1, className: "text-start" },  
-                    { targets: 2, className: "text-start" },  
-                    { targets: 3, className: "text-start" },  
-                    { targets: 4, className: "text-start" },  
-                    { targets: 5, className: "text-start" },  
-                    { targets: 6, className: "text-start" },  
-                    
-                  ],
-                  language: {
-                    search: 'Buscar:',
-                    lengthMenu: 'Mostrar _MENU_ registros',
-                    info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-                    zeroRecords: 'No se encontraron solicitudes personalizadas',
-                    paginate: {
-                      previous: "Anterior",           
-                      next: "Siguiente"               
+              <div className="d-none d-lg-block">
+                <ReusableDataTable
+                  data={personalizaciones}
+                  columns={columns}
+                  loading={loading}
+                  error={error}
+                  onQuote={handleQuote}
+                  onReject={handleReject}
+                  onImagePreview={handleImagePreview}
+                  options={{
+                    columnDefs: [
+                      { targets: 0, className: "text-center" },
+                      { targets: 1, className: "text-start" },
+                      { targets: 2, className: "text-start" },
+                      { targets: 3, className: "text-start" },
+                      { targets: 4, className: "text-start" },
+                      { targets: 5, className: "text-start" },
+                      { targets: 6, className: "text-start" }
+                    ],
+                    language: {
+                      search: 'Buscar:',
+                      lengthMenu: 'Mostrar _MENU_ registros',
+                      info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                      zeroRecords: 'No se encontraron solicitudes personalizadas',
+                      paginate: {
+                        previous: "Anterior",
+                        next: "Siguiente"
+                      }
                     }
-                  }
-                }}
-                className="table table-striped table-hover mb-0 custom-table"
+                  }}
+                  className="table table-striped table-hover mb-0 custom-table"
+                />
+              </div>
+              <div className="d-block d-lg-none">
+                <DataCardList
+                  data={personalizaciones}
+                  loading={loading}
+                  error={error}
+                  emptyMessage="No se encontraron solicitudes personalizadas"
+                  renderCard={(item) => {
+                    const image = item.imagen_referencia || item.Productos?.Producto_imagenes?.[0]?.imagen;
+                    const imageUrl = image?.startsWith('http') ? image : image ? `${SERVER_URL}${image}` : null;
+                    const nombreCliente = item.Cliente
+                      ? `${item.Cliente.nombres || ''} ${item.Cliente.apellidos || ''}`.trim()
+                      : '-';
+                    const nombreProducto = item.Productos?.nombre || item.Producto?.nombre || '-';
+                    const puedeCotizar = !item.cotizacion_id && item.estado !== 'rechazada';
 
-              />
+                    return (
+                      <>
+                        <div className="d-flex align-items-start gap-3 mb-3">
+                          {imageUrl && (
+                            <button
+                              type="button"
+                              className="btn p-0 border-0 flex-shrink-0"
+                              onClick={() => handleImagePreview(encodeURIComponent(imageUrl))}
+                              title="Ver imagen de referencia"
+                            >
+                              <img
+                                src={imageUrl}
+                                alt={nombreProducto}
+                                style={{ width: "64px", height: "64px", objectFit: "cover", borderRadius: "6px" }}
+                              />
+                            </button>
+                          )}
+                          <div>
+                            <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                            <h5 className="mb-1 fw-bold text-dark d-inline-block">{nombreProducto}</h5>
+                            <div className="small text-muted">Cliente: {nombreCliente}</div>
+                          </div>
+                        </div>
+                        <div className="small text-muted mb-3">
+                          <strong>Descripción:</strong> {item.descripcion_solicitada || "-"}
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center border-top pt-2">
+                          <span className={`badge ${statusClass(item.estado)}`}>{item.estado || "-"}</span>
+                          {puedeCotizar && (
+                            <div className="d-flex gap-2">
+                              <button className="btn btn-sm btn-dark" onClick={() => handleQuote(item.id)}>Cotizar</button>
+                              <button className="btn btn-sm btn-outline-danger" onClick={() => handleReject(item.id)}>Rechazar</button>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    );
+                  }}
+                />
+              </div>
               <ImagePreviewModal imageUrl={previewImage} onClose={() => setPreviewImage(null)} />
 
           </div>

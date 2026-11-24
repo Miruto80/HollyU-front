@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { usePostFetch } from "../../hooks/usePostFetch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -113,33 +114,55 @@ export default function Colors() {
             </div>
           )}
 
-      <ReusableDataTable
-        data={colores}
-        columns={columns}
-        loading={loading}
-        error={error}
-        options={{
-          columnDefs: [
-            { targets: 0, className: "text-center" }, 
-            { targets: 1, className: "text-start" },  
-            { targets: 2, className: "text-start" },
-            { targets: 3, className: "text-start" }
-          
-          ],
-          language: {
-            search: "Buscar:",
-            lengthMenu: "Mostrar _MENU_ registros",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron resultados",
-            paginate: {
-                previous: "Anterior",           
-                next: "Siguiente"               
+      <div className="d-none d-lg-block">
+        <ReusableDataTable
+          data={colores}
+          columns={columns}
+          loading={loading}
+          error={error}
+          options={{
+            columnDefs: [
+              { targets: 0, className: "text-center" },
+              { targets: 1, className: "text-start" },
+              { targets: 2, className: "text-start" },
+              { targets: 3, className: "text-start" }
+            ],
+            language: {
+              search: "Buscar:",
+              lengthMenu: "Mostrar _MENU_ registros",
+              info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+              zeroRecords: "No se encontraron resultados",
+              paginate: {
+                previous: "Anterior",
+                next: "Siguiente"
+              }
             }
-          }
-        }}
-        className="table table-striped table-hover mb-0 custom-table"
-      />
-      
+          }}
+          className="table table-striped table-hover mb-0 custom-table"
+        />
+      </div>
+      <div className="d-block d-lg-none">
+        <DataCardList
+          data={colores}
+          loading={loading}
+          error={error}
+          emptyMessage="No se encontraron colores"
+          renderCard={(item) => (
+            <div className="d-flex align-items-center gap-3">
+              <span
+                className="border rounded-circle flex-shrink-0"
+                style={{ width: "40px", height: "40px", backgroundColor: item.codigo_hex || "transparent" }}
+                aria-label={`Color ${item.codigo_hex || "sin código"}`}
+              />
+              <div>
+                <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                <h5 className="mb-1 fw-bold text-dark d-inline-block">{item.nombre || "-"}</h5>
+                <div className="small text-muted"><strong>Código HEX:</strong> {item.codigo_hex || "-"}</div>
+              </div>
+            </div>
+          )}
+        />
+      </div>
 
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { useDeleteFetch } from "../../hooks/useDeleteFetch";
 import { usePutFetch } from "../../hooks/usePutFetch";
@@ -152,39 +153,116 @@ export default function ProductosTable() {
             </button>
           </div>
 
-          <ReusableDataTable
-            data={productos}
-            columns={columns}
-            loading={loading}
-            error={error}
-            options={{
-              columnDefs: [
-                { targets: 0, className: "text-center" }, 
-                { targets: 1, className: "text-start" },  
-                { targets: 2, className: "text-center" },  
-                { targets: 3, className: "text-center" },  
-                { targets: 4, className: "text-center" },  
-                { targets: 5, className: "text-center" },  
-                { targets: 6, className: "text-center" },  
-                { targets: 7, className: "text-center" },  
-              ],
-              language: {
-                search: "Buscar:",
-                lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                zeroRecords: "No se encontraron resultados",
-                paginate: {
-                  previous: "Anterior",           
-                  next: "Siguiente"               
+          {/* Vista para Laptops y PC (>= 992px) */}
+          <div className="d-none d-lg-block">
+            <ReusableDataTable
+              data={productos}
+              columns={columns}
+              loading={loading}
+              error={error}
+              options={{
+                columnDefs: [
+                  { targets: 0, className: "text-center" }, 
+                  { targets: 1, className: "text-start" },  
+                  { targets: 2, className: "text-center" },  
+                  { targets: 3, className: "text-center" },  
+                  { targets: 4, className: "text-center" },  
+                  { targets: 5, className: "text-center" },  
+                  { targets: 6, className: "text-center" },  
+                  { targets: 7, className: "text-center" },  
+                ],
+                language: {
+                  search: "Buscar:",
+                  lengthMenu: "Mostrar _MENU_ registros",
+                  info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                  zeroRecords: "No se encontraron resultados",
+                  paginate: {
+                    previous: "Anterior",           
+                    next: "Siguiente"               
+                  }
                 }
-              }
-            }}
-            className="table table-striped table-hover mb-0 custom-table"
-            onEdit={handleEdit}
-            onView={handleView}
-            onDelete={handleDelete}
-            onToggleEstatus={handleToggleEstatus}
-          />
+              }}
+              className="table table-striped table-hover mb-0 custom-table"
+              onEdit={handleEdit}
+              onView={handleView}
+              onDelete={handleDelete}
+              onToggleEstatus={handleToggleEstatus}
+            />
+          </div>
+
+          {/* Vista para Teléfonos y Tablets (< 992px) usando DataCardList */}
+          <div className="d-block d-lg-none">
+            <DataCardList
+              data={productos}
+              loading={loading}
+              error={error}
+              emptyMessage="No se encontraron resultados"
+              // Usamos las funciones de acción directamente en los botones de la tarjeta móvil
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              renderCard={(item) => {
+                const img = item.Producto_imagenes?.[0]?.imagen;
+                const src = img ? `${SERVER_URL}${img}` : "/images/no-image.jpg";
+                
+                const badgeStatus = 
+                  item.estatus === 1 ? <span className="badge bg-success">Activo</span> :
+                  item.estatus === 2 ? <span className="badge bg-secondary">Desactivado</span> :
+                  <span className="badge bg-dark">Eliminado</span>;
+
+                return (
+                  <div>
+                    <div className="d-flex align-items-center gap-3 mb-3">
+                      <img 
+                        src={src} 
+                        alt={item.nombre} 
+                        style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" }} 
+                      />
+                      <div className="flex-grow-1">
+                        <div className="d-flex justify-content-between align-items-start">
+                          <span className="badge bg-light text-dark border">ID: {item.id}</span>
+                          {badgeStatus}
+                        </div>
+                        <h5 className="mb-0 fw-bold text-dark mt-1">{item.nombre}</h5>
+                      </div>
+                    </div>
+
+                    <div className="row small text-muted g-2 mb-3">
+                      <div className="col-6">
+                        <strong>Categoría:</strong> {item.Categoria?.nombre ?? "-"}
+                      </div>
+                      <div className="col-6">
+                        <strong>Género:</strong> {item.Genero?.nombre ?? "-"}
+                      </div>
+                      <div className="col-6">
+                        <strong>Precio:</strong> <span className="text-dark fw-bold">${Number(item.precio).toLocaleString()}</span>
+                      </div>
+                      <div className="col-6">
+                        <strong>Stock:</strong> {item.stock}
+                      </div>
+                    </div>
+
+                    {/* Acciones adicionales para móvil; Editar y Eliminar las provee DataCardList. */}
+                    <div className="d-flex justify-content-end gap-2 border-top pt-2">
+                      <button 
+                        className="btn btn-sm btn-outline-info" 
+                        title="Ver más"
+                        onClick={() => handleView(item.id)}
+                      >
+                        <FontAwesomeIcon icon={faEye} />
+                      </button>
+                      <button 
+                        className={`btn btn-sm btn-outline-${item.estatus === 1 ? 'secondary' : 'success'}`}
+                        title="Cambiar estado"
+                        onClick={() => handleToggleEstatus(item.id, item.estatus)}
+                      >
+                        <FontAwesomeIcon icon={faWarning} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              }}
+            />
+          </div>
 
           <ProductModal
             show={showModal}

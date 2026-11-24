@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullseye, faCheck, faEye, faGem } from "@fortawesome/free-solid-svg-icons";
+import PromoStrip from "../home/PromoStrip.jsx";
 import "../../assets/css/About.css";
 import aboutImg from "../../assets/img/IMG_9567.webp";
 
@@ -48,6 +49,14 @@ export default function About() {
 
           </div>
         </div>
+      </section>
+
+      <section className="stats-section2">
+
+        <div className="container">
+          <PromoStrip />
+        </div>
+
       </section>
 
       {/* Historia */}

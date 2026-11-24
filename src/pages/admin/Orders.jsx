@@ -4,6 +4,7 @@ import api from "../../services/api";
 import { notifySuccess } from "../../utils/Tostify";
 import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import OrderModal from "../../components/admin/OrderModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -226,39 +227,117 @@ export default function Orders() {
               <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faClipboardList} style={{ color: "#ffc107" }} /> Pedidos</h3>
             </div>
 
-            <ReusableDataTable
-              data={pedidos}
-              columns={columns}
-              loading={loading}
-              error={error}
-              onView={handleView}
-              onConfirm={handleConfirm}
-              onReject={handleReject}
-              onAvanzar={handleAdvance}
-              options={{
-                columnDefs: [
-                { targets: 0, className: "text-center" }, 
-                { targets: 1, className: "text-start" },  
-                { targets: 2, className: "text-start" },  
-                { targets: 3, className: "text-start" },  
-                { targets: 4, className: "text-start" },  
-                { targets: 5, className: "text-start" },  
-                { targets: 6, className: "text-start" },  
-                
-              ],
-                language: {
-                  search: "Buscador:",
-                  lengthMenu: "Mostrar _MENU_ registros",
-                  info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                  zeroRecords: "No se encontraron resultados",
+            <div className="d-none d-lg-block">
+              <ReusableDataTable
+                data={pedidos}
+                columns={columns}
+                loading={loading}
+                error={error}
+                onView={handleView}
+                onConfirm={handleConfirm}
+                onReject={handleReject}
+                onAvanzar={handleAdvance}
+                options={{
+                  columnDefs: [
+                    { targets: 0, className: "text-center" },
+                    { targets: 1, className: "text-start" },
+                    { targets: 2, className: "text-start" },
+                    { targets: 3, className: "text-start" },
+                    { targets: 4, className: "text-start" },
+                    { targets: 5, className: "text-start" },
+                    { targets: 6, className: "text-start" }
+                  ],
+                  language: {
+                    search: "Buscador:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    zeroRecords: "No se encontraron resultados",
                     paginate: {
-                      previous: "Anterior",           
-                      next: "Siguiente"               
+                      previous: "Anterior",
+                      next: "Siguiente"
                     }
-                }
-              }}
-              className="table table-striped table-hover mb-0 custom-table"
-            />
+                  }
+                }}
+                className="table table-striped table-hover mb-0 custom-table"
+              />
+            </div>
+            <div className="d-block d-lg-none">
+              <DataCardList
+                data={pedidos}
+                loading={loading}
+                error={error}
+                emptyMessage="No se encontraron pedidos"
+                renderCard={(item) => {
+                  const estadoPago = item.Pagos?.[0]?.Estados_pago?.nombre;
+                  const estadoPedido = item.Estados_pedido?.nombre;
+                  const esPedidoDeCotizacion = Boolean(item.cotizacion_id);
+                  const producciones = item.Producciones || [];
+                  const produccionTerminada = producciones.length > 0
+                    && producciones.every((produccion) => produccion.Estados_produccion?.nombre === "Terminado");
+                  const puedeAvanzar = (
+                    estadoPedido === "En producción"
+                    && produccionTerminada
+                    && (estadoPago === "Verificado" || esPedidoDeCotizacion)
+                  ) || (
+                    estadoPedido === "Listo para entrega"
+                    && (estadoPago === "Verificado" || esPedidoDeCotizacion)
+                  );
+                  const estadoClass = estadoPago === "Pendiente de verificación"
+                    ? "bg-warning text-dark"
+                    : estadoPago === "Rechazado"
+                      ? "bg-danger"
+                      : estadoPago === "Verificado"
+                        ? "bg-primary"
+                        : "bg-secondary";
+                  const nombreCliente = item.Cliente
+                    ? `${item.Cliente.nombres || ""} ${item.Cliente.apellidos || ""}`.trim()
+                    : "-";
+
+                  return (
+                    <>
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                          <h5 className="mb-1 fw-bold text-dark d-inline-block">{nombreCliente}</h5>
+                        </div>
+                        <span className={`badge ${estadoClass}`}>
+                          {estadoPago === "Pendiente de verificación"
+                            ? "VERIFICAR PAGO"
+                            : estadoPago === "Rechazado"
+                              ? "PAGO RECHAZADO"
+                              : estadoPedido || "-"}
+                        </span>
+                      </div>
+                      <div className="row small text-muted g-2">
+                        <div className="col-12"><strong>Fecha:</strong> {new Date(item.fecha).toLocaleString()}</div>
+                        <div className="col-6"><strong>Total:</strong> ${Number(item.total || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+                        <div className="col-6"><strong>Referencia:</strong> {item.Pagos?.[0]?.referencia ?? "-"}</div>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end gap-2 border-top pt-2 mt-3">
+                        <button className="btn btn-sm btn-info text-white" onClick={() => handleView(item.id)}>
+                          Ver
+                        </button>
+                        {estadoPago === "Pendiente de verificación" && (
+                          <>
+                            <button className="btn btn-sm btn-success" onClick={() => handleConfirm(item.id)}>
+                              Confirmar
+                            </button>
+                            <button className="btn btn-sm btn-danger" onClick={() => handleReject(item.id)}>
+                              Rechazar
+                            </button>
+                          </>
+                        )}
+                        {puedeAvanzar && (
+                          <button className="btn btn-sm btn-primary" onClick={() => handleAdvance(item.id)}>
+                            {estadoPedido === "Listo para entrega" ? "Entregado" : "Listo para entrega"}
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  );
+                }}
+              />
+            </div>
 
             <OrderModal
               pedidoId={pedidoSeleccionadoId}
