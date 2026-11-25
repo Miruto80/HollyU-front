@@ -1,13 +1,14 @@
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const SidebarItem = ({ to, icon, text }) => {
+const SidebarItem = ({ to, icon, text, end = false }) => {
 
     return (
 
         <NavLink
             to={to}
-            className="sidebar-item"
+            end={end}
+            className={({ isActive }) => `sidebar-item${isActive ? " active" : ""}`}
         >
 
             <FontAwesomeIcon

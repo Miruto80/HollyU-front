@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { confirmarAccion, alertaExito, alertaError } from "../../utils/Alert";
 import api from "../../services/api";
 import SalesModal from "../../components/admin/SalesModal";
@@ -142,37 +143,85 @@ export default function Sales() {
               </button>
             </div>
 
-              <ReusableDataTable
-                data={ventas}
-                columns={columns}
-                loading={loading}
-                error={error}
-                onView={handleView}
-                onAvanzar={handleAdvance}
-                options={{
-                  columnDefs: [
-                    { targets: 0, className: "text-center" }, 
-                    { targets: 1, className: "text-start" },  
-                    { targets: 2, className: "text-start" },  
-                    { targets: 3, className: "text-start" },  
-                    { targets: 4, className: "text-start" },  
-                    { targets: 5, className: "text-start" },  
-                    { targets: 6, className: "text-start" },  
-                    
-                  ],  
-                  language: {
-                    search: "Buscar:",
-                    lengthMenu: "Mostrar _MENU_ registros",
-                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    zeroRecords: "No se encontraron resultados",
-                    paginate: {
-                      previous: "Anterior",           
-                      next: "Siguiente"               
+              <div className="d-none d-lg-block">
+                <ReusableDataTable
+                  data={ventas}
+                  columns={columns}
+                  loading={loading}
+                  error={error}
+                  onView={handleView}
+                  onAvanzar={handleAdvance}
+                  options={{
+                    columnDefs: [
+                      { targets: 0, className: "text-center" },
+                      { targets: 1, className: "text-start" },
+                      { targets: 2, className: "text-start" },
+                      { targets: 3, className: "text-start" },
+                      { targets: 4, className: "text-start" },
+                      { targets: 5, className: "text-start" },
+                      { targets: 6, className: "text-start" }
+                    ],
+                    language: {
+                      search: "Buscar:",
+                      lengthMenu: "Mostrar _MENU_ registros",
+                      info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                      zeroRecords: "No se encontraron resultados",
+                      paginate: {
+                        previous: "Anterior",
+                        next: "Siguiente"
+                      }
                     }
-                  }
-                }}
-                className="table table-striped table-hover mb-0 custom-table"
-              />
+                  }}
+                  className="table table-striped table-hover mb-0 custom-table"
+                />
+              </div>
+              <div className="d-block d-lg-none">
+                <DataCardList
+                  data={ventas}
+                  loading={loading}
+                  error={error}
+                  emptyMessage="No se encontraron ventas"
+                  renderCard={(item) => {
+                    const estadoPedido = item.Estados_pedido?.nombre;
+                    const producciones = item.Producciones || [];
+                    const produccionTerminada = producciones.length > 0
+                      && producciones.every((produccion) => produccion.Estados_produccion?.nombre === "Terminado");
+                    const puedeAvanzar = (estadoPedido === "En producción" && produccionTerminada)
+                      || estadoPedido === "Listo para entrega";
+                    const metodosPago = item.Pagos?.map((pago) => pago.Metodos_pago?.nombre).filter(Boolean);
+                    const nombreCliente = item.Cliente
+                      ? `${item.Cliente.nombres || ""} ${item.Cliente.apellidos || ""}`.trim()
+                      : "-";
+
+                    return (
+                      <>
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div>
+                            <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                            <h5 className="mb-1 fw-bold text-dark d-inline-block">{nombreCliente}</h5>
+                          </div>
+                          <span className="badge bg-secondary">{estadoPedido || "-"}</span>
+                        </div>
+                        <div className="row small text-muted g-2">
+                          <div className="col-12"><strong>Fecha:</strong> {new Date(item.fecha).toLocaleString()}</div>
+                          <div className="col-6"><strong>Total:</strong> ${Number(item.total || 0).toLocaleString()}</div>
+                          <div className="col-6"><strong>Método de pago:</strong> {metodosPago?.length ? metodosPago.join(" + ") : "-"}</div>
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-end gap-2 border-top pt-2 mt-3">
+                          <button className="btn btn-sm btn-info text-white" onClick={() => handleView(item.id)}>
+                            Ver
+                          </button>
+                          {puedeAvanzar && (
+                            <button className="btn btn-sm btn-primary" onClick={() => handleAdvance(item.id)}>
+                              {estadoPedido === "Listo para entrega" ? "Entregado" : "Listo para entrega"}
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    );
+                  }}
+                />
+              </div>
 
               <SalesModal
                 show={showRegistro}

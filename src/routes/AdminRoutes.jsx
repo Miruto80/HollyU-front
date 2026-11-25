@@ -15,6 +15,7 @@ import Personalizations from "../pages/admin/Personalizations";
 import Discounts from "../pages/admin/Discounts";
 import Sales from "../pages/admin/Sales.jsx";
 import Notifications from "../pages/admin/Notifications.jsx";
+import NotFound from "../pages/NotFound.jsx";
 
 function AdminRoutes() {
 
@@ -49,6 +50,8 @@ function AdminRoutes() {
                 <Route path="ventas" element={<Sales />} />
 
                 <Route path="notificaciones" element={<Notifications />} />
+
+                <Route path="*" element={<NotFound />} />
             </Route>
 
         </Routes>

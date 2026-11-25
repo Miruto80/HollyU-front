@@ -1,4 +1,5 @@
 import ReusableDataTable from '../../components/common/ReusableDataTable';
+import DataCardList from '../../components/common/DataCardList';
 import { useGetFetch } from '../../hooks/useGetFetch';
 import api from '../../services/api';
 import { notifySuccess, notifyError } from '../../utils/Tostify';
@@ -114,38 +115,82 @@ export default function Quotes() {
               <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faReceipt} style={{ color: "#ffc107" }} /> Cotizaciones</h3>
             </div>
 
-            <ReusableDataTable
-              data={cotizaciones}
-              columns={columns}
-              loading={loading}
-              error={error}
-              onProduction={handleProduction}
-              options={{
-                columnDefs: [
-                { targets: 0, className: "text-center" }, 
-                { targets: 1, className: "text-start" },  
-                { targets: 2, className: "text-start" },  
-                { targets: 3, className: "text-start" },  
-                { targets: 4, className: "text-start" },  
-                { targets: 5, className: "text-start" },  
-                { targets: 6, className: "text-start" },  
-                { targets: 7, className: "text-start" },  
-                { targets: 8, className: "text-start" }  
-                
-              ],                
-                language: {
-                  search: 'Buscar:',
-                  lengthMenu: 'Mostrar _MENU_ registros',
-                  info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-                  zeroRecords: 'No se encontraron cotizaciones',
+            <div className="d-none d-lg-block">
+              <ReusableDataTable
+                data={cotizaciones}
+                columns={columns}
+                loading={loading}
+                error={error}
+                onProduction={handleProduction}
+                options={{
+                  columnDefs: [
+                    { targets: 0, className: "text-center" },
+                    { targets: 1, className: "text-start" },
+                    { targets: 2, className: "text-start" },
+                    { targets: 3, className: "text-start" },
+                    { targets: 4, className: "text-start" },
+                    { targets: 5, className: "text-start" },
+                    { targets: 6, className: "text-start" },
+                    { targets: 7, className: "text-start" },
+                    { targets: 8, className: "text-start" }
+                  ],
+                  language: {
+                    search: 'Buscar:',
+                    lengthMenu: 'Mostrar _MENU_ registros',
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                    zeroRecords: 'No se encontraron cotizaciones',
                     paginate: {
-                      previous: "Anterior",           
-                      next: "Siguiente"               
-                    }                  
-                }
-              }}
-              className="table table-striped table-hover mb-0 custom-table"
-            /> 
+                      previous: "Anterior",
+                      next: "Siguiente"
+                    }
+                  }
+                }}
+                className="table table-striped table-hover mb-0 custom-table"
+              />
+            </div>
+            <div className="d-block d-lg-none">
+              <DataCardList
+                data={cotizaciones}
+                loading={loading}
+                error={error}
+                emptyMessage="No se encontraron cotizaciones"
+                renderCard={(item) => {
+                  const status = item.Estados_cotizacion?.nombre || "Sin estado";
+                  const cliente = item.Cliente
+                    ? `${item.Cliente.nombres || ""} ${item.Cliente.apellidos || ""}`.trim()
+                    : "-";
+                  const productos = item.Detalle_cotizacions?.map((detail) =>
+                    `${detail.Producto?.nombre || "Producto"} x${detail.cantidad}`
+                  ).join(", ") || "-";
+
+                  return (
+                    <>
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                          <h5 className="mb-1 fw-bold text-dark d-inline-block">{cliente}</h5>
+                        </div>
+                        <span className={`badge ${statusClass(status)}`}>{status}</span>
+                      </div>
+                      <div className="row small text-muted g-2">
+                        <div className="col-12"><strong>Fecha:</strong> {formatDate(item.fecha)}</div>
+                        <div className="col-12"><strong>Productos:</strong> {productos}</div>
+                        <div className="col-6"><strong>Subtotal:</strong> {formatCurrency(item.subtotal)}</div>
+                        <div className="col-6"><strong>Total:</strong> {formatCurrency(item.total)}</div>
+                        <div className="col-12"><strong>Observaciones:</strong> {item.observaciones || "-"}</div>
+                      </div>
+                      {!status.toLowerCase().includes("producc") && (
+                        <div className="d-flex justify-content-end border-top pt-2 mt-3">
+                          <button className="btn btn-sm btn-primary" onClick={() => handleProduction(item.id)}>
+                            Pasar a producción
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                }}
+              />
+            </div>
 
         </div>
       </div>

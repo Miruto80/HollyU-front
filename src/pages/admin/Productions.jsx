@@ -3,6 +3,7 @@ import api from "../../services/api";
 import { notifySuccess, notifyError } from "../../utils/Tostify";
 import { confirmarAccion } from "../../utils/Alert";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoneyBillWave,
@@ -88,39 +89,103 @@ export default function Productions() {
               <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faMoneyBillWave} style={{ color: "#ffc107" }} /> Producciones</h3>
             </div>
 
-      <ReusableDataTable
-        data={producciones}
-        columns={columns}
-        loading={loading}
-        error={error}
-        onAvanzar={handleAvanzar}
-        options={{
-          columnDefs: [
-            { targets: 0, className: "text-center" }, 
-            { targets: 1, className: "text-center" },  
-            { targets: 2, className: "text-start" },  
-            { targets: 3, className: "text-center" },  
-            { targets: 4, className: "text-center" },  
-            { targets: 5, className: "text-center" },  
-            { targets: 6, className: "text-start" },  
-            
-            
-          ],  
-          language: {
-            search: "Buscador:",
-            lengthMenu: "Mostrar _MENU_ registros",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            zeroRecords: "No se encontraron resultados",
-             paginate: {
-              previous: "Anterior",           
-              next: "Siguiente"               
-            }
-          }
-        }}
-        className="table table-striped table-hover mb-0 custom-table"
-      />
+            {/* Vista para Laptops y PC (>= 992px) */}
+            <div className="d-none d-lg-block">
+              <ReusableDataTable
+                data={producciones}
+                columns={columns}
+                loading={loading}
+                error={error}
+                onAvanzar={handleAvanzar}
+                options={{
+                  columnDefs: [
+                    { targets: 0, className: "text-center" }, 
+                    { targets: 1, className: "text-center" },  
+                    { targets: 2, className: "text-start" },  
+                    { targets: 3, className: "text-center" },  
+                    { targets: 4, className: "text-center" },  
+                    { targets: 5, className: "text-center" },  
+                    { targets: 6, className: "text-start" },  
+                  ],  
+                  language: {
+                    search: "Buscador:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    zeroRecords: "No se encontraron resultados",
+                     paginate: {
+                      previous: "Anterior",           
+                      next: "Siguiente"               
+                    }
+                  }
+                }}
+                className="table table-striped table-hover mb-0 custom-table"
+              />
+            </div>
+
+            {/* Vista para Teléfonos y Tablets (< 992px) con DataCardList */}
+            <div className="d-block d-lg-none">
+              <DataCardList
+                data={producciones}
+                loading={loading}
+                error={error}
+                emptyMessage="No se encontraron resultados"
+                renderCard={(item) => {
+                  const etapaNombre = item.Estados_produccion?.nombre ?? "-";
+                  const clienteNombre = item.Pedido?.Cliente 
+                    ? `${item.Pedido.Cliente.nombres} ${item.Pedido.Cliente.apellidos ?? ""}` 
+                    : "-";
+                  const inicio = item.fecha_inicio ? new Date(item.fecha_inicio).toLocaleDateString() : "-";
+                  const entrega = item.Pedido?.fecha_entrega_estimada 
+                    ? new Date(item.Pedido.fecha_entrega_estimada).toLocaleDateString() 
+                    : "-";
+                  const final = item.fecha_final ? new Date(item.fecha_final).toLocaleDateString() : "-";
+                  const isTerminado = etapaNombre === "Terminado";
+
+                  return (
+                    <>
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                          <h5 className="mb-1 fw-bold text-dark d-inline-block">Pedido #{item.Pedido?.id ?? "-"}</h5>
+                        </div>
+                        <div>
+                          <span className="badge bg-info text-dark">{etapaNombre}</span>
+                        </div>
+                      </div>
+
+                      <div className="row small text-muted g-2 mb-3">
+                        <div className="col-12">
+                          <strong>Cliente:</strong> {clienteNombre}
+                        </div>
+                        <div className="col-6">
+                          <strong>Inicio:</strong> {inicio}
+                        </div>
+                        <div className="col-6">
+                          <strong>Entrega estimada:</strong> {entrega}
+                        </div>
+                        <div className="col-6">
+                          <strong>Finalizado:</strong> {final}
+                        </div>
+                      </div>
+
+                      {!isTerminado && (
+                        <div className="d-flex justify-content-end border-top pt-2">
+                          <button
+                            className="btn btn-sm btn-primary px-3"
+                            onClick={() => handleAvanzar(item.id)}
+                          >
+                            Avanzar →
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                }}
+              />
+            </div>
+
         </div>
-        </div>
+      </div>
     </div>
   );
 }

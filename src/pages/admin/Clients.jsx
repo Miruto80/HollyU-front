@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import api from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -80,7 +81,7 @@ export default function Clients() {
               <h3 className="card-title m-0 fw-bold text-dark"> <FontAwesomeIcon icon={faUsers} style={{ color: "#ffc107" }} /> Clientes</h3>
           </div>
 
-          <div className="table-responsive">
+          <div className="d-none d-lg-block">
             <ReusableDataTable
               data={clientes}
               columns={columns}
@@ -111,6 +112,40 @@ export default function Clients() {
               }}
               className="table table-striped table-hover mb-0 custom-table"
               onView={handleView}
+            />
+          </div>
+          <div className="d-block d-lg-none">
+            <DataCardList
+              data={clientes}
+              loading={loading}
+              error={error}
+              emptyMessage="No se encontraron clientes"
+              renderCard={(item) => (
+                <>
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                      <h5 className="mb-1 fw-bold text-dark d-inline-block">
+                        {`${item.nombres || ""} ${item.apellidos || ""}`.trim() || "-"}
+                      </h5>
+                    </div>
+                    <span className={`badge ${item.activo ? "bg-success" : "bg-secondary"}`}>
+                      {item.activo ? "Activo" : "Inactivo"}
+                    </span>
+                  </div>
+                  <div className="row small text-muted g-2">
+                    <div className="col-12"><strong>Documento:</strong> {item.documento || "-"}</div>
+                    <div className="col-12"><strong>Email:</strong> {item.email || "-"}</div>
+                    <div className="col-6"><strong>Teléfono:</strong> {item.telefono || "-"}</div>
+                    <div className="col-6"><strong>Ciudad:</strong> {item.ciudad || "-"}</div>
+                  </div>
+                  <div className="d-flex justify-content-end border-top pt-2 mt-3">
+                    <button className="btn btn-sm btn-info text-white" onClick={() => handleView(item.id)}>
+                      Ver más
+                    </button>
+                  </div>
+                </>
+              )}
             />
           </div>
       {modalOpen && (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReusableDataTable from "../../components/common/ReusableDataTable";
+import DataCardList from "../../components/common/DataCardList";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { useDeleteFetch } from "../../hooks/useDeleteFetch";
 import CategoryModal from "../../components/admin/CategoryModal";
@@ -73,35 +74,69 @@ export default function Categories() {
               </button>
           </div>
 
-          <ReusableDataTable
-            data={categorias}
-            columns={columns}
-            loading={loading}
-            error={error}
-            options={{
-              columnDefs: [
-                { targets: 0, className: "text-center" }, 
-                { targets: 1, className: "text-start" },  
-                { targets: 2, className: "text-start" },  
-                { targets: 3, className: "text-start" },  
-                { targets: 4, className: "text-start" },  
-                
-              ],
-              language: {
-                search: "Buscar:",
-                lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                zeroRecords: "No se encontraron resultados",
-                paginate: {
-                  previous: "Anterior",           
-                  next: "Siguiente"               
+          {/* Vista para Laptops y PC (>= 992px) */}
+          <div className="d-none d-lg-block">
+            <ReusableDataTable
+              data={categorias}
+              columns={columns}
+              loading={loading}
+              error={error}
+              options={{
+                columnDefs: [
+                  { targets: 0, className: "text-center" }, 
+                  { targets: 1, className: "text-start" },  
+                  { targets: 2, className: "text-start" },  
+                  { targets: 3, className: "text-start" },  
+                  { targets: 4, className: "text-start" },  
+                ],
+                language: {
+                  search: "Buscar:",
+                  lengthMenu: "Mostrar _MENU_ registros",
+                  info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                  zeroRecords: "No se encontraron resultados",
+                  paginate: {
+                    previous: "Anterior",           
+                    next: "Siguiente"               
+                  }
                 }
-              }
-            }}
-            className="table table-striped table-hover mb-0 custom-table"
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+              }}
+              className="table table-striped table-hover mb-0 custom-table"
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
+
+          {/* Vista para Teléfonos y Tablets (< 992px) usando el componente universal */}
+          <div className="d-block d-lg-none">
+            <DataCardList
+              data={categorias}
+              loading={loading}
+              error={error}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              emptyMessage="No se encontraron resultados"
+              renderCard={(item) => (
+                <>
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <span className="badge bg-light text-dark border me-2">ID: {item.id}</span>
+                      <h5 className="mb-1 fw-bold text-dark d-inline-block">{item.nombre}</h5>
+                    </div>
+                    <div>
+                      {item.activo ? (
+                        <span className="badge bg-success">Activo</span>
+                      ) : (
+                        <span className="badge bg-secondary">Inactivo</span>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-muted small mb-0">
+                    {item.descripcion || "Sin descripción"}
+                  </p>
+                </>
+              )}
+            />
+          </div>
 
           <CategoryModal show={showModal} onClose={() => setShowModal(false)} onSaved={refetch} category={editing} />
 
@@ -112,4 +147,3 @@ export default function Categories() {
     </div>
   );
 }
-

@@ -14,20 +14,13 @@
 
 }
 
-.sidebar-logo {
+.sidebar-header {
 
-    height: 90px;
+    height: 0;
+    flex: 0 0 0;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,.08);
-
-}
-
-.sidebar-logo img {
-
-    width: 55px;
-    height: auto; 
 
 }
 
@@ -134,12 +127,12 @@
         
     }
 
-    .sidebar-logo {
+    .sidebar-header {
 
         position: relative;
-        justify-content: flex-start; 
-        padding-left: 25px;       
-        padding-right: 50px;
+        height: 56px;
+        flex: 0 0 56px;
+        padding: 0 16px;
 
     }
 
@@ -148,12 +141,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        position: static;
 
     }
 
     .sidebar-menu {
 
-        padding: 20px 15px 120px;
+        padding: 0 15px 120px;
 
     }
 
