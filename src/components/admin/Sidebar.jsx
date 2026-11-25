@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
     faHouse,
     faBox,
@@ -11,7 +10,6 @@ import {
     faWandMagicSparkles,
     faTags,
     faMoneyBillWave,
-    faRightFromBracket,
     faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,8 +18,6 @@ import SidebarItem from "./SidebarItem";
 import "../../assets/css/Sidebar.css";
 
 export default function Sidebar({ isOpen, onClose }) {
-    
-
    return (
     <>
       <div 
@@ -30,12 +26,7 @@ export default function Sidebar({ isOpen, onClose }) {
       />
 
       <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
-        <div className="sidebar-logo">
-          <img
-            src="/src/assets/img/Logo.png"
-            alt="HolyHoly"
-          />
-
+        <div className="sidebar-header">
           <button
             type="button"
             className="sidebar-close"
@@ -51,6 +42,7 @@ export default function Sidebar({ isOpen, onClose }) {
             to="/admin"
             icon={faHouse}
             text="Dashboard"
+            end
           />
 
           <SidebarItem
