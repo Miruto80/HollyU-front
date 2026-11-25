@@ -1,0 +1,126 @@
+.not-found-wrapper {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: radial-gradient(circle at top right, rgba(229, 184, 63, 0.08), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(33, 37, 41, 0.04), transparent 40%);
+}
+
+.not-found-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.not-found-code-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.not-found-code-main {
+  position: relative;
+  font-size: clamp(5rem, 15vw, 7.5rem);
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+  background: linear-gradient(135deg, #e5b83f 0%, #c8961e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.04em;
+  animation: floatNumber 4s ease-in-out infinite;
+}
+
+.not-found-code {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: clamp(5rem, 15vw, 7.5rem);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(229, 184, 63, 0.15);
+  letter-spacing: -0.04em;
+  user-select: none;
+}
+
+.not-found-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1d20;
+  margin: 0.75rem 0;
+}
+
+.not-found-description {
+  font-size: 1.25rem;
+  color: #6c757d;
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto 2rem auto;
+}
+
+.not-found-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-not-found-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #1a1d20;
+  border: 1px solid #1a1d20;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-not-found-primary:hover {
+  background-color: #343a40;
+  border-color: #343a40;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(26, 29, 32, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatNumber {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found-card {
+    padding: 2.25rem 1.25rem;
+  }
+
+  .btn-not-found-primary {
+    width: 100%;
+  }
+}

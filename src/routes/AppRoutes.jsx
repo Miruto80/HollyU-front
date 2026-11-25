@@ -14,11 +14,13 @@ import MyOrders from "../pages/public/MyOrders.jsx";
 import CartPage from "../pages/public/CartPage.jsx";
 import DeliveryPage from "../pages/public/DeliveryPage.jsx";
 import Terms from "../components/catalog/Terms.jsx";
+import NotFound from "../pages/NotFound.jsx";
 
 function AppRoutes() {
   const location = useLocation();
 
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAdminRoute =
+    location.pathname === "/admin" || location.pathname.startsWith("/admin/");
 
   return (
     <>
@@ -47,6 +49,7 @@ function AppRoutes() {
             </ProtectRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!isAdminRoute && <Footer />}
