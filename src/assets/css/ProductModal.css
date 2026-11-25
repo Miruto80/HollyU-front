@@ -354,6 +354,37 @@
     font-weight: 700;
 }
 
+.product-modal-pricing {
+    margin-bottom: 0.75rem;
+}
+
+.product-modal-price-label {
+    color: #737b84;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.product-modal-price-values {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.product-modal-price-current {
+    margin: 0;
+    color: #0b2545;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.product-modal-price-original {
+    color: #737b84;
+    font-size: 1.1rem;
+}
+
 
 /* COLORES */
 

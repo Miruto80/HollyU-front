@@ -133,6 +133,12 @@
   width: 100%;
 }
 
+.cart-flow-price-original {
+  color: #777;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
 .cart-flow-subtotal-box {
   display: flex;
   flex-direction: column;

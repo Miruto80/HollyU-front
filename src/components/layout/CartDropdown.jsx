@@ -3,11 +3,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../../hooks/useCart";
 import { SERVER_URL } from "../../services/api";
+import { useGetFetch } from "../../hooks/useGetFetch";
+import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
+import { getDiscountedItemPricing } from "../../utils/Discounts";
 import "../../assets/css/CartDropdown.css";
 
 export default function CartDropdown({ show, onClose }) {
   const navigate = useNavigate();
-  const { items, removeItem, updateCantidad, totalPrecio } = useCart();
+  const { items, removeItem, updateCantidad } = useCart();
+  const { data: descuentos = [] } = useGetFetch("/descuentos");
+
+  const itemsConDescuento = items.map((item) => {
+    const pricing = getDiscountedItemPricing(item, descuentos, item.cantidad, getUnitPrice(item));
+
+    return {
+      ...item,
+      ...pricing,
+      esMayor: esPrecioMayor(item),
+      originalSubtotal: pricing.subtotal
+    };
+  });
+
+  const totalOriginal = itemsConDescuento.reduce((total, item) => total + item.originalSubtotal, 0);
+  const totalConDescuento = itemsConDescuento.reduce((total, item) => total + item.discountedSubtotal, 0);
+  const totalDescuento = totalOriginal - totalConDescuento;
 
   const handleFinalizarPedido = () => {
     onClose();
@@ -44,11 +63,7 @@ export default function CartDropdown({ show, onClose }) {
           <>
             {/* Listado de productos */}
             <div className="flex-grow-1 overflow-y-auto mb-3">
-              {items.map((item, index) => {
-                const precioNum = Number(item.precio || 0);
-                const subtotalItem = precioNum * item.cantidad;
-
-                return (
+              {itemsConDescuento.map((item, index) => (
                   <div key={item.idCart || `${item.id}-${item.modelo || index}`} className="d-flex gap-3 mb-3 pb-3 border-bottom position-relative">
                     
                     {/* Imagen del producto */}
@@ -72,8 +87,16 @@ export default function CartDropdown({ show, onClose }) {
 
                       {/* Precio por unidad */}
                       <p className="mb-2 text-muted small">
-                        ${precioNum.toFixed(2)} c/u
+                        ${item.discountedUnitPrice.toFixed(2)} c/u
+                        {item.discountPerUnit > 0 && (
+                          <del className="cart-dropdown-original-price ms-2">
+                            ${item.unitPrice.toFixed(2)} c/u
+                          </del>
+                        )}
                       </p>
+                      {item.esMayor && (
+                        <small className="text-success">Precio al mayor aplicado</small>
+                      )}
 
                       {/* Controles de cantidad y precio total*/}
                       <div className="d-flex align-items-center justify-content-between mt-2">
@@ -96,9 +119,16 @@ export default function CartDropdown({ show, onClose }) {
                         </div>
 
                         {/* Precio total del producto */}
-                        <span className="fw-bold text-dark" style={{ fontSize: "1.05rem" }}>
-                          ${subtotalItem.toFixed(2)}
-                        </span>
+                        <div className="d-flex flex-column align-items-end">
+                          <span className="fw-bold text-dark" style={{ fontSize: "1.05rem" }}>
+                            ${item.discountedSubtotal.toFixed(2)}
+                          </span>
+                          {item.discountPerUnit > 0 && (
+                            <del className="cart-dropdown-original-price">
+                              ${item.originalSubtotal.toFixed(2)}
+                            </del>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -113,8 +143,7 @@ export default function CartDropdown({ show, onClose }) {
                     </button>
 
                   </div>
-                );
-              })}
+              ))}
             </div>
 
             {/* botón  */}
@@ -123,8 +152,18 @@ export default function CartDropdown({ show, onClose }) {
                 
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <span className="text-muted small">Total</span>
-                  <span className="fw-bold fs-4 text-dark">${totalPrecio.toFixed(2)}</span>
+                  <div className="d-flex flex-column align-items-end">
+                    {totalDescuento > 0 && (
+                      <del className="cart-dropdown-original-price">${totalOriginal.toFixed(2)}</del>
+                    )}
+                    <span className="fw-bold fs-4 text-dark">${totalConDescuento.toFixed(2)}</span>
+                  </div>
                 </div>
+                {totalDescuento > 0 && (
+                  <p className="text-success small text-end mb-2">
+                    Descuento aplicado: -${totalDescuento.toFixed(2)}
+                  </p>
+                )}
                 
                 
                 <button 

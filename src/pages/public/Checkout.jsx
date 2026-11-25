@@ -11,7 +11,8 @@ import { usePostFetch } from "../../hooks/usePostFetch";
 import { SERVER_URL } from "../../services/api";
 import { obtenerTasaDolar } from "../../utils/Tasa";
 import { notifySuccess } from "../../utils/Tostify";
-import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
+import { getUnitPrice, esPrecioMayor, roundCurrency } from "../../utils/Pricing";
+import { getDiscountedItemPricing } from "../../utils/Discounts";
 import { FORMATO_TELEFONO_VENEZOLANO, formatearTelefonoVenezolano } from "../../utils/Telefono";
 import { alertaError, obtenerMensajeError } from "../../utils/Alert";
 import "../../assets/css/Checkout.css";
@@ -52,51 +53,18 @@ const pagoSchema = Yup.object({
 });
 
 const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
-
-const getDiscountForItem = (item, descuentos, unitPrice) => {
-  const now = new Date();
-
-  const aplicables = (descuentos || []).filter((descuento) => {
-    if (!descuento.activo) return false;
-
-    const fechaInicio = descuento.fecha_inicio ? new Date(descuento.fecha_inicio) : null;
-    const fechaFin = descuento.fecha_fin ? new Date(descuento.fecha_fin) : null;
-
-    if (fechaInicio && now < fechaInicio) return false;
-    if (fechaFin && now > fechaFin) return false;
-
-    const categoryMatch = descuento.categoria_id != null && Number(descuento.categoria_id) === Number(item.categoria_id);
-    const productMatch = Array.isArray(descuento.Productos) && descuento.Productos.some((producto) => Number(producto.id) === Number(item.producto_id));
-
-    return categoryMatch || productMatch;
-  });
-
-  if (!aplicables.length) return { discountAmount: 0, discountLabel: "" };
-
-  const descuento = aplicables[0];
-  const quantity = Number(item.cantidad || 1);
-
-  if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
-    const descuentoUnitario = unitPrice * (Number(descuento.valor || 0) / 100);
-    return {
-      discountAmount: descuentoUnitario * quantity,
-      discountLabel: `${Number(descuento.valor).toFixed(2)}% de descuento`
-    };
-  }
-
-  const fixedAmount = Number(descuento.valor || 0);
-  return {
-    discountAmount: fixedAmount * quantity,
-    discountLabel: `${formatMoney(fixedAmount)} de descuento`
-  };
-};
+const formatBolivares = (value) => Number(value).toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, clearCart } = useCart();
 
   const isLogged = Boolean(localStorage.getItem("accessToken"));
-  const [tasaDia, setTasaDia] = useState(1);
+  const [tasaDia, setTasaDia] = useState(null);
+  const [cargandoTasa, setCargandoTasa] = useState(true);
   const [deliveryData] = useState(() => {
     try {
       return JSON.parse(sessionStorage.getItem(DELIVERY_STORAGE_KEY) || "null");
@@ -112,28 +80,27 @@ export default function Checkout() {
   const [clienteInvitado, setClienteInvitado] = useState(null);
   const [showGuestModal, setShowGuestModal] = useState(false);
 
-  const { data: descuentos = [] } = useGetFetch("/descuentos");
+  const {
+    data: descuentos = [],
+    loading: cargandoDescuentos,
+    error: errorDescuentos
+  } = useGetFetch("/descuentos");
   const { post: postPedido, loading: enviando } = usePostFetch("/pedidos");
 
   const itemsWithDiscount = items.map((item) => {
-  const unitPrice = getUnitPrice(item);
-  const discountInfo = getDiscountForItem(item, descuentos, unitPrice);
-  const subtotal = Number(item.cantidad || 0) * unitPrice;
-  const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
+    const pricing = getDiscountedItemPricing(item, descuentos, item.cantidad, getUnitPrice(item));
 
-  return {
-    ...item,
-    unitPrice,
-    esMayor: esPrecioMayor(item),
-    subtotal,
-    discountAmount: Number(discountInfo.discountAmount || 0),
-    discountedSubtotal,
-    discountLabel: discountInfo.discountLabel,
-  };
-});
+    return {
+      ...item,
+      ...pricing,
+      esMayor: esPrecioMayor(item),
+      discountLabel: pricing.discountInfo?.label || ""
+    };
+  });
 const totalSubtotalSinDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.subtotal, 0);
 const totalDiscount = itemsWithDiscount.reduce((sum, item) => sum + item.discountAmount, 0);
 const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.discountedSubtotal, 0);
+const descuentosListos = !cargandoDescuentos && !errorDescuentos;
 
   const formik = useFormik({
     initialValues: PAGO_INICIAL,
@@ -141,6 +108,14 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
     onSubmit: async (values) => {
       if (items.length === 0) {
         await alertaError("Carrito vacío", "Agrega productos antes de realizar el pedido.");
+        return;
+      }
+
+      if (cargandoDescuentos || errorDescuentos) {
+        await alertaError(
+          "No se pudieron validar las promociones",
+          "Espera a que se carguen los descuentos o recarga la página para continuar."
+        );
         return;
       }
 
@@ -153,6 +128,14 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
       if (!deliveryData?.metodoEntrega) {
         await alertaError("Falta el método de entrega", "Completa los datos de entrega antes de pagar.");
         navigate("/entrega");
+        return;
+      }
+
+      if (totalBs == null) {
+        await alertaError(
+          "No se pudo obtener la tasa",
+          "No podemos calcular el total en bolívares. Recarga la página e inténtalo de nuevo."
+        );
         return;
       }
 
@@ -179,7 +162,7 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
         formData.append("banco_origen", values.bancoOrigen);
         formData.append("banco_destino", values.bancoDestino);
         formData.append("telefono_emisor", values.telefono.trim());
-        formData.append("total_bs", totalBs);
+        formData.append("total_bs", totalBs.toFixed(2));
         formData.append("metodo_entrega", deliveryData.metodoEntrega);
         formData.append("agencia_envio", deliveryData.agenciaEnvio || "");
         formData.append("sucursal_envio", deliveryData.sucursalEnvio || "");
@@ -211,7 +194,21 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
   });
 
   useEffect(() => {
-    obtenerTasaDolar().then(tasa => setTasaDia(tasa));
+    let vigente = true;
+
+    const cargarTasa = async () => {
+      const tasa = Number(await obtenerTasaDolar());
+      if (!vigente) return;
+
+      setTasaDia(Number.isFinite(tasa) && tasa > 0 ? tasa : null);
+      setCargandoTasa(false);
+    };
+
+    cargarTasa();
+
+    return () => {
+      vigente = false;
+    };
   }, []);
 
   // Decide si mostrar el modal de invitado, una vez que ya sabemos el estado del login
@@ -224,7 +221,9 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
 
   const clienteId = clienteLogueado?.id ?? clienteInvitado?.id;
 
-  const totalBs = totalConDescuento * tasaDia;
+  const totalBs = !descuentosListos || tasaDia == null
+    ? null
+    : roundCurrency(totalConDescuento * tasaDia);
 
   const fieldError = (name) => formik.touched[name] && formik.errors[name];
   const fieldClass = (name) => {
@@ -383,9 +382,22 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
                 <button
                   type="submit"
                   className="checkout-submit-btn w-100 py-2"
-                  disabled={enviando || formik.isSubmitting}
+                  disabled={
+                    enviando ||
+                    formik.isSubmitting ||
+                    cargandoTasa ||
+                    cargandoDescuentos ||
+                    Boolean(errorDescuentos) ||
+                    totalBs == null
+                  }
                 >
-                  {enviando ? "Procesando..." : "Realizar Pago"}
+                  {enviando
+                    ? "Procesando..."
+                    : cargandoTasa
+                      ? "Consultando tasa..."
+                      : cargandoDescuentos
+                        ? "Validando promociones..."
+                        : "Realizar Pago"}
                 </button>
 
                 <p className="text-muted text-center mt-3 mb-0 small">
@@ -430,7 +442,10 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
         <p className="mb-0 text-muted small">Bota: {item.tipo_bota_nombre}</p>
       )}
       <p className="mb-0 text-muted small">
-        Cantidad: {item.cantidad} × {formatMoney(item.unitPrice)}
+        Cantidad: {item.cantidad} × {formatMoney(item.discountedUnitPrice)} c/u
+        {item.discountAmount > 0 && (
+          <del className="ms-2">{formatMoney(item.unitPrice)} c/u</del>
+        )}
       </p>
       {item.esMayor && (
         <p className="mb-0 text-success small fw-semibold">Precio al mayor aplicado</p>
@@ -453,6 +468,15 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
                 <span>{formatMoney(totalSubtotalSinDescuento)}</span>
               </div>
 
+              {cargandoDescuentos && (
+                <p className="text-muted small text-end mb-1">Validando promociones...</p>
+              )}
+              {errorDescuentos && (
+                <p className="text-danger small text-end mb-1" role="alert">
+                  No se pudieron validar las promociones. Recarga la página para continuar.
+                </p>
+              )}
+
               {totalDiscount > 0 && (
                 <div className="d-flex justify-content-between mb-1 text-success">
                   <span>Descuento:</span>
@@ -462,14 +486,29 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
 
               <div className="d-flex justify-content-between mb-1">
                 <strong>Total USD:</strong>
-                <strong>{formatMoney(totalConDescuento)}</strong>
+                <strong>
+                  {cargandoDescuentos
+                    ? "Validando promociones..."
+                    : errorDescuentos
+                      ? "No disponible"
+                      : formatMoney(totalConDescuento)}
+                </strong>
               </div>
               <div className="d-flex justify-content-between">
                 <strong>Total Bs:</strong>
                 <strong className="text-success">
-                  {totalBs.toLocaleString(undefined, { maximumFractionDigits: 2 })} Bs
+                  {!descuentosListos
+                    ? cargandoDescuentos ? "Validando promociones..." : "No disponible"
+                    : totalBs == null
+                      ? cargandoTasa ? "Consultando tasa..." : "Tasa no disponible"
+                    : `${formatBolivares(totalBs)} Bs`}
                 </strong>
               </div>
+              {totalBs == null && !cargandoTasa && (
+                <p className="text-danger small text-end mt-1 mb-0" role="alert">
+                  No se pudo obtener la tasa oficial. Recarga la página para continuar.
+                </p>
+              )}
             </div>
           </div>
 
