@@ -2,45 +2,9 @@ import { useState } from "react";
 import { useGetFetch } from "../../hooks/useGetFetch";
 import { notifyError } from "../../utils/Tostify";
 import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
+import { getDiscountedItemPricing } from "../../utils/Discounts";
 
 const formatMoney = (value) => `$${Number(value || 0).toLocaleString()}`;
-
-const getDiscountForProducto = (producto, cantidad, unitPrice, descuentos) => {
-  const now = new Date();
-
-  const aplicables = (descuentos || []).filter((descuento) => {
-    if (!descuento.activo) return false;
-
-    const fechaInicio = descuento.fecha_inicio ? new Date(descuento.fecha_inicio) : null;
-    const fechaFin = descuento.fecha_fin ? new Date(descuento.fecha_fin) : null;
-
-    if (fechaInicio && now < fechaInicio) return false;
-    if (fechaFin && now > fechaFin) return false;
-
-    const categoryMatch = descuento.categoria_id != null && Number(descuento.categoria_id) === Number(producto.categoria_id);
-    const productMatch = Array.isArray(descuento.Productos) && descuento.Productos.some((p) => Number(p.id) === Number(producto.id));
-
-    return categoryMatch || productMatch;
-  });
-
-  if (!aplicables.length) return { discountAmount: 0, discountLabel: "" };
-
-  const descuento = aplicables[0];
-
-  if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
-    const descuentoUnitario = unitPrice * (Number(descuento.valor || 0) / 100);
-    return {
-      discountAmount: descuentoUnitario * cantidad,
-      discountLabel: `${Number(descuento.valor).toFixed(2)}% de descuento`
-    };
-  }
-
-  const fixedAmount = Number(descuento.valor || 0);
-  return {
-    discountAmount: fixedAmount * cantidad,
-    discountLabel: `${formatMoney(fixedAmount)} de descuento`
-  };
-};
 
 export default function ProductosPaso({ items, setItems }) {
   const { data: productos } = useGetFetch("/productos");
@@ -105,7 +69,7 @@ export default function ProductosPaso({ items, setItems }) {
 
     const unitPrice = getUnitPrice({ precio: detalle.precio, precio_mayor: detalle.precio_mayor, cantidad: cantidadNum });
     const esMayor = esPrecioMayor({ precio_mayor: detalle.precio_mayor, cantidad: cantidadNum });
-    const discountInfo = getDiscountForProducto(detalle, cantidadNum, unitPrice, descuentos);
+    const pricing = getDiscountedItemPricing(detalle, descuentos, cantidadNum, unitPrice);
 
     // Mapeo adaptado con las claves exactas requeridas por el Backend
     setItems((prev) => [
@@ -130,10 +94,10 @@ export default function ProductosPaso({ items, setItems }) {
         tipo_bota_id: tipoBotaId,
         tipo_bota_nombre: detalle.Tipos_bota?.find((t) => String(t.id) === String(tipoBotaId))?.nombre,
         
-        precio: unitPrice,
+        precio: pricing.unitPrice,
         esMayor,
-        descuento: Number(discountInfo.discountAmount || 0),
-        discountLabel: discountInfo.discountLabel,
+        descuento: pricing.discountAmount,
+        discountLabel: pricing.discountInfo?.label || "",
         cantidad: cantidadNum
       }
     ]);

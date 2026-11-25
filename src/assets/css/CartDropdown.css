@@ -17,3 +17,9 @@
   color: #6c757d; 
   opacity: 0.6;
 }
+
+.cart-dropdown-original-price {
+  color: #777;
+  font-size: 0.82em;
+  font-weight: 400;
+}

@@ -7,59 +7,10 @@ import { useGetFetch } from "../../hooks/useGetFetch";
 import StepIndicator from "../../components/home/StepIndicator";
 import { SERVER_URL } from "../../services/api";
 import { getUnitPrice, esPrecioMayor } from "../../utils/Pricing";
+import { getDiscountedItemPricing } from "../../utils/Discounts";
 import "../../assets/css/CartFlow.css";
 
 const formatMoney = (value) => `$ ${Number(value || 0).toLocaleString()}`;
-
-const getDiscountForItem = (item, descuentos, unitPrice) => {
-  const now = new Date();
-
-  const aplicables = (descuentos || []).filter((descuento) => {
-    if (!descuento.activo) return false;
-
-    const fechaInicio = descuento.fecha_inicio ? new Date(descuento.fecha_inicio) : null;
-    const fechaFin = descuento.fecha_fin ? new Date(descuento.fecha_fin) : null;
-
-    if (fechaInicio && now < fechaInicio) return false;
-    if (fechaFin && now > fechaFin) return false;
-
-    const categoryMatch =
-      descuento.categoria_id !== null &&
-      descuento.categoria_id !== undefined &&
-      item.categoria_id !== null &&
-      item.categoria_id !== undefined &&
-      Number(descuento.categoria_id) === Number(item.categoria_id);
-
-    const productMatch =
-      Array.isArray(descuento.Productos) &&
-      descuento.Productos.some(
-        (producto) => Number(producto.id) === Number(item.producto_id)
-      );
-
-    return categoryMatch || productMatch;
-  });
-
-  if (aplicables.length === 0) {
-    return { discountAmount: 0, discountLabel: "" };
-  }
-
-  const descuento = aplicables[0];
-  const quantity = Number(item.cantidad || 1);
-  const valor = Number(descuento.valor || 0);
-
-  if (descuento.Tipos_descuento?.nombre === "Porcentaje") {
-    const descuentoUnitario = unitPrice * (valor / 100);
-    return {
-      discountAmount: descuentoUnitario * quantity,
-      discountLabel: `${valor.toFixed(2)}% de descuento`
-    };
-  }
-
-  return {
-    discountAmount: valor * quantity,
-    discountLabel: `$${valor.toLocaleString()} de descuento`
-  };
-};
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -69,19 +20,13 @@ export default function CartPage() {
   const cantidadTotal = items.reduce((sum, item) => sum + item.cantidad, 0);
 
   const itemsWithDiscount = items.map((item) => {
-    const unitPrice = getUnitPrice(item);
-    const discountInfo = getDiscountForItem(item, descuentos, unitPrice);
-    const subtotal = item.cantidad * unitPrice;
-    const discountedSubtotal = Math.max(0, subtotal - discountInfo.discountAmount);
+    const pricing = getDiscountedItemPricing(item, descuentos, item.cantidad, getUnitPrice(item));
 
     return {
       ...item,
-      unitPrice,
+      ...pricing,
       esMayor: esPrecioMayor(item),
-      subtotal,
-      discountAmount: discountInfo.discountAmount,
-      discountedSubtotal,
-      discountLabel: discountInfo.discountLabel
+      discountLabel: pricing.discountInfo?.label || ""
     };
   });
 
@@ -164,7 +109,12 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <span className="cart-flow-price text-center">{formatMoney(item.unitPrice)}</span>
+                <div className="cart-flow-price text-center">
+                  <span>{formatMoney(item.discountedUnitPrice)}</span>
+                  {item.discountAmount > 0 && (
+                    <del className="cart-flow-price-original">{formatMoney(item.unitPrice)}</del>
+                  )}
+                </div>
 
                 <div className="cart-flow-qty">
                   <button type="button" onClick={() => updateCantidad(item.id, item.cantidad - 1, item.modelo)}>-</button>

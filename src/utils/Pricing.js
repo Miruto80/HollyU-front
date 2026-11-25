@@ -1,5 +1,7 @@
 export const CANTIDAD_MINIMA_MAYOR = 12;
 
+export const roundCurrency = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+
 export const getUnitPrice = (item) => {
   const cantidad = Number(item.cantidad || 0);
   const precioMayor = Number(item.precio_mayor || 0);

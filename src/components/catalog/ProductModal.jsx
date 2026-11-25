@@ -10,6 +10,7 @@ import GuestModal from "./GuestModal";
 import PersonalizationRequestModal from "./PersonalizationRequestModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
+import { getDiscountForProduct } from "../../utils/Discounts";
 import "../../assets/css/ProductModal.css";
 import hero from "../../assets/img/hero.png";
 
@@ -27,6 +28,7 @@ export default function ProductModal({ product, onClose }) {
     const { data: clienteLogueado, loading: cargandoCliente } = useGetFetch(
         isLogged ? "/clientes/me" : null
     );
+    const { data: descuentos = [] } = useGetFetch("/descuentos");
     const { post: postPersonalizacion, loading: enviandoSolicitud } = usePostFetch("/personalizaciones");
     const { addItem } = useCart();
 
@@ -55,6 +57,12 @@ export default function ProductModal({ product, onClose }) {
     }, [product]);
 
     if (!product || !detalle) return null;
+
+    const precio = Number(detalle.precio || 0);
+    const descuento = getDiscountForProduct(detalle, descuentos, precio);
+    const montoDescuento = descuento ? Math.min(precio, Math.max(0, descuento.amountPerUnit)) : 0;
+    const precioConDescuento = Math.max(0, precio - montoDescuento);
+    const tieneDescuento = montoDescuento > 0;
 
     const modelosDisponibles = (detalle.Producto_modelos || []).map((pm) => ({
         ...pm.Modelo,
@@ -228,9 +236,19 @@ export default function ProductModal({ product, onClose }) {
                                     {detalle.nombre}
                                 </h2>
 
-                                <h3 className="fs-2 fw-bold mb-2" style={{ color: "#000000" }}>
-                                    ${Number(detalle.precio).toLocaleString()}
-                                </h3>
+                                <div className="product-modal-pricing">
+                                    <span className="product-modal-price-label">Precio por unidad</span>
+                                    <div className="product-modal-price-values">
+                                        <h3 className="product-modal-price-current">
+                                            ${Number(tieneDescuento ? precioConDescuento : precio).toLocaleString()}
+                                        </h3>
+                                        {tieneDescuento && (
+                                            <del className="product-modal-price-original">
+                                                ${precio.toLocaleString()}
+                                            </del>
+                                        )}
+                                    </div>
+                                </div>
 
                                 <p className="text-muted small mb-3">
                                     {detalle.descripcion}
