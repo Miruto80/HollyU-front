@@ -6,7 +6,11 @@ export async function obtenerTasaDolar() {
     }
 
     const datos = await respuesta.json();
-    const tasa = parseFloat(datos.promedio).toFixed(2);
+    const tasa = Number(datos.promedio);
+    if (!Number.isFinite(tasa) || tasa <= 0) {
+      throw new Error('La tasa recibida no es válida');
+    }
+
     return tasa;
   } catch (error) {
     console.error('Error al obtener la tasa del dólar:', error);
