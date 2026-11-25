@@ -48,11 +48,12 @@ export default function PersonalizationRequestModal({
                                 <input
                                     id="imagen-referencia-personalizacion"
                                     type="file"
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp"
                                     onChange={(event) => onReferenceFileChange(event.target.files?.[0] || null)}
                                     disabled={loading}
                                 />
                                 {referenceFile && <span className="personalization-file-name">{referenceFile.name}</span>}
+                                <small>Formatos permitidos: JPG, JPEG, PNG o WEBP. Máximo 5 MB.</small>
                             </label>
                         )}
 

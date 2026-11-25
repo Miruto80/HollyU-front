@@ -347,10 +347,12 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
                   id="pago-comprobante"
                   type="file"
                   name="comprobante"
+                  accept="image/jpeg,image/png,image/webp"
                   className={`form-control ${fieldClass("comprobante")}`}
                   onChange={(event) => formik.setFieldValue("comprobante", event.currentTarget.files?.[0] || null)}
                   onBlur={() => formik.setFieldTouched("comprobante", true)}
                   />
+                  <small className="form-text text-muted">Formatos permitidos: JPG, JPEG, PNG o WEBP. Máximo 5 MB.</small>
                   {fieldError("comprobante") && <div className="invalid-feedback">{fieldError("comprobante")}</div>}
                 </div>
 
