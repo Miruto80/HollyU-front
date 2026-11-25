@@ -399,6 +399,8 @@ const totalConDescuento = itemsWithDiscount.reduce((sum, item) => sum + item.dis
             <div className="checkout-card checkout-info-card mb-3">
               <h6 className="checkout-accent-title">Datos del pago móvil</h6>
               <p className="mb-1">Banco Nacional de Credito (0191) C.I.: V-18.334.628 Telf.:0414-511-9764</p>
+              <h6 className="checkout-accent-title">Datos del zelle</h6>
+              <p className="mb-1"> Correo: magalydefendini@gmail.com Nombre: Magaly defendini</p>
             </div>
 
             <div className="checkout-card">
