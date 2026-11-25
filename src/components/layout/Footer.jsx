@@ -8,13 +8,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
-  faFacebookF,
   faInstagram,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
 
 import { openTermsModal } from "../catalog/Terms.jsx";
 import "../../assets/css/Footer.css";
+
+const phoneNumber = "+58 04145119764";
+const whatsappNumber = "584145119764";
 
 export default function Footer() {
   return (
@@ -34,15 +36,16 @@ export default function Footer() {
             </p>
 
             <div className="footer-social">
-              <a href="#" aria-label="Facebook">
-                <FontAwesomeIcon icon={faFacebookF} />
-              </a>
-
               <a href="https://www.instagram.com/holyholyuniformes/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
 
-              <a href="#" aria-label="WhatsApp">
+              <a
+                href={`https://wa.me/${whatsappNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+              >
                 <FontAwesomeIcon icon={faWhatsapp} />
               </a>
             </div>
@@ -58,7 +61,7 @@ export default function Footer() {
               </li>
 
               <li>
-                <Link to="/catalog/all">Catálogo</Link>
+                <Link to="/catalog">Catálogo</Link>
               </li>
 
               <li>
@@ -110,17 +113,28 @@ export default function Footer() {
             <div className="footer-contact">
               <p>
                 <FontAwesomeIcon icon={faPhone} />
-                <span>+58 04145119764</span>
+                <a className="text-reset text-decoration-none" href={`tel:${whatsappNumber}`}>
+                  {phoneNumber}
+                </a>
               </p>
 
               <p>
                 <FontAwesomeIcon icon={faEnvelope} />
-                <span>alexyvb33@gmail.com</span>
+                <a className="text-reset text-decoration-none" href="mailto:alexyvb33@gmail.com">
+                  alexyvb33@gmail.com
+                </a>
               </p>
 
               <p>
                 <FontAwesomeIcon icon={faLocationDot} />
-                <span>Barquisimeto, Venezuela</span>
+                <a
+                  className="text-reset text-decoration-none"
+                  href="https://www.google.com/maps/search/?api=1&query=Barquisimeto%2C%20Venezuela"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Barquisimeto, Venezuela
+                </a>
               </p>
             </div>
           </div>
