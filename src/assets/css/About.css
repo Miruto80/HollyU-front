@@ -1,6 +1,7 @@
 .about-hero{
     padding:110px 0 90px;
     background:#f8fafc;
+    scroll-margin-top: 6rem;
 }
 
 .about-hero .img-fluid{

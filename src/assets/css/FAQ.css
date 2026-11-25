@@ -1,6 +1,7 @@
 .faq-section{
     background:#f8f9fa;
     min-height:70vh;
+    scroll-margin-top: 6rem;
 }
 
 .faq-title{

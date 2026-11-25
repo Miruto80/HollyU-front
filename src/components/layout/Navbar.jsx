@@ -120,7 +120,7 @@ export default function Navbar() {
               </li>
 
               <li className="nav-item">
-                <Link to="/nosotros" className="nav-link">
+                <Link to="/#nosotros" className="nav-link">
                   Nosotros
                 </Link>
               </li>

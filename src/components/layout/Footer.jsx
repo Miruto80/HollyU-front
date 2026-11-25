@@ -65,12 +65,9 @@ export default function Footer() {
               </li>
 
               <li>
-                <Link to="/nosotros">Nosotros</Link>
+                <Link to="/#nosotros">Nosotros</Link>
               </li>
-
-              <li>
-                <Link to="/contacto">Contacto</Link>
-              </li>
+              
             </ul>
           </div>
 
@@ -80,11 +77,7 @@ export default function Footer() {
 
             <ul className="footer-links">
               <li>
-                <Link to="/faq">Preguntas frecuentes</Link>
-              </li>
-
-              <li>
-                <Link to="/politicas">Políticas</Link>
+                <Link to="/#faq">Preguntas frecuentes</Link>
               </li>
 
               <li>

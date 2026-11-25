@@ -8,7 +8,7 @@ export default function About() {
   return (
     <>
       {/* Hero */}
-      <section className="about-hero">
+      <section id="nosotros" className="about-hero">
         <div className="container">
           <div className="row align-items-center g-5">
 
