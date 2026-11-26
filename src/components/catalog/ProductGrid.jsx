@@ -1,4 +1,5 @@
 import ProductCard from "./ProductCard";
+import RevealUp from "../animations/RevealUp";
 
 export default function ProductGrid({ products = [], loading, onSelect }) {
     if (loading) {
@@ -17,18 +18,18 @@ export default function ProductGrid({ products = [], loading, onSelect }) {
 
         <div className="row g-4">
 
-            {products.map(product => (
+            {products.map((product, index) => (
 
                 <div
                     className="col-lg-3 col-md-4 col-sm-6"
                     key={product.id}
                 >
-
-                    <ProductCard
-                        product={product}
-                        onClick={() => onSelect(product)}
-                    />
-
+                    <RevealUp className="h-100" delay={index * 0.04}>
+                        <ProductCard
+                            product={product}
+                            onClick={() => onSelect(product)}
+                        />
+                    </RevealUp>
                 </div>
 
             ))}

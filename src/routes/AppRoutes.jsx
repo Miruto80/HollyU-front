@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import Navbar from "../components/layout/Navbar.jsx";
-import PromoStrip from "../components/home/PromoStrip.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import Home from "../pages/public/Home.jsx";
 import Login from "../pages/public/Login.jsx";
@@ -15,6 +15,9 @@ import CartPage from "../pages/public/CartPage.jsx";
 import DeliveryPage from "../pages/public/DeliveryPage.jsx";
 import Terms from "../components/catalog/Terms.jsx";
 import NotFound from "../pages/NotFound.jsx";
+import FadeWrapper from "../components/animations/FadeWrapper.jsx";
+
+const withFade = (page) => <FadeWrapper>{page}</FadeWrapper>;
 
 function AppRoutes() {
   const location = useLocation();
@@ -29,28 +32,30 @@ function AppRoutes() {
   
       {!isAdminRoute && <Navbar />}
 
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/catalog" element={<Catalog />} />
-        <Route path="/catalog/:category" element={<Catalog />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/entrega" element={<DeliveryPage />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/pedido-confirmado/:id" element={<OrderConfirmation />} />
-        <Route path="/mis-pedidos" element={<MyOrders />} />
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={`${location.pathname}${location.search}`}>
+          <Route path="/" element={withFade(<Home />)} />
+          <Route path="/login" element={withFade(<Login />)} />
+          <Route path="/catalog" element={withFade(<Catalog />)} />
+          <Route path="/catalog/:category" element={withFade(<Catalog />)} />
+          <Route path="/cart" element={withFade(<CartPage />)} />
+          <Route path="/entrega" element={withFade(<DeliveryPage />)} />
+          <Route path="/checkout" element={withFade(<Checkout />)} />
+          <Route path="/pedido-confirmado/:id" element={withFade(<OrderConfirmation />)} />
+          <Route path="/mis-pedidos" element={withFade(<MyOrders />)} />
 
 
-         <Route
-          path="/admin/*"
-          element={
-            <ProtectRoute rolPermitido="Administrador">
-              <AdminRoutes />
-            </ProtectRoute>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route
+            path="/admin/*"
+            element={withFade(
+              <ProtectRoute rolPermitido="Administrador">
+                <AdminRoutes />
+              </ProtectRoute>
+            )}
+          />
+          <Route path="*" element={withFade(<NotFound />)} />
+        </Routes>
+      </AnimatePresence>
 
       {!isAdminRoute && <Footer />}
       <Terms />
