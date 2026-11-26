@@ -57,19 +57,22 @@ export default function CategoriesGrid() {
   }
 
   return (
-    <div className="categories-grid row g-3">
-      {categories.map((c) => (
-        <div key={c.id} className="col-6 col-md-3">
-          <Link to={c.link} className="category-card d-block text-decoration-none text-dark">
-            <div className="ratio ratio-4x3 overflow-hidden rounded">
-              <img src={c.img} alt={c.title} loading="lazy" className="w-100 h-100 object-fit-cover" />
-            </div>
-            <div className="mt-2 text-center">
-              <strong>{c.title}</strong>
-            </div>
-          </Link>
-        </div>
-      ))}
+    <div>
+      <h2 className="text-center fw-bold mb-4">Nuestras categorías</h2>
+      <div className="categories-grid row g-3">
+        {categories.map((c) => (
+          <div key={c.id} className="col-6 col-md-3">
+            <Link to={c.link} className="category-card d-block text-decoration-none text-dark">
+              <div className="ratio ratio-4x3 overflow-hidden rounded">
+                <img src={c.img} alt={c.title} loading="lazy" className="w-100 h-100 object-fit-cover" />
+              </div>
+              <div className="mt-2 text-center">
+                <strong>{c.title}</strong>
+              </div>
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
