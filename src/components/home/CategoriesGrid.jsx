@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useGetFetch } from '../../hooks/useGetFetch';
+import { SERVER_URL } from '../../services/api';
 import '../../assets/css/CategoriesGrid.css';
 import img1 from '../../assets/img/IMG_4023.webp';
 import img2 from '../../assets/img/IMG_0133.webp';
@@ -38,7 +39,7 @@ export default function CategoriesGrid() {
         return {
           id: categoria.id,
           title: categoria.nombre,
-          img: imageMap[slug] || img1,
+          img: categoria.imagen ? `${SERVER_URL}${categoria.imagen}` : imageMap[slug] || img1,
           link: `/catalog/${slug}?categoria_id=${categoria.id}`,
         };
       })

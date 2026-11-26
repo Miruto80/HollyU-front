@@ -1,17 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePostFetch } from "../../hooks/usePostFetch";
 import { usePutFetch } from "../../hooks/usePutFetch";
+import { SERVER_URL } from "../../services/api";
 
 export default function CategoryModal({ show, onClose, onSaved, category = null }) {
   const { post, loading: creating, error: createError } = usePostFetch("/categorias");
   const { put, loading: updating, error: updateError } = usePutFetch("/categorias");
 
   const [form, setForm] = useState({ nombre: "", descripcion: "", activo: true });
+  const [imagen, setImagen] = useState(null);
+  const [vistaPrevia, setVistaPrevia] = useState(null);
+  const vistaPreviaTemporal = useRef(null);
 
   useEffect(() => {
     if (category) setForm({ nombre: category.nombre || "", descripcion: category.descripcion || "", activo: !!category.activo });
     else setForm({ nombre: "", descripcion: "", activo: true });
+    setImagen(null);
+    if (vistaPreviaTemporal.current) {
+      URL.revokeObjectURL(vistaPreviaTemporal.current);
+      vistaPreviaTemporal.current = null;
+    }
+    setVistaPrevia(category?.imagen ? `${SERVER_URL}${category.imagen}` : null);
   }, [category, show]);
+
+  useEffect(() => () => {
+    if (vistaPreviaTemporal.current) URL.revokeObjectURL(vistaPreviaTemporal.current);
+  }, []);
 
   if (!show) return null;
 
@@ -23,13 +37,33 @@ export default function CategoryModal({ show, onClose, onSaved, category = null 
     setForm(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
+  const handleImageChange = (e) => {
+    if (vistaPreviaTemporal.current) {
+      URL.revokeObjectURL(vistaPreviaTemporal.current);
+      vistaPreviaTemporal.current = null;
+    }
+
+    const file = e.target.files?.[0] || null;
+    setImagen(file);
+    if (file) {
+      vistaPreviaTemporal.current = URL.createObjectURL(file);
+      setVistaPrevia(vistaPreviaTemporal.current);
+    } else {
+      setVistaPrevia(category?.imagen ? `${SERVER_URL}${category.imagen}` : null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = new FormData();
+      Object.entries(form).forEach(([key, value]) => payload.append(key, String(value)));
+      if (imagen) payload.append("imagen", imagen);
+
       if (category?.id) {
-        await put(category.id, form);
+        await put(category.id, payload);
       } else {
-        await post(form);
+        await post(payload);
       }
       onSaved?.();
       onClose();
@@ -61,6 +95,26 @@ export default function CategoryModal({ show, onClose, onSaved, category = null 
               <div className="mb-3">
                 <label className="form-label">Descripción</label>
                 <textarea name="descripcion" className="form-control" value={form.descripcion} onChange={handleChange} />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="imagen-categoria" className="form-label">Imagen de categoría</label>
+                <input
+                  id="imagen-categoria"
+                  type="file"
+                  className="form-control"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageChange}
+                />
+                <div className="form-text">JPG, PNG o WEBP. Máximo 5 MB.</div>
+                {vistaPrevia && (
+                  <img
+                    src={vistaPrevia}
+                    alt="Vista previa de la categoría"
+                    className="img-thumbnail mt-2"
+                    style={{ maxHeight: "160px", objectFit: "cover" }}
+                  />
+                )}
               </div>
 
               <div className="form-check">
