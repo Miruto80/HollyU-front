@@ -4,6 +4,8 @@ import Navbar from "../components/layout/Navbar.jsx";
 import Footer from "../components/layout/Footer.jsx";
 import Home from "../pages/public/Home.jsx";
 import Login from "../pages/public/Login.jsx";
+import ForgotPassword from "../pages/public/ForgotPassword.jsx";
+import ResetPassword from "../pages/public/ResetPassword.jsx";
 import ScrollToTop from "../components/ScrollToTop.jsx";
 import AdminRoutes from "./AdminRoutes.jsx";
 import Catalog from "../pages/public/Catalog.jsx";
@@ -36,6 +38,8 @@ function AppRoutes() {
         <Routes location={location} key={`${location.pathname}${location.search}`}>
           <Route path="/" element={withFade(<Home />)} />
           <Route path="/login" element={withFade(<Login />)} />
+          <Route path="/recuperar" element={withFade(<ForgotPassword />)} />
+          <Route path="/restablecer-contrasena" element={withFade(<ResetPassword />)} />
           <Route path="/catalog" element={withFade(<Catalog />)} />
           <Route path="/catalog/:category" element={withFade(<Catalog />)} />
           <Route path="/cart" element={withFade(<CartPage />)} />
